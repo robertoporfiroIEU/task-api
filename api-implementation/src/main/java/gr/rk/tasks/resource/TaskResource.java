@@ -7,6 +7,7 @@ import gr.rk.tasks.V1.models.TaskDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -22,9 +23,8 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<List<Comment>> getTaskComments(UUID identifier) {
-        return ResponseEntity.ok(List.of(new Comment().text("testComment")
-        .creationDate(LocalDateTime.now().atZone(ZoneId.of("UTC").normalized()).toString())));
+    public ResponseEntity<Comment> addTaskComment(@Valid Comment body, UUID identifier) {
+        return ResponseEntity.ok(body);
     }
 
     @Override
@@ -32,7 +32,10 @@ public class TaskResource implements TasksApi {
         TaskDetail taskDetail = new TaskDetail();
         taskDetail.setName("test");
         taskDetail.setIdentifier(UUID.randomUUID());
-        taskDetail.setComments(List.of(new Comment().text("text comment")));
+        taskDetail.setComments(
+                List.of(new Comment().text("text comment")
+                        .creationDate(LocalDateTime.now().atZone(ZoneId.of("UTC").normalized()).toString()))
+        );
         return ResponseEntity.ok(taskDetail);
     }
 }

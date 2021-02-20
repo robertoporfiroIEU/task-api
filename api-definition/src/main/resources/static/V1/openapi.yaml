@@ -53,11 +53,11 @@ paths:
 
 
   /tasks/{identifier}/comments:
-    get:
-      description: Returns all the comments from the task with a specific identifier
+    post:
+      description: Add a new comment to the Task
       tags:
         - "Tasks"
-      operationId: getTaskComments
+      operationId: addTaskComment
       parameters:
         - name: identifier
           in: path
@@ -66,15 +66,19 @@ paths:
           schema:
             type: string
             format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
       responses:
         "200":
-          description: A list of comments
+          description: A comment
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/Comment'
 
 
 components:
