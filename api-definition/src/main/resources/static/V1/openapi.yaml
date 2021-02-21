@@ -11,6 +11,7 @@ servers:
 
 tags:
   - name: Tasks
+  - name: Groups
 
 paths:
   /tasks:
@@ -80,6 +81,73 @@ paths:
               schema:
                 $ref: '#/components/schemas/Comment'
 
+  /tasks/{identifier}/assigns:
+    post:
+      description: Assign users and groups to the task
+      tags:
+        - "Tasks"
+      operationId: addAssign
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the task
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Assign'
+      responses:
+        "200":
+          description: The assign
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assign'
+
+  /groups:
+    get:
+      description: |
+        These are the groups that exist in the API.
+        The purpose of groups is to can assign Tasks to many users through groups.
+        Returns all groups from the system that the user has access to
+      tags:
+        - Groups
+      operationId: getGroups
+      responses:
+        "200":
+          description: A list of groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+  /groups/{name}:
+    get:
+      description: Return specific group
+      tags:
+        - Groups
+      operationId: getGroupDetail
+      parameters:
+        - name: name
+          in: path
+          description: identifier of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A Group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDetail'
+
 
 components:
   schemas:
@@ -110,6 +178,13 @@ components:
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
           readOnly: true
+        createdBy:
+          $ref: '#/components/schemas/User'
+        realm:
+          type: string
+          description: This field is the realm from the IDP
+          example: Application1
+          readOnly: true
         dueDate:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
@@ -126,6 +201,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Comment'
+            assigns:
+              type: array
+              items:
+                $ref: '#/components/schemas/Assign'
+            spectators:
+              type: array
+              items:
+                $ref: '#/components/schemas/Spectator'
 
 
     Comment:
@@ -148,3 +231,76 @@ components:
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
           readOnly: true
+
+    Assign:
+      description: This is an object that holds the information about in which group or user a task belongs
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/Group'
+        users:
+          $ref: '#/components/schemas/User'
+        assignDate:
+          type: string
+          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+          example: "2021-01-30T08:30:00Z"
+          readOnly: true
+
+    Spectator:
+      description: |
+        This is an object that shows the spectators of the Task. By default, the system is going to add the
+        the user that creates the task as a spectator.
+      type: object
+      properties:
+        group:
+          $ref: '#/components/schemas/Group'
+        users:
+          $ref: '#/components/schemas/User'
+        creationDate:
+          type: string
+          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+          example: "2021-01-30T08:30:00Z"
+          readOnly: true
+
+    Group:
+      description: This is a group object that a user belongs to
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    GroupDetail:
+      allOf: # Combines the Group and the inline model
+      - $ref: '#/components/schemas/Group'
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        realm:
+          type: string
+          description: This field is the realm from the IDP
+          example: Application1
+          readOnly: true
+        creationDate:
+          type: string
+          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+          readOnly: true
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    User:
+      description: This is a user object that is coming from IDP
+      type: object
+      properties:
+        name:
+          type: string
