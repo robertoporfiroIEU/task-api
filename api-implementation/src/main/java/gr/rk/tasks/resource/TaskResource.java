@@ -1,6 +1,7 @@
 package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.TasksApi;
+import gr.rk.tasks.V1.models.Assign;
 import gr.rk.tasks.V1.models.Comment;
 import gr.rk.tasks.V1.models.Task;
 import gr.rk.tasks.V1.models.TaskDetail;
@@ -37,5 +38,10 @@ public class TaskResource implements TasksApi {
                         .creationDate(LocalDateTime.now().atZone(ZoneId.of("UTC").normalized()).toString()))
         );
         return ResponseEntity.ok(taskDetail);
+    }
+
+    @Override
+    public ResponseEntity<Assign> addAssign(@Valid Assign body, UUID identifier) {
+        return null;
     }
 }
