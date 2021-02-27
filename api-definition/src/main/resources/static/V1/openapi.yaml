@@ -26,9 +26,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
+                allOf:
+                  - $ref: '#/components/schemas/EnvelopeResponse'
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/Task'
 
   /tasks/{identifier}:
     get:
@@ -50,7 +53,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskDetail'
+                allOf:
+                  - $ref: '#/components/schemas/EnvelopeResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TaskDetail'
 
 
   /tasks/{identifier}/comments:
@@ -304,3 +311,32 @@ components:
       properties:
         name:
           type: string
+
+    EnvelopeResponse:
+      type: object
+      oneOf:
+        - properties:
+            data:
+              type: object
+        - properties:
+            data:
+              items:
+                items:
+                  type: object
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - fail
+            - error
+          description: |
+            The fail status indicating that there was a problem with the data submitted or some
+            pre-condition on API call was not satisfied.
+            The error status indicating that an error occurred in processing the request, i.e. Exception
+            was thrown
+        message:
+          type: string
+

@@ -5,6 +5,7 @@ import gr.rk.tasks.V1.models.Assign;
 import gr.rk.tasks.V1.models.Comment;
 import gr.rk.tasks.V1.models.Task;
 import gr.rk.tasks.V1.models.TaskDetail;
+import model.EnvelopeResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,17 +20,17 @@ import java.util.UUID;
 public class TaskResource implements TasksApi {
 
     @Override
-    public ResponseEntity<List<Task>> getTasks() {
-        return ResponseEntity.ok(List.of(new Task().name("test").status("test")));
+    public ResponseEntity<Assign> addAssign(UUID identifier, @Valid Assign assign) {
+        return null;
     }
 
     @Override
-    public ResponseEntity<Comment> addTaskComment(@Valid Comment body, UUID identifier) {
-        return ResponseEntity.ok(body);
+    public ResponseEntity<Comment> addTaskComment(UUID identifier, @Valid Comment comment) {
+        return null;
     }
 
     @Override
-    public ResponseEntity<TaskDetail> getTaskDetail(UUID identifier) {
+    public ResponseEntity<EnvelopeResponse<TaskDetail>> getTaskDetail(UUID identifier) {
         TaskDetail taskDetail = new TaskDetail();
         taskDetail.setName("test");
         taskDetail.setIdentifier(UUID.randomUUID());
@@ -37,11 +38,12 @@ public class TaskResource implements TasksApi {
                 List.of(new Comment().text("text comment")
                         .creationDate(LocalDateTime.now().atZone(ZoneId.of("UTC").normalized()).toString()))
         );
-        return ResponseEntity.ok(taskDetail);
+        return ResponseEntity.ok(new EnvelopeResponse.Builder<TaskDetail>().withData(taskDetail).build());
     }
 
     @Override
-    public ResponseEntity<Assign> addAssign(@Valid Assign body, UUID identifier) {
+    public ResponseEntity<EnvelopeResponse<Task>> getTasks() {
         return null;
     }
+
 }
