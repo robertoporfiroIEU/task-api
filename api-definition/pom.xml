@@ -68,7 +68,9 @@
                             <apiPackage>gr.rk.tasks.${oas.version}.api</apiPackage>
                             <modelPackage>gr.rk.tasks.${oas.version}.models</modelPackage>
                             <generatorName>spring</generatorName>
-                            <importMappings>Error=model.Error, EnvelopeResponse=model.EnvelopeResponse</importMappings>
+                            <importMappings>errors=model.EnvelopeResponse, EnvelopeResponse=model.EnvelopeResponse</importMappings>
+<!--                            <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>-->
+                            <templateDirectory>${project.basedir}/src/main/resources/</templateDirectory>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
