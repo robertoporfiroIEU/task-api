@@ -3,7 +3,6 @@ package gr.rk.tasks.resource;
 import gr.rk.tasks.V1.api.TasksApi;
 import gr.rk.tasks.V1.models.Assign;
 import gr.rk.tasks.V1.models.Comment;
-import gr.rk.tasks.V1.models.Task;
 import gr.rk.tasks.V1.models.TaskDetail;
 import model.EnvelopeResponse;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +41,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<EnvelopeResponse<Task>> getTasks() {
+    public ResponseEntity<EnvelopeResponse> getTasks() {
         return null;
     }
 

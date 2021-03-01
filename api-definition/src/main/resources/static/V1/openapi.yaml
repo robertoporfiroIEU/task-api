@@ -21,7 +21,7 @@ paths:
         - "Tasks"
       operationId: getTasks
       responses:
-        "200":
+        200:
           description: A list of tasks.
           content:
             application/json:
@@ -32,6 +32,16 @@ paths:
                   data:
                     items:
                       $ref: '#/components/schemas/Task'
+        default:
+          description: error payload
+          content:
+            application/json:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      $ref: '#/components/schemas/Error'
+
 
   /tasks/{identifier}:
     get:
@@ -131,9 +141,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Group'
+                allOf:
+                 - $ref: '#/components/schemas/EnvelopeResponse'
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/Group'
   /groups/{name}:
     get:
       description: Return specific group
@@ -153,7 +166,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupDetail'
+                allOf:
+                  - $ref: '#/components/schemas/EnvelopeResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/GroupDetail'
 
 
 components:
@@ -314,7 +331,7 @@ components:
 
     EnvelopeResponse:
       type: object
-      oneOf:
+      anyOf:
         - properties:
             data:
               type: object
@@ -325,6 +342,8 @@ components:
                   type: object
 
     Error:
+      x-generic-object:
+        - test
       type: object
       properties:
         status:
