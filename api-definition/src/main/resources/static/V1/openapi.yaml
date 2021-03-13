@@ -26,12 +26,8 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/EnvelopeResponse'
-                properties:
-                  data:
-                    items:
-                      $ref: '#/components/schemas/Task'
+                items:
+                  $ref: '#/components/schemas/Task'
         default:
           description: error payload
           content:
@@ -63,11 +59,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/EnvelopeResponse'
-                properties:
-                  data:
-                    $ref: '#/components/schemas/TaskDetail'
+                $ref: '#/components/schemas/TaskDetail'
 
 
   /tasks/{identifier}/comments:
@@ -141,12 +133,8 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                 - $ref: '#/components/schemas/EnvelopeResponse'
-                properties:
-                  data:
-                    items:
-                      $ref: '#/components/schemas/Group'
+                items:
+                  $ref: '#/components/schemas/Group'
   /groups/{name}:
     get:
       description: Return specific group
@@ -166,11 +154,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/EnvelopeResponse'
-                properties:
-                  data:
-                    $ref: '#/components/schemas/GroupDetail'
+                $ref: '#/components/schemas/GroupDetail'
 
 
 components:
@@ -297,7 +281,7 @@ components:
 
     GroupDetail:
       allOf: # Combines the Group and the inline model
-      - $ref: '#/components/schemas/Group'
+        - $ref: '#/components/schemas/Group'
       type: object
       required:
         - name
@@ -329,21 +313,7 @@ components:
         name:
           type: string
 
-    EnvelopeResponse:
-      type: object
-      anyOf:
-        - properties:
-            data:
-              type: object
-        - properties:
-            data:
-              items:
-                items:
-                  type: object
-
     Error:
-      x-generic-object:
-        - test
       type: object
       properties:
         status:
