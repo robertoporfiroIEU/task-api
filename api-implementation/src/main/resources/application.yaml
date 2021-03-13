@@ -1,3 +1,0 @@
-oas:
-  version: '@oas.version@'
-  filename: '@oas.filename@'
