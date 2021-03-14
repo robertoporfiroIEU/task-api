@@ -68,9 +68,9 @@
                             <apiPackage>gr.rk.tasks.${oas.version}.api</apiPackage>
                             <modelPackage>gr.rk.tasks.${oas.version}.models</modelPackage>
                             <generatorName>spring</generatorName>
-                            <importMappings>errors=model.EnvelopeResponse, EnvelopeResponse=model.EnvelopeResponse</importMappings>
-<!--                            <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>-->
-                            <templateDirectory>${project.basedir}/src/main/resources/</templateDirectory>
+                            <templateDirectory>${project.basedir}/src/main/resources/templates/</templateDirectory>
+                            <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
+                            <importMappings>Page=org.springframework.data.domain.Page</importMappings>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
@@ -84,8 +84,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>15</source>
-                    <target>15</target>
+                    <source>14</source>
+                    <target>14</target>
                 </configuration>
             </plugin>
         </plugins>
