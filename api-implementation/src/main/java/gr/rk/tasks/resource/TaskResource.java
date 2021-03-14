@@ -5,6 +5,8 @@ import gr.rk.tasks.V1.models.Assign;
 import gr.rk.tasks.V1.models.Comment;
 import gr.rk.tasks.V1.models.Task;
 import gr.rk.tasks.V1.models.TaskDetail;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,8 +43,8 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<List<Task>> getTasks() {
-        return null;
+    public ResponseEntity<Page<Task>> getTasks() {
+        List<Task> tasks = List.of(new Task().name("test"));
+        return ResponseEntity.ok(new PageImpl<>(tasks));
     }
-
 }

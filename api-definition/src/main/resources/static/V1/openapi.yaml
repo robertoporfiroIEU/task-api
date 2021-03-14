@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: Task API
-  description: The purpose of this API is for external systems to manage tasks
+  description: The purpose of this API is for external systems to manage tasks.
 
 servers:
   - url: http://localhost:8080
@@ -20,23 +20,22 @@ paths:
       tags:
         - "Tasks"
       operationId: getTasks
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
       responses:
         200:
-          description: A list of tasks.
+          description: Paginated Tasks
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Task'
-        default:
-          description: error payload
-          content:
-            application/json:
-              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
                 properties:
-                  errors:
+                  content:
                     items:
-                      $ref: '#/components/schemas/Error'
+                      $ref: '#/components/schemas/Task'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /tasks/{identifier}:
@@ -60,7 +59,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskDetail'
-
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /tasks/{identifier}/comments:
     post:
@@ -89,6 +89,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /tasks/{identifier}/assigns:
     post:
@@ -117,24 +119,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assign'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /groups:
     get:
       description: |
         These are the groups that exist in the API.
-        The purpose of groups is to can assign Tasks to many users through groups.
-        Returns all groups from the system that the user has access to
+        With groups, we can assign a task to the users that belonging to this group.
+        Returns all groups from the system that the user has access to.
       tags:
         - Groups
       operationId: getGroups
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
       responses:
         "200":
-          description: A list of groups.
+          description: Paginated groups.
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Group'
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  items:
+                    $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
   /groups/{name}:
     get:
       description: Return specific group
@@ -155,13 +167,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GroupDetail'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
 components:
   schemas:
+    Page:
+      type: object
+      properties:
+        pageable:
+          type: string
+          example: INSTANCE
+        last:
+          type: boolean
+        totalPages:
+          type: integer
+          example: 1
+        totalElements:
+          type: integer
+          example: 5
+        size:
+          type: integer
+          example: 10
+        number:
+          type: integer
+          example: 0
+        sort:
+          type: object
+          properties:
+            sorted:
+              type: boolean
+              example: false
+            unsorted:
+              type: boolean
+            empty:
+                type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          example: 5
+        empty:
+          type: boolean
+          example: false
+
     Task:
       description: This is a task object
       type: object
+      discriminator:
+        propertyName: identifier
       required:
         - name
         - status
@@ -202,22 +257,21 @@ components:
     TaskDetail:
       allOf: # Combines the Task and the inline model
         - $ref: '#/components/schemas/Task'
-        - type: object
-          properties:
-            comments:
-              readOnly: true
-              type: array
-              items:
-                $ref: '#/components/schemas/Comment'
-            assigns:
-              type: array
-              items:
-                $ref: '#/components/schemas/Assign'
-            spectators:
-              type: array
-              items:
-                $ref: '#/components/schemas/Spectator'
-
+      type: object
+      properties:
+        comments:
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        assigns:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assign'
+        spectators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Spectator'
 
     Comment:
       description: This is a comment object that belongs to a Task
@@ -241,7 +295,7 @@ components:
           readOnly: true
 
     Assign:
-      description: This is an object that holds the information about in which group or user a task belongs
+      description: A task can be assigned to users or groups.
       type: object
       properties:
         group:
@@ -256,8 +310,7 @@ components:
 
     Spectator:
       description: |
-        This is an object that shows the spectators of the Task. By default, the system is going to add the
-        the user that creates the task as a spectator.
+        This is an object that shows the spectators of the Task. By default, the system is going to add as a spectator the the user that creates the task.
       type: object
       properties:
         group:
@@ -271,7 +324,7 @@ components:
           readOnly: true
 
     Group:
-      description: This is a group object that a user belongs to
+      description: This is a group that a user belongs to
       type: object
       required:
         - name
@@ -328,4 +381,16 @@ components:
             was thrown
         message:
           type: string
+
+  responses:
+    ErrorResponse:
+      description: Error payload
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                items:
+                  $ref: '#/components/schemas/Error'
+
 
