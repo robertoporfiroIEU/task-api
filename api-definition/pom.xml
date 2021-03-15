@@ -70,7 +70,7 @@
                             <generatorName>spring</generatorName>
                             <templateDirectory>${project.basedir}/src/main/resources/templates/</templateDirectory>
                             <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
-                            <importMappings>Page=org.springframework.data.domain.Page</importMappings>
+                            <importMappings>Page=org.springframework.data.domain.Page, Pageable=org.springframework.data.domain.Pageable</importMappings>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
