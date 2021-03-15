@@ -22,6 +22,12 @@ paths:
       operationId: getTasks
       x-paginated-object:
         - gr.rk.tasks.V1.models.Task
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
       responses:
         200:
           description: Paginated Tasks
@@ -384,6 +390,23 @@ components:
         message:
           type: string
 
+    Pageable:
+      description: minimal Pageable query parameters
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Results page you want to retrieve (0..N)
+        size:
+          type: integer
+          description: Number of records per page
+        sort:
+          items:
+            type: string
+            description: Sorting criteria in the format -> property,asc|desc no space after comma!.
+            example: id,asc
+
+
   responses:
     ErrorResponse:
       description: Error payload
@@ -394,5 +417,7 @@ components:
               errors:
                 items:
                   $ref: '#/components/schemas/Error'
+
+
 
 
