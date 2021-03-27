@@ -81,4 +81,9 @@ public class TaskResource implements TasksApi {
     public ResponseEntity<Page<Task>> getSpectators(UUID identifier, @Valid Pageable pageable) {
         return null;
     }
+
+    @Override
+    public ResponseEntity<Page<Task>> getHistory(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String newHashCode, @Valid String changedBy) {
+        return null;
+    }
 }
