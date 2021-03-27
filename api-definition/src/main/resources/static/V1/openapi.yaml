@@ -81,7 +81,7 @@ paths:
       description: Return specific Task
       tags:
         - "Tasks"
-      operationId: getTaskDetail
+      operationId: getTask
       parameters:
         - name: identifier
           in: path
@@ -96,11 +96,55 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskDetail'
+                $ref: '#/components/schemas/Task'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
   /tasks/{identifier}/comments:
+    get:
+      description: Returns the comments of the specific Task
+      tags:
+        - "Tasks"
+      operationId: getComments
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+        - in: query
+          name: identifier
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: createdBy
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Paginated Comments
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  content:
+                    items:
+                      $ref: '#/components/schemas/Comment'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
     post:
       description: Add a new comment to the Task
       tags:
@@ -131,8 +175,42 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
   /tasks/{identifier}/assigns:
+    get:
+      description: Returns the assigns of the specific Task
+      tags:
+        - "Tasks"
+      operationId: getAssigns
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        200:
+          description: Paginated Assigns
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  content:
+                    items:
+                      $ref: '#/components/schemas/Assign'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Assign users and groups to the task
+      description: Assign user and/or group to the task
       tags:
         - "Tasks"
       operationId: addAssign
@@ -157,6 +235,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assign'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /tasks/{identifier}/spectators:
+    get:
+      description: Returns the spectator of the specific Task
+      tags:
+        - "Tasks"
+      operationId: getSpectators
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        200:
+          description: Paginated spectators
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  content:
+                    items:
+                      $ref: '#/components/schemas/Spectator'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      description: Adding user and/or group as the spectator of the task
+      tags:
+        - "Tasks"
+      operationId: addSpectator
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the task
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Spectator'
+      responses:
+        "200":
+          description: The assign
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spectator'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -190,7 +332,7 @@ paths:
       description: Return specific group
       tags:
         - Groups
-      operationId: getGroupDetail
+      operationId: getGroup
       parameters:
         - name: name
           in: path
@@ -204,7 +346,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupDetail'
+                $ref: '#/components/schemas/Group'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -251,13 +393,7 @@ components:
           example: false
 
     Task:
-      description: This is a task object
       type: object
-      discriminator:
-        propertyName: identifier
-      required:
-        - name
-        - status
       properties:
         identifier:
           type: string
@@ -291,25 +427,21 @@ components:
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           description: Expiration Date of Task
           example: "2021-01-30T08:30:00Z"
-
-    TaskDetail:
-      allOf: # Combines the Task and the inline model
-        - $ref: '#/components/schemas/Task'
-      type: object
-      properties:
-        comments:
+        comments_url:
           readOnly: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Comment'
-        assigns:
-          type: array
-          items:
-            $ref: '#/components/schemas/Assign'
-        spectators:
-          type: array
-          items:
-            $ref: '#/components/schemas/Spectator'
+          type: string
+          format: url
+          example: "{protocol}//{server-base-url}/tasks/{identifier}/comments"
+        assigns_url:
+          readOnly: true
+          type: string
+          format: url
+          example: "{protocol}//{server-base-url}/tasks/{identifier}/assigns"
+        spectators_url:
+          readOnly: true
+          type: string
+          format: url
+          example: "{protocol}//{server-base-url}/tasks/{identifier}/spectators"
 
     Comment:
       description: This is a comment object that belongs to a Task
@@ -320,7 +452,6 @@ components:
         identifier:
           type: string
           format: uuid
-          description: Returned by GET, not used in POST/PUT/PATCH
           readOnly: true
         text:
           description: This is the text of the comment
@@ -338,6 +469,10 @@ components:
       description: A task can be assigned to users or groups.
       type: object
       properties:
+        identifier:
+          type: string
+          format: uuid
+          readOnly: true
         group:
           $ref: '#/components/schemas/Group'
         users:
@@ -350,12 +485,16 @@ components:
 
     Spectator:
       description: |
-        This is an object that shows the spectators of the Task. By default, the system is going to add as a spectator the the user that creates the task.
+        This is an object that shows the spectators of the Task. By default, the system is going to add as a spectator the user that creates the task.
       type: object
       properties:
+        identifier:
+          type: string
+          format: uuid
+          readOnly: true
         group:
           $ref: '#/components/schemas/Group'
-        users:
+        user:
           $ref: '#/components/schemas/User'
         creationDate:
           type: string
@@ -365,16 +504,6 @@ components:
 
     Group:
       description: This is a group that a user belongs to
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-
-    GroupDetail:
-      allOf: # Combines the Group and the inline model
-        - $ref: '#/components/schemas/Group'
       type: object
       required:
         - name
@@ -394,10 +523,11 @@ components:
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
           readOnly: true
-        groups:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
+        users_url:
+          readOnly: true
+          type: string
+          format: url
+          example: "{protocol}//{server-base-url}/groups/{identifier}/users"
 
     User:
       description: This is a user object that is coming from IDP
@@ -433,10 +563,10 @@ components:
           type: integer
           description: Number of records per page
         sort:
-          items:
-            type: string
-            description: Sorting criteria in the format -> property,asc|desc no space after comma!.
-            example: id,asc
+          description: Sorting criteria in the format -> property,asc|desc no space after comma!.
+          example: id,asc
+          type: string
+
 
   responses:
     ErrorResponse:
