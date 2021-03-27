@@ -302,6 +302,55 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+  /tasks/{identifier}/history:
+    get:
+      description: Returns the changes that took place in the specific Task
+      tags:
+        - "Tasks"
+      operationId: getHistory
+      x-paginated-object:
+        - gr.rk.tasks.V1.models.Task
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+        - in: query
+          name: identifier
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: newHashCode
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: changedBy
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Paginated history
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  content:
+                    items:
+                      $ref: '#/components/schemas/History'
+
   /groups:
     get:
       description: |
@@ -535,6 +584,36 @@ components:
       properties:
         name:
           type: string
+
+    History:
+      description: This is the history object. This object describes the changes that happens to a specific object
+      properties:
+        hashcode:
+          type: string
+          description: This is the hash code that an object has
+          readOnly: true
+        typeOfObject:
+          type: string
+          description: This is the type of Object
+        field:
+          description: This indicates the field in which the value has changed
+        oldValue:
+          type: string
+        newValue:
+          type: string
+        changedBy:
+          type: string
+          description: The user that makes an action to an object
+        timestampOfChange:
+          type: string
+          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+          readOnly: true
+        action:
+          description: The action that modifies the state of the object
+          type: string
+          enum:
+            - update
+            - delete
 
     Error:
       type: object
