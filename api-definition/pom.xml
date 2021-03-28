@@ -66,11 +66,12 @@
                             <output>${project.build.directory}/generated-sources/</output>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <apiPackage>gr.rk.tasks.${oas.version}.api</apiPackage>
-                            <modelPackage>gr.rk.tasks.${oas.version}.models</modelPackage>
+                            <modelPackage>gr.rk.tasks.${oas.version}.dto</modelPackage>
                             <generatorName>spring</generatorName>
                             <templateDirectory>${project.basedir}/src/main/resources/templates/</templateDirectory>
                             <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
                             <importMappings>Page=org.springframework.data.domain.Page, Pageable=org.springframework.data.domain.Pageable</importMappings>
+                            <modelNameSuffix>DTO</modelNameSuffix>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>

@@ -1,10 +1,10 @@
 package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.TasksApi;
-import gr.rk.tasks.V1.models.Assign;
-import gr.rk.tasks.V1.models.Comment;
-import gr.rk.tasks.V1.models.Spectator;
-import gr.rk.tasks.V1.models.Task;
+import gr.rk.tasks.V1.dto.AssignDTO;
+import gr.rk.tasks.V1.dto.CommentDTO;
+import gr.rk.tasks.V1.dto.SpectatorDTO;
+import gr.rk.tasks.V1.dto.TaskDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class TaskResource implements TasksApi {
 
     @Override
-    public ResponseEntity<Page<Task>> getTasks(
+    public ResponseEntity<Page<TaskDTO>> getTasks(
             @Valid Pageable pageable,
             @Valid String identifier,
             @Valid String name,
@@ -34,14 +34,14 @@ public class TaskResource implements TasksApi {
             @Valid String createdBy,
             @Pattern(regexp = "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$")
             @Valid String dueDate) {
-        List<Task> tasks = List.of(new Task().name("test"));
+        List<TaskDTO> tasks = List.of(new TaskDTO().name("test"));
         return ResponseEntity.ok(new PageImpl<>(tasks));
     }
 
     @Override
-    public ResponseEntity<Task> getTask(UUID identifier) {
+    public ResponseEntity<TaskDTO> getTask(UUID identifier) {
 
-        Task task = new Task();
+        TaskDTO task = new TaskDTO();
 
         task.setName("test");
         task.setIdentifier(UUID.randomUUID());
@@ -53,37 +53,37 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Assign> addAssign(UUID identifier, @Valid Assign assign) {
+    public ResponseEntity<AssignDTO> addAssign(UUID identifier, @Valid AssignDTO assign) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Spectator> addSpectator(UUID identifier, @Valid Spectator spectator) {
+    public ResponseEntity<SpectatorDTO> addSpectator(UUID identifier, @Valid SpectatorDTO spectator) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Comment> addTaskComment(UUID identifier, @Valid Comment comment) {
+    public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO comment) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<Task>> getAssigns(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getAssigns(UUID identifier, @Valid Pageable pageable) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<Task>> getComments(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String createdBy) {
+    public ResponseEntity<Page<TaskDTO>> getComments(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String createdBy) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<Task>> getSpectators(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<Page<SpectatorDTO>> getSpectators(UUID identifier, @Valid Pageable pageable) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<Task>> getHistory(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String newHashCode, @Valid String changedBy) {
+    public ResponseEntity<Page<TaskDTO>> getHistory(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String newHashCode, @Valid String changedBy) {
         return null;
     }
 }
