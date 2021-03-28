@@ -21,7 +21,7 @@ paths:
         - "Tasks"
       operationId: getTasks
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - in: query
           name: pageable
@@ -107,7 +107,7 @@ paths:
         - "Tasks"
       operationId: getComments
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - name: identifier
           in: path
@@ -181,7 +181,7 @@ paths:
         - "Tasks"
       operationId: getAssigns
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - name: identifier
           in: path
@@ -245,7 +245,7 @@ paths:
         - "Tasks"
       operationId: getSpectators
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.SpectatorDTO
       parameters:
         - name: identifier
           in: path
@@ -309,7 +309,7 @@ paths:
         - "Tasks"
       operationId: getHistory
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - name: identifier
           in: path
@@ -361,7 +361,7 @@ paths:
         - Groups
       operationId: getGroups
       x-paginated-object:
-        - gr.rk.tasks.V1.models.Task
+        - gr.rk.tasks.V1.dto.TaskDTO
       responses:
         "200":
           description: Paginated groups.
