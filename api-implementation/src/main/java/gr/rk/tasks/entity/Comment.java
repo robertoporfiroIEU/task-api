@@ -1,14 +1,13 @@
 package gr.rk.tasks.entity;
 
-
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "comments")
 public class Comment {
 
     @Id
@@ -25,9 +24,8 @@ public class Comment {
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @CreationTimestamp
     @Column(name="creation_date")
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     public Comment() {
     }
@@ -52,7 +50,12 @@ public class Comment {
         return createdBy;
     }
 
-    public Timestamp getCreationDate() {
+    @PrePersist
+    private void setCreationDate() {
+        this.creationDate = LocalDateTime.now();
+    }
+
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 }
