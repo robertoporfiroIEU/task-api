@@ -17,6 +17,8 @@ public class Group {
     private LocalDateTime creationDate;
     @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
     private List<User> users;
+    @OneToMany(mappedBy = "group")
+    private List<Assign> assigns;
 
     public Group() {
     }
@@ -47,6 +49,18 @@ public class Group {
 
     public LocalDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public List<Assign> getAssigns() {
+        return assigns;
+    }
+
+    public void setAssigns(List<Assign> assigns) {
+        this.assigns = assigns;
     }
 
     @PrePersist

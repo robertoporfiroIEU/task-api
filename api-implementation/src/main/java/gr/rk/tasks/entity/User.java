@@ -20,6 +20,8 @@ public class User {
             joinColumns = @JoinColumn(name = "username"),
             inverseJoinColumns = @JoinColumn(name = "group_name"))
     private List<Group> groups;
+    @OneToMany(mappedBy = "user")
+    private List<Assign> assigns;
 
     public User() {
         this.groups = new ArrayList<>();
@@ -47,6 +49,14 @@ public class User {
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+    }
+
+    public List<Assign> getAssigns() {
+        return assigns;
+    }
+
+    public void setAssigns(List<Assign> assigns) {
+        this.assigns = assigns;
     }
 
     @Override

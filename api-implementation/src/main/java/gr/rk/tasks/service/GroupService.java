@@ -21,14 +21,4 @@ public class GroupService {
     public void addGroup(Group group) {
         groupRepository.save(group);
     }
-
-    public void addUsersToGroup(Group group, List<User> users) {
-
-        for(User user: users) {
-            user.getGroups().add(group);
-        }
-
-        group.setUsers(users);
-        groupRepository.save(group);
-    }
 }
