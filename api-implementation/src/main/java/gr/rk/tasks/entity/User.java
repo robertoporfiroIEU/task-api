@@ -22,6 +22,8 @@ public class User {
     private List<Group> groups;
     @OneToMany(mappedBy = "user")
     private List<Assign> assigns;
+    @OneToMany(mappedBy = "user")
+    private List<Spectator> spectators;
 
     public User() {
         this.groups = new ArrayList<>();
@@ -57,6 +59,14 @@ public class User {
 
     public void setAssigns(List<Assign> assigns) {
         this.assigns = assigns;
+    }
+
+    public List<Spectator> getSpectators() {
+        return spectators;
+    }
+
+    public void setSpectators(List<Spectator> spectators) {
+        this.spectators = spectators;
     }
 
     @Override
