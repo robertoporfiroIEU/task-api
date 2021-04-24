@@ -17,6 +17,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final GroupService groupService;
     private final AssignService assignService;
     private final SpectatorService spectatorService;
+    private final TaskService taskService;
 
     @Autowired
     public SetupDataLoader(
@@ -24,13 +25,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             CommentService commentService,
             GroupService groupService,
             AssignService assignService,
-            SpectatorService spectatorService
+            SpectatorService spectatorService,
+            TaskService taskService
             ) {
         this.userService = userService;
         this.commentService = commentService;
         this.groupService = groupService;
         this.assignService = assignService;
         this.spectatorService = spectatorService;
+        this.taskService = taskService;
     }
 
     @Override
@@ -40,13 +43,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             User user = new User();
             user.setUsername("Rafail");
             user.setEmail("rafail@gmail.gr");
-            userService.addUser(user);
 
             // Create a comment
             Comment comment = new Comment();
             comment.setText("This is a test text");
             comment.setCreatedBy(user);
-            commentService.addComment(comment);
 
             // Create a group
             Group group = new Group();
@@ -55,18 +56,36 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             group.setRealm("My Realm");
             group.setUsers(List.of(user));
             user.setGroups(List.of(group));
-            groupService.addGroup(group);
 
             // Create an assign
             Assign assign = new Assign();
             assign.setUser(user);
             assign.setGroup(group);
-            assignService.addAssign(assign);
 
             // Create a spectator
             Spectator spectator = new Spectator();
             spectator.setUser(user);
             spectator.setGroup(group);
+
+            // Create a task
+            Task task = new Task();
+            task.setName("test task");
+            task.setRealm("test realm");
+            task.setStatus("created");
+            task.setCreatedBy(user);
+            task.setComments(List.of(comment));
+            task.setAssigns(List.of(assign));
+            task.setSpectators(List.of(spectator));
+            comment.setTask(task);
+            assign.setTask(task);
+            spectator.setTask(task);
+
+            // persist
+            taskService.addTask(task);
+            userService.addUser(user);
+            commentService.addComment(comment);
+            groupService.addGroup(group);
+            assignService.addAssign(assign);
             spectatorService.addSpectator(spectator);
         } catch (ConstraintViolationException e) {
             e.printStackTrace();

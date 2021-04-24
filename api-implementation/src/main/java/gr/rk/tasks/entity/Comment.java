@@ -17,15 +17,14 @@ public class Comment {
             strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private UUID identifier;
-
     private String text;
-
     @OneToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
-
     @Column(name="creation_date")
     private LocalDateTime creationDate;
+    @ManyToOne(optional = false)
+    private Task task;
 
     public Comment() {
     }
@@ -48,6 +47,14 @@ public class Comment {
 
     public User getCreatedBy() {
         return createdBy;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     @PrePersist
