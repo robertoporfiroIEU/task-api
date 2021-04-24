@@ -21,9 +21,10 @@ public class Assign {
     private Group group;
     @ManyToOne
     private User user;
-
     @Column(name = "assign_date")
     private LocalDateTime assignDate;
+    @ManyToOne(optional = false)
+    private Task task;
 
     public Assign() {
     }
@@ -59,6 +60,14 @@ public class Assign {
     @PrePersist
     private void setAssignDate() {
         this.assignDate = LocalDateTime.now();
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     @Override
