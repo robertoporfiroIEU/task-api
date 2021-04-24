@@ -68,6 +68,11 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<Page<TaskDTO>> getAssigns(UUID identifier, @Valid Pageable pageable) {
         return null;
     }
