@@ -74,6 +74,27 @@ paths:
                       $ref: '#/components/schemas/Task'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    post:
+      description: Create a new Task
+      tags:
+        - "Tasks"
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "200":
+          description: A Task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 
 
   /tasks/{identifier}:
@@ -99,6 +120,8 @@ paths:
                 $ref: '#/components/schemas/Task'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+
 
   /tasks/{identifier}/comments:
     get:
@@ -145,6 +168,9 @@ paths:
                       $ref: '#/components/schemas/Comment'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+
+
     post:
       description: Add a new comment to the Task
       tags:
@@ -173,6 +199,8 @@ paths:
                 $ref: '#/components/schemas/Comment'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+
 
   /tasks/{identifier}/assigns:
     get:
@@ -238,6 +266,8 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+
+
   /tasks/{identifier}/spectators:
     get:
       description: Returns the spectator of the specific Task
@@ -273,6 +303,9 @@ paths:
                       $ref: '#/components/schemas/Spectator'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+
+
     post:
       description: Adding user and/or group as the spectator of the task
       tags:
@@ -301,6 +334,8 @@ paths:
                 $ref: '#/components/schemas/Spectator'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+
 
   /tasks/{identifier}/history:
     get:
@@ -351,6 +386,8 @@ paths:
                     items:
                       $ref: '#/components/schemas/History'
 
+
+
   /groups:
     get:
       description: |
@@ -376,6 +413,8 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+
+
   /groups/{name}:
     get:
       description: Return specific group
@@ -398,6 +437,7 @@ paths:
                 $ref: '#/components/schemas/Group'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
 
 
 components:
