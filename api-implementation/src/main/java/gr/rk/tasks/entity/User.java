@@ -2,6 +2,7 @@ package gr.rk.tasks.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +15,14 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
+    private String applicationUser;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "users_groups",
-            joinColumns = @JoinColumn(name = "username"),
-            inverseJoinColumns = @JoinColumn(name = "group_name"))
+            name = "users_has_groups",
+            joinColumns = @JoinColumn(name = "users_username"),
+            inverseJoinColumns = @JoinColumn(name = "groups_name"))
     private List<Group> groups;
     @OneToMany(mappedBy = "user")
     private List<Assign> assigns;
@@ -43,6 +47,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getApplicationUser() {
+        return applicationUser;
+    }
+
+    public void setApplicationUser(String applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<Group> getGroups() {
@@ -80,13 +100,5 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(username);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }

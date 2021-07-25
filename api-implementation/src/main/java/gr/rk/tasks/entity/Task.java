@@ -1,7 +1,5 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,19 +11,21 @@ import java.util.UUID;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID identifier;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String identifier;
     private String name;
     private String description;
     private String status;
-    private LocalDateTime creationDate;
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    private User createdBy;
-    private String realm;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
+    private String applicationUser;
     private LocalDateTime dueDate;
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "users_username")
+    private User createdBy;
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Comment> comments;
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
@@ -39,7 +39,60 @@ public class Task {
         this.spectators = new ArrayList<>();
     }
 
-    public UUID getIdentifier() {
+    @PrePersist
+    public void setIdentifier() {
+        this.identifier = UUID.randomUUID().toString();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setApplicationUser(String applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void setAssigns(List<Assign> assigns) {
+        this.assigns = assigns;
+    }
+
+    public void setSpectators(List<Spectator> spectators) {
+        this.spectators = spectators;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getIdentifier() {
         return identifier;
     }
 
@@ -47,81 +100,44 @@ public class Task {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    @PrePersist
-    private void setCreationDate() {
-        this.creationDate = LocalDateTime.now();
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getRealm() {
-        return realm;
-    }
-
-    public void setRealm(String realm) {
-        this.realm = realm;
+    public String getApplicationUser() {
+        return applicationUser;
     }
 
     public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
     public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
     public List<Assign> getAssigns() {
         return assigns;
     }
 
-    public void setAssigns(List<Assign> assigns) {
-        this.assigns = assigns;
-    }
-
     public List<Spectator> getSpectators() {
         return spectators;
-    }
-
-    public void setSpectators(List<Spectator> spectators) {
-        this.spectators = spectators;
     }
 
     @Override
@@ -129,11 +145,11 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(identifier, task.identifier);
+        return Objects.equals(id, task.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier);
+        return Objects.hash(id);
     }
 }
