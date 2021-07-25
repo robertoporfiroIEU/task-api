@@ -1,9 +1,8 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -11,33 +10,30 @@ import java.util.UUID;
 public class Comment {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private UUID identifier;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String identifier;
     private String text;
     @OneToOne
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "users_username")
     private User createdBy;
-    @Column(name="creation_date")
-    private LocalDateTime creationDate;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
     @ManyToOne(optional = false)
+    @JoinColumn(name = "tasks_id")
     private Task task;
+    private String applicationUser;
 
-    public Comment() {
+    public Comment() {}
+
+    @PrePersist
+    private void setIdentifier() {
+        this.identifier = UUID.randomUUID().toString();
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public UUID getIdentifier() {
+    public String getIdentifier() {
         return identifier;
     }
 
@@ -45,9 +41,26 @@ public class Comment {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public User getCreatedBy() {
         return createdBy;
     }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
 
     public Task getTask() {
         return task;
@@ -57,12 +70,24 @@ public class Comment {
         this.task = task;
     }
 
-    @PrePersist
-    private void setCreationDate() {
-        this.creationDate = LocalDateTime.now();
+    public String getApplicationUser() {
+        return applicationUser;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public void setApplicationUser(String applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return Objects.equals(id, comment.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

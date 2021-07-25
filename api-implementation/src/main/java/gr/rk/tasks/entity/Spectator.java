@@ -1,7 +1,5 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,30 +9,33 @@ import java.util.UUID;
 @Table(name = "spectators")
 public class Spectator {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private UUID identifier;
-    @ManyToOne
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String identifier;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "groups_name")
     private Group group;
     @ManyToOne
+    @JoinColumn(name = "users_username")
     private User user;
-    @Column(name = "assign_date")
-    private LocalDateTime assignDate;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     @ManyToOne(optional = false)
+    @JoinColumn(name = "tasks_id")
     private Task task;
+
+    private String applicationUser;
 
     public Spectator() {
     }
 
-    public UUID getIdentifier() {
-        return identifier;
+    @PrePersist
+    private void setIdentifier() {
+        this.identifier = UUID.randomUUID().toString();
     }
 
-    public void setIdentifier(UUID identifier) {
-        this.identifier = identifier;
+    public String getIdentifier() {
+        return identifier;
     }
 
     public Group getGroup() {
@@ -53,13 +54,12 @@ public class Spectator {
         this.user = user;
     }
 
-    public LocalDateTime getAssignDate() {
-        return assignDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    @PrePersist
-    private void setAssignDate() {
-        this.assignDate = LocalDateTime.now();
+    public void setCreatedAt(LocalDateTime assignDate) {
+        this.createdAt = assignDate;
     }
 
     public Task getTask() {
@@ -70,26 +70,24 @@ public class Spectator {
         this.task = task;
     }
 
+    public String getApplicationUser() {
+        return applicationUser;
+    }
+
+    public void setApplicationUser(String applicationUser) {
+        this.applicationUser = applicationUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Spectator spectator = (Spectator) o;
-        return Objects.equals(identifier, spectator.identifier);
+        return Objects.equals(id, spectator.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier);
-    }
-
-    @Override
-    public String toString() {
-        return "Spectator{" +
-                "identifier=" + identifier +
-                ", group=" + group +
-                ", user=" + user +
-                ", assignDate=" + assignDate +
-                '}';
+        return Objects.hash(id);
     }
 }
