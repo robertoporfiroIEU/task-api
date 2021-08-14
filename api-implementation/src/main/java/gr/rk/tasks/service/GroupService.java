@@ -21,4 +21,8 @@ public class GroupService {
     public void addGroup(Group group) {
         groupRepository.save(group);
     }
+
+    public void deleteGroup(String groupName) {
+        groupRepository.deleteByName(groupName);
+    }
 }

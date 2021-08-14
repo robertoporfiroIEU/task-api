@@ -8,21 +8,28 @@ import java.util.UUID;
 @Entity
 @Table(name = "spectators")
 public class Spectator {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String identifier;
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "groups_name")
     private Group group;
-    @ManyToOne
-    @JoinColumn(name = "users_username")
-    private User user;
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "tasks_id")
     private Task task;
+
+    @ManyToOne
+    @JoinColumn(name = "users_username")
+    private User user;
+
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     private String applicationUser;
 
