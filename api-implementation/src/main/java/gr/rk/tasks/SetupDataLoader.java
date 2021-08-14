@@ -3,69 +3,101 @@ package gr.rk.tasks;
 import gr.rk.tasks.entity.*;
 import gr.rk.tasks.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+
     private final TaskService taskService;
+    private final UserService userService;
+    private final GroupService groupService;
+
+    @Value( "${applicationConfigurations.addTestData:false}")
+    private boolean addTestData;
+
+    @Value( "${applicationConfigurations.deleteTestData:false}")
+    private boolean deleteTestData;
+
+    private final String taskIdentifier = "c8883d60-84fe-4eca-b8ea-0192f6239913";
+    private final String groupName = "test group";
+    private final String username = "Rafail";
 
     @Autowired
-    public SetupDataLoader(TaskService taskService) {
+    public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService) {
         this.taskService = taskService;
+        this.userService = userService;
+        this.groupService = groupService;
     }
 
+    @Transactional
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         try {
-            final String applicationUser = "TestApplication";
-            // Create a user
-            User user = new User();
-            user.setUsername("Rafail");
-            user.setEmail("rafail@gmail.gr");
-            user.setApplicationUser(applicationUser);
+            if (addTestData) {
+                final String applicationUser = "TestApplication";
+                // Create a user
+                User user = new User();
+                user.setUsername(username);
+                user.setEmail("rafail@gmail.gr");
+                user.setApplicationUser(applicationUser);
 
-            // Create a comment
-            Comment comment = new Comment();
-            comment.setText("This is a test text");
-            comment.setCreatedBy(user);
-            comment.setApplicationUser(applicationUser);
+                // Create a comment
+                Comment comment = new Comment();
+                comment.setText("This is a test text");
+                comment.setCreatedBy(user);
+                comment.setApplicationUser(applicationUser);
 
-            // Create a group
-            Group group = new Group();
-            group.setName("test group");
-            group.setDescription("This is a test group");
-            group.setApplicationUser(applicationUser);
+                // Create a group
+                Group group = new Group();
+                group.setName(groupName);
+                group.setDescription("This is a test group");
+                group.setApplicationUser(applicationUser);
 
-            // Create an assign
-            Assign assign = new Assign();
-            assign.setUser(user);
-            assign.setGroup(group);
-            assign.setApplicationUser(applicationUser);
+                user.setGroups(Arrays.asList(group));
 
-            // Create a spectator
-            Spectator spectator = new Spectator();
-            spectator.setUser(user);
-            spectator.setGroup(group);
-            spectator.setApplicationUser(applicationUser);
+                // Create an assign
+                Assign assign = new Assign();
+                assign.setUser(user);
+                assign.setGroup(group);
+                assign.setApplicationUser(applicationUser);
 
-            // Create a task
-            Task task = new Task();
-            task.setName("test task");
-            task.setApplicationUser("Test Application");
-            task.setStatus("created");
-            task.setCreatedBy(user);
-            comment.setTask(task);
+                // Create a spectator
+                Spectator spectator = new Spectator();
+                spectator.setUser(user);
+                spectator.setGroup(group);
+                spectator.setApplicationUser(applicationUser);
 
-            task.setComments(List.of(comment));
-            task.setAssigns(List.of(assign));
-            task.setSpectators(List.of(spectator));
+                // Create a task
+                Task task = new Task();
+                task.setIdentifier(taskIdentifier);
+                task.setName("test task");
+                task.setApplicationUser("Test Application");
+                task.setStatus("created");
+                task.setCreatedBy(user);
+                comment.setTask(task);
 
-            // persist
-            taskService.addTask(task);
+                task.setComments(List.of(comment));
+                task.setAssigns(List.of(assign));
+                task.setSpectators(List.of(spectator));
+
+                assign.setTask(task);
+                spectator.setTask(task);
+                // persist
+                taskService.createTask(task);
+            } else if (deleteTestData) {
+                taskService.deleteTask(taskIdentifier);
+                groupService.deleteGroup(groupName);
+                userService.deleteUser(username);
+            }
+
         } catch (ConstraintViolationException e) {
             e.printStackTrace();
         }

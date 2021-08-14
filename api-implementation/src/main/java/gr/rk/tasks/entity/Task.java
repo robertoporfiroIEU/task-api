@@ -10,26 +10,41 @@ import java.util.UUID;
 @Entity
 @Table(name = "tasks")
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String identifier;
+
+    @Column(nullable = false)
     private String name;
+
     private String description;
+
     private String status;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
+
     private String applicationUser;
+
     private LocalDateTime dueDate;
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "users_username")
     private User createdBy;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Assign> assigns;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Spectator> spectators;
 
@@ -40,8 +55,14 @@ public class Task {
     }
 
     @PrePersist
-    public void setIdentifier() {
-        this.identifier = UUID.randomUUID().toString();
+    private void setIdentifierAuto() {
+        if (Objects.isNull(this.identifier)) {
+            this.identifier = UUID.randomUUID().toString();
+        }
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public void setName(String name) {

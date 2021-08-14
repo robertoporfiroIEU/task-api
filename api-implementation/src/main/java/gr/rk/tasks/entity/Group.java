@@ -2,6 +2,7 @@ package gr.rk.tasks.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,20 +12,30 @@ public class Group {
 
     @Id
     private String name;
+
     private String description;
+
     private String applicationUser;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
-    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
+
+    @ManyToMany(mappedBy = "groups", cascade = CascadeType.PERSIST)
     private List<User> users;
+
     @OneToMany(mappedBy = "group")
     private List<Assign> assigns;
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "group")
     private List<Spectator> spectators;
 
     public Group() {
+        this.users = new ArrayList<>();
+        this.assigns = new ArrayList<>();
+        this.spectators = new ArrayList<>();
     }
 
     public void setName(String name) {

@@ -12,19 +12,26 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String identifier;
-    private String text;
-    @OneToOne
+
+    @OneToOne(optional = false)
     @JoinColumn(name = "users_username")
     private User createdBy;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tasks_id")
+    private Task task;
+
+    @Column(unique = true)
+    private String identifier;
+
+    private String text;
+
+    private String applicationUser;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "tasks_id")
-    private Task task;
-    private String applicationUser;
 
     public Comment() {}
 

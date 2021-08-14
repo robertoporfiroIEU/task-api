@@ -10,27 +10,39 @@ import java.util.Objects;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     private String username;
+
     @Email
     @Column(unique = true)
     private String email;
+
     private String applicationUser;
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_has_groups",
             joinColumns = @JoinColumn(name = "users_username"),
             inverseJoinColumns = @JoinColumn(name = "groups_name"))
     private List<Group> groups;
+
     @OneToMany(mappedBy = "user")
     private List<Assign> assigns;
+
     @OneToMany(mappedBy = "user")
     private List<Spectator> spectators;
 
     public User() {
         this.groups = new ArrayList<>();
+        this.assigns = new ArrayList<>();
+        this.spectators = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -87,6 +99,14 @@ public class User {
 
     public void setSpectators(List<Spectator> spectators) {
         this.spectators = spectators;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

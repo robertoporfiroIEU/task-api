@@ -23,4 +23,8 @@ public class UserService {
     public void addUser(@Valid User user) throws ConstraintViolationException {
         userRepository.save(user);
     }
+
+    public void deleteUser(String username) {
+        userRepository.deleteByUsername(username);
+    }
 }
