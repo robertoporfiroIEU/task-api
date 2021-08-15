@@ -130,7 +130,7 @@ paths:
         - "Tasks"
       operationId: getComments
       x-paginated-object:
-        - gr.rk.tasks.V1.dto.TaskDTO
+        - gr.rk.tasks.V1.dto.CommentDTO
       parameters:
         - name: identifier
           in: path
@@ -144,16 +144,6 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/Pageable'
-        - in: query
-          name: identifier
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: createdBy
-          required: false
-          schema:
-            type: string
       responses:
         200:
           description: Paginated Comments

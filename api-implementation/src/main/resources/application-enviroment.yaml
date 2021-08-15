@@ -15,5 +15,7 @@ spring:
 
 applicationConfigurations:
   addTestData: false
-  deleteTestData: false
+  deleteTestData: true
+  taskService:
+    commentPageMaxSize: 25
 
