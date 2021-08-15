@@ -1,17 +1,11 @@
 package gr.rk.tasks.mapper;
 
-import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
-import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.util.Util;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -42,20 +36,5 @@ public class TaskMapper {
         task.setAssignsUrl(Util.getEndPointRelationURL("assigns"));
         task.setSpectatorsUrl(Util.getEndPointRelationURL("spectators"));
         return task;
-    }
-
-    public Page<CommentDTO> toPageCommentDTO(Page<Comment> commentsEntity) {
-        List<CommentDTO> commentsDTO = new ArrayList<>();
-        commentsEntity.forEach(comment -> {
-            CommentDTO commentDTO = new CommentDTO();
-            commentDTO.setIdentifier(UUID.fromString(comment.getIdentifier()));
-
-            UserDTO userDTO = new UserDTO();
-            commentDTO.setCreatedBy(userDTO.name(comment.getCreatedBy().getUsername()));
-            commentDTO.setCreationDate(comment.getCreatedAt().toString());
-            commentsDTO.add(commentDTO);
-        });
-
-        return new PageImpl<>(commentsDTO, commentsEntity.getPageable(), commentsEntity.getTotalElements());
     }
 }

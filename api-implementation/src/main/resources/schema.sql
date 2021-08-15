@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS `tasksapidb`.`comments` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `identifier_UNIQUE` (`identifier` ASC),
   UNIQUE INDEX `fks_UNIQUE` (`users_username` ASC, `tasks_id` ASC, `identifier` ASC),
+  UNIQUE INDEX `applicationUser_UNIQUE` (`applicationUser` ASC),
   INDEX `fk_comments_users1_idx` (`users_username` ASC),
   INDEX `fk_comments_tasks1_idx` (`tasks_id` ASC),
   CONSTRAINT `fk_comments_tasks1`

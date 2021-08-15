@@ -5,7 +5,6 @@ import gr.rk.tasks.V1.dto.AssignDTO;
 import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
-import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.mapper.TaskMapper;
 import gr.rk.tasks.service.TaskService;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,17 +89,8 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<CommentDTO>> getComments(UUID identifier, @Valid Pageable pageable) {
-        List<CommentDTO> commentsDTO = new ArrayList<>();
-        Page<CommentDTO> commentsDTOPage= new PageImpl<>(commentsDTO);
-
-        Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
-
-        if (!commentsEntity.isEmpty()) {
-            commentsDTOPage = taskMapper.toPageCommentDTO(commentsEntity);
-        }
-
-        return ResponseEntity.ok(commentsDTOPage);
+    public ResponseEntity<Page<TaskDTO>> getComments(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String createdBy) {
+        return null;
     }
 
     @Override
