@@ -1,21 +1,31 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.repository.CommentRepository;
 import gr.rk.tasks.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final CommentRepository commentRepository;
+    @Value("${applicationConfigurations.taskService.commentPageMaxSize: 25}")
+    private int maxSize;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository) {
         this.taskRepository = taskRepository;
+        this.commentRepository = commentRepository;
     }
 
     public void createTask(Task task) {
@@ -28,5 +38,15 @@ public class TaskService {
 
     public void deleteTask(String taskIdentifier) {
         taskRepository.deleteByIdentifier(taskIdentifier);
+    }
+
+    public Page<Comment> getComments(UUID identifier, Pageable pageable) {
+        Pageable page = pageable;
+
+        if (pageable.getPageSize() > maxSize) {
+            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        }
+
+        return commentRepository.findCommentByTaskIdentifier(identifier.toString(), page);
     }
 }
