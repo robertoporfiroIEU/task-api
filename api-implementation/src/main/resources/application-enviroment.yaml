@@ -15,5 +15,5 @@ spring:
 
 applicationConfigurations:
   addTestData: false
-  deleteTestData: true
+  deleteTestData: false
 

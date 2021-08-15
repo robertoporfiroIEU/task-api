@@ -5,23 +5,36 @@ import gr.rk.tasks.V1.dto.AssignDTO;
 import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
+import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.mapper.TaskMapper;
+import gr.rk.tasks.service.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
 @RestController
 @Validated
 public class TaskResource implements TasksApi {
+
+    private final TaskMapper taskMapper;
+    private final TaskService taskService;
+
+    @Autowired
+    public TaskResource(TaskMapper taskMapper, TaskService taskService) {
+        this.taskMapper = taskMapper;
+        this.taskService = taskService;
+    }
 
     @Override
     public ResponseEntity<Page<TaskDTO>> getTasks(
@@ -40,16 +53,14 @@ public class TaskResource implements TasksApi {
 
     @Override
     public ResponseEntity<TaskDTO> getTask(UUID identifier) {
+        TaskDTO taskDTO = new TaskDTO();
+        Optional<Task> oTaskEntity = taskService.getTask(identifier.toString());
 
-        TaskDTO task = new TaskDTO();
+        if (oTaskEntity.isPresent()) {
+            taskDTO = taskMapper.toTaskDTO(oTaskEntity.get());
+        }
 
-        task.setName("test");
-        task.setIdentifier(UUID.randomUUID());
-        task.setCommentsUrl(ServletUriComponentsBuilder.fromCurrentRequest().toUriString() + "/comments");
-        task.setAssignsUrl(ServletUriComponentsBuilder.fromCurrentRequest().toUriString() + "/assigns");
-        task.setSpectatorsUrl(ServletUriComponentsBuilder.fromCurrentRequest().toUriString() + "/spectators");
-
-        return ResponseEntity.ok(task);
+        return ResponseEntity.ok(taskDTO);
     }
 
     @Override
