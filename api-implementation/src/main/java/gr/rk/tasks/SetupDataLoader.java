@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,17 +20,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final UserService userService;
     private final GroupService groupService;
 
-    @Value("${applicationConfigurations.addTestData:false}")
+    @Value( "${applicationConfigurations.addTestData:false}")
     private boolean addTestData;
 
-    @Value("${applicationConfigurations.deleteTestData:false}")
+    @Value( "${applicationConfigurations.deleteTestData:false}")
     private boolean deleteTestData;
 
     private final String taskIdentifier = "c8883d60-84fe-4eca-b8ea-0192f6239913";
     private final String groupName = "test group";
     private final String username = "Rafail";
-    private final String applicationUser = "TestApplication";
-    private final int numberOfComments = 30;
 
     @Autowired
     public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService) {
@@ -45,6 +42,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         try {
             if (addTestData) {
+                final String applicationUser = "TestApplication";
                 // Create a user
                 User user = new User();
                 user.setUsername(username);
@@ -84,10 +82,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 task.setApplicationUser("Test Application");
                 task.setStatus("created");
                 task.setCreatedBy(user);
+                comment.setTask(task);
 
-                List<Comment> comments = createComments(task, user);
-
-                task.setComments(comments);
+                task.setComments(List.of(comment));
                 task.setAssigns(List.of(assign));
                 task.setSpectators(List.of(spectator));
 
@@ -104,18 +101,5 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         } catch (ConstraintViolationException e) {
             e.printStackTrace();
         }
-    }
-
-    private List<Comment> createComments(Task task, User user) {
-        List<Comment> comments = new ArrayList<>();
-        for (int i = 0; i < numberOfComments; i++) {
-            Comment comment = new Comment();
-            comment.setText("This is a test text");
-            comment.setCreatedBy(user);
-            comment.setApplicationUser(applicationUser);
-            comment.setTask(task);
-            comments.add(comment);
-        }
-        return comments;
     }
 }
