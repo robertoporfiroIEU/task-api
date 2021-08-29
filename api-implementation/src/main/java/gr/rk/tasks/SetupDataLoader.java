@@ -1,6 +1,7 @@
 package gr.rk.tasks;
 
 import gr.rk.tasks.entity.*;
+import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,18 +27,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Value("${applicationConfigurations.deleteTestData:false}")
     private boolean deleteTestData;
+    private final UserPrincipal userPrincipal;
 
     private final String taskIdentifier = "c8883d60-84fe-4eca-b8ea-0192f6239913";
     private final String groupName = "test group";
     private final String username = "Rafail";
-    private final String applicationUser = "TestApplication";
     private final int numberOfComments = 30;
 
     @Autowired
-    public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService) {
+    public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService, UserPrincipal userPrincipal) {
         this.taskService = taskService;
         this.userService = userService;
         this.groupService = groupService;
+        this.userPrincipal = userPrincipal;
     }
 
     @Transactional
@@ -46,42 +48,36 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         try {
             if (addTestData) {
                 // Create a user
-                User user = new User();
+                User user = new User(userPrincipal);
                 user.setUsername(username);
                 user.setEmail("rafail@gmail.gr");
-                user.setApplicationUser(applicationUser);
 
                 // Create a comment
-                Comment comment = new Comment();
+                Comment comment = new Comment(userPrincipal);
                 comment.setText("This is a test text");
                 comment.setCreatedBy(user);
-                comment.setApplicationUser(applicationUser);
 
                 // Create a group
-                Group group = new Group();
+                Group group = new Group(userPrincipal);
                 group.setName(groupName);
                 group.setDescription("This is a test group");
-                group.setApplicationUser(applicationUser);
 
                 user.setGroups(Arrays.asList(group));
 
                 // Create an assign
-                Assign assign = new Assign();
+                Assign assign = new Assign(userPrincipal);
                 assign.setUser(user);
                 assign.setGroup(group);
-                assign.setApplicationUser(applicationUser);
 
                 // Create a spectator
-                Spectator spectator = new Spectator();
+                Spectator spectator = new Spectator(userPrincipal);
                 spectator.setUser(user);
                 spectator.setGroup(group);
-                spectator.setApplicationUser(applicationUser);
 
                 // Create a task
-                Task task = new Task();
+                Task task = new Task(userPrincipal);
                 task.setIdentifier(taskIdentifier);
                 task.setName("test task");
-                task.setApplicationUser("Test Application");
                 task.setStatus("created");
                 task.setCreatedBy(user);
 
@@ -109,10 +105,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private List<Comment> createComments(Task task, User user) {
         List<Comment> comments = new ArrayList<>();
         for (int i = 0; i < numberOfComments; i++) {
-            Comment comment = new Comment();
+            Comment comment = new Comment(userPrincipal);
             comment.setText("This is a test text");
             comment.setCreatedBy(user);
-            comment.setApplicationUser(applicationUser);
             comment.setTask(task);
             comments.add(comment);
         }
