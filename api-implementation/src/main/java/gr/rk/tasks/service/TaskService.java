@@ -4,6 +4,7 @@ import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.repository.CommentRepository;
 import gr.rk.tasks.repository.TaskRepository;
+import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,14 +19,19 @@ import java.util.UUID;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+
     private final CommentRepository commentRepository;
+
+    private final UserPrincipal userPrincipal;
+
     @Value("${applicationConfigurations.taskService.commentPageMaxSize: 25}")
     private int maxSize;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository) {
+    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository, UserPrincipal userPrincipal) {
         this.taskRepository = taskRepository;
         this.commentRepository = commentRepository;
+        this.userPrincipal = userPrincipal;
     }
 
     public void createTask(Task task) {
@@ -33,7 +39,7 @@ public class TaskService {
     }
 
     public Optional<Task> getTask(String identifier) {
-        return taskRepository.findTaskByIdentifier(identifier);
+        return taskRepository.findTaskByIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser());
     }
 
     public void deleteTask(String taskIdentifier) {
@@ -47,6 +53,6 @@ public class TaskService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return commentRepository.findCommentByTaskIdentifier(identifier.toString(), page);
+        return commentRepository.findCommentByTaskIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser(), page);
     }
 }

@@ -1,5 +1,8 @@
 package gr.rk.tasks.entity;
 
+import gr.rk.tasks.security.UserPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -7,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment implements AutomaticValuesGeneration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +36,25 @@ public class Comment {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
+    @Transient
+    private UserPrincipal userPrincipal;
+
     public Comment() {}
 
+    @Autowired
+    public Comment(UserPrincipal userPrincipal) {
+        this.userPrincipal = userPrincipal;
+    }
+
     @PrePersist
-    private void setIdentifier() {
-        this.identifier = UUID.randomUUID().toString();
+    @Override
+    public void generateAutomatedValues() {
+        if (Objects.isNull(this.identifier)) {
+            this.identifier = UUID.randomUUID().toString();
+        }
+        if (Objects.isNull(this.applicationUser)) {
+            this.applicationUser = this.userPrincipal.getApplicationUser();
+        }
     }
 
     public String getIdentifier() {

@@ -1,5 +1,8 @@
 package gr.rk.tasks.entity;
 
+import gr.rk.tasks.security.UserPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
@@ -9,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements AutomaticValuesGeneration {
 
     @Id
     private String username;
@@ -39,10 +42,26 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Spectator> spectators;
 
+    @Transient
+    private UserPrincipal userPrincipal;
+
     public User() {
         this.groups = new ArrayList<>();
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
+    }
+
+    @Autowired
+    public User(UserPrincipal userPrincipal) {
+        this();
+        this.userPrincipal = userPrincipal;
+    }
+
+    @PrePersist
+    public void generateAutomatedValues() {
+        if (Objects.isNull(this.applicationUser)) {
+            this.applicationUser = this.userPrincipal.getApplicationUser();
+        }
     }
 
     public String getUsername() {

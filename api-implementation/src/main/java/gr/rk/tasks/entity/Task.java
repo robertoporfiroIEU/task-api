@@ -1,5 +1,8 @@
 package gr.rk.tasks.entity;
 
+import gr.rk.tasks.security.UserPrincipal;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task implements AutomaticValuesGeneration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +34,7 @@ public class Task {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
     private String applicationUser;
 
     private LocalDateTime dueDate;
@@ -48,18 +52,32 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Spectator> spectators;
 
+    @Transient
+    private UserPrincipal userPrincipal;
+
     public Task() {
         this.comments = new ArrayList<>();
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
     }
 
+    @Autowired
+    public Task(UserPrincipal userPrincipal) {
+        this();
+        this.userPrincipal = userPrincipal;
+    }
+
     @PrePersist
-    private void setIdentifierAuto() {
+    @Override
+    public void generateAutomatedValues() {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
         }
+        if (Objects.isNull(this.applicationUser)) {
+            this.applicationUser = this.userPrincipal.getApplicationUser();
+        }
     }
+
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;

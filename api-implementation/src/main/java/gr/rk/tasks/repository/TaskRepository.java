@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    Optional<Task> findTaskByIdentifier(String identifier);
+    Optional<Task> findTaskByIdentifierAndApplicationUser(String identifier, String applicationUser);
 
     void deleteByIdentifier(String identifier);
 }
