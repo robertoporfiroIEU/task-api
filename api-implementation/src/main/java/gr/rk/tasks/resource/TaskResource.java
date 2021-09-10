@@ -49,8 +49,25 @@ public class TaskResource implements TasksApi {
             @Valid String createdBy,
             @Pattern(regexp = "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$")
             @Valid String dueDate) {
-        List<TaskDTO> tasks = List.of(new TaskDTO().name("test"));
-        return ResponseEntity.ok(new PageImpl<>(tasks));
+
+        List<TaskDTO> tasksDTO = new ArrayList<>();
+        Page<TaskDTO> tasksDTOPage= new PageImpl<>(tasksDTO);
+
+        Page<Task> tasksEntity = taskService.getTasks(
+                pageable,
+                identifier,
+                name,
+                status,
+                creationDate,
+                createdBy,
+                dueDate
+        );
+
+        if (!tasksEntity.isEmpty()) {
+            tasksDTOPage = taskMapper.toPageTaskDTO(tasksEntity);
+        }
+
+        return ResponseEntity.ok(tasksDTOPage);
     }
 
     @Override

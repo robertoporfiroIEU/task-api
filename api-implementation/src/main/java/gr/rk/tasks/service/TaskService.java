@@ -38,6 +38,32 @@ public class TaskService {
         taskRepository.save(task);
     }
 
+    public Page<Task> getTasks(
+            Pageable pageable,
+            String identifier,
+            String name,
+            String status,
+            String creationDate,
+            String createdBy,
+            String dueDate
+    ) {
+        Pageable page = pageable;
+
+        if (pageable.getPageSize() > maxSize) {
+            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        }
+
+        return taskRepository.findTasksDynamicJPQL(
+                page,
+                identifier,
+                name,
+                status,
+                creationDate,
+                createdBy,
+                dueDate
+        );
+    }
+
     public Optional<Task> getTask(String identifier) {
         return taskRepository.findTaskByIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser());
     }
