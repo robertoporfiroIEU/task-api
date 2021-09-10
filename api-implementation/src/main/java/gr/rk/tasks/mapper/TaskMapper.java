@@ -9,7 +9,6 @@ import gr.rk.tasks.util.Util;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +24,7 @@ public class TaskMapper {
         task.setName(taskEntity.getName());
         task.setDescription(taskEntity.getDescription());
         task.setStatus(taskEntity.getStatus());
-        task.creationDate(taskEntity.getCreatedAt().toString());
+        task.creationDate(Util.toDateISO8601WithTimeZone(taskEntity.getCreatedAt()));
 
         if (Objects.nonNull(taskEntity.getCreatedBy())) {
             UserDTO userDTO = new UserDTO();
@@ -38,9 +37,9 @@ public class TaskMapper {
             task.setDueDate(taskEntity.toString());
         }
 
-        task.setCommentsUrl(Util.getEndPointRelationURL("comments"));
-        task.setAssignsUrl(Util.getEndPointRelationURL("assigns"));
-        task.setSpectatorsUrl(Util.getEndPointRelationURL("spectators"));
+        task.setCommentsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/comments"));
+        task.setAssignsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/assigns"));
+        task.setSpectatorsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/spectators"));
         return task;
     }
 
@@ -53,10 +52,18 @@ public class TaskMapper {
 
             UserDTO userDTO = new UserDTO();
             commentDTO.setCreatedBy(userDTO.name(comment.getCreatedBy().getUsername()));
-            commentDTO.setCreationDate(comment.getCreatedAt().toString());
+            commentDTO.setCreationDate(Util.toDateISO8601WithTimeZone(comment.getCreatedAt()));
             commentsDTO.add(commentDTO);
         });
 
         return new PageImpl<>(commentsDTO, commentsEntity.getPageable(), commentsEntity.getTotalElements());
+    }
+
+    public Page<TaskDTO> toPageTaskDTO(Page<Task> tasksEntity) {
+        List<TaskDTO> tasksDTO = new ArrayList<>();
+        tasksEntity.forEach( task -> {
+            tasksDTO.add(toTaskDTO(task));
+        });
+        return new PageImpl<>(tasksDTO, tasksEntity.getPageable(), tasksEntity.getTotalElements());
     }
 }
