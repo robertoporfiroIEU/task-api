@@ -1,7 +1,7 @@
 package gr.rk.tasks.entity;
 
-import gr.rk.tasks.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,29 +30,19 @@ public class Assign implements AutomaticValuesGeneration {
     @JoinColumn(name = "users_username")
     private User user;
 
+    @Generated(GenerationTime.INSERT)
     @Column(insertable = false, updatable = false)
     private LocalDateTime assignDate;
 
     private String applicationUser;
 
-    @Transient
-    private UserPrincipal userPrincipal;
-
     public Assign() {}
-
-    @Autowired
-    public Assign(UserPrincipal userPrincipal) {
-        this.userPrincipal = userPrincipal;
-    }
 
     @PrePersist
     @Override
     public void generateAutomatedValues() {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
-        }
-        if (Objects.isNull(this.applicationUser)) {
-            this.applicationUser = this.userPrincipal.getApplicationUser();
         }
     }
 
@@ -98,6 +88,10 @@ public class Assign implements AutomaticValuesGeneration {
 
     public void setApplicationUser(String applicationUser) {
         this.applicationUser = applicationUser;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     @Override

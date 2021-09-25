@@ -1,7 +1,7 @@
 package gr.rk.tasks.entity;
 
-import gr.rk.tasks.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "groups")
-public class Group implements AutomaticValuesGeneration {
+public class Group {
 
     @Id
     private String name;
@@ -20,9 +20,11 @@ public class Group implements AutomaticValuesGeneration {
 
     private String applicationUser;
 
+    @Generated(GenerationTime.INSERT)
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
@@ -35,19 +37,10 @@ public class Group implements AutomaticValuesGeneration {
     @OneToMany(mappedBy = "group")
     private List<Spectator> spectators;
 
-    @Transient
-    private UserPrincipal userPrincipal;
-
     public Group() {
         this.users = new ArrayList<>();
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
-    }
-
-    @Autowired
-    public Group(UserPrincipal userPrincipal) {
-        this();
-        this.userPrincipal = userPrincipal;
     }
 
     public void setName(String name) {
@@ -125,13 +118,5 @@ public class Group implements AutomaticValuesGeneration {
     @Override
     public int hashCode() {
         return Objects.hash(name);
-    }
-
-    @PrePersist
-    @Override
-    public void generateAutomatedValues() {
-        if (Objects.isNull(this.applicationUser)) {
-            this.applicationUser = this.userPrincipal.getApplicationUser();
-        }
     }
 }

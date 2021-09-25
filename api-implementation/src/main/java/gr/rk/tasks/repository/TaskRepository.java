@@ -9,4 +9,5 @@ public interface TaskRepository extends JpaRepository<Task, Long>, TasksReposito
     Optional<Task> findTaskByIdentifierAndApplicationUser(String identifier, String applicationUser);
 
     void deleteByIdentifier(String identifier);
+
 }

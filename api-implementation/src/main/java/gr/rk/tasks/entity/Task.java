@@ -1,7 +1,7 @@
 package gr.rk.tasks.entity;
 
-import gr.rk.tasks.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,9 +28,11 @@ public class Task implements AutomaticValuesGeneration {
 
     private String status;
 
+    @Generated(GenerationTime.INSERT)
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
@@ -52,19 +54,10 @@ public class Task implements AutomaticValuesGeneration {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Spectator> spectators;
 
-    @Transient
-    private UserPrincipal userPrincipal;
-
     public Task() {
         this.comments = new ArrayList<>();
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
-    }
-
-    @Autowired
-    public Task(UserPrincipal userPrincipal) {
-        this();
-        this.userPrincipal = userPrincipal;
     }
 
     @PrePersist
@@ -72,9 +65,6 @@ public class Task implements AutomaticValuesGeneration {
     public void generateAutomatedValues() {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
-        }
-        if (Objects.isNull(this.applicationUser)) {
-            this.applicationUser = this.userPrincipal.getApplicationUser();
         }
     }
 
