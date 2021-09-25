@@ -1,6 +1,7 @@
 package gr.rk.tasks.exceptions.i18n;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public enum I18nErrorMessage {
 
@@ -21,8 +22,8 @@ public enum I18nErrorMessage {
         this.errorStatus = errorStatus;
     }
 
-    public static HashSet<String> getEnums() {
-        HashSet<String> values = new HashSet<String>();
+    public static Set<String> getEnums() {
+        HashSet<String> values = new HashSet<>();
         for (I18nErrorMessage i18nErrorMessageType : I18nErrorMessage.values()) {
             values.add(i18nErrorMessageType.name());
         }

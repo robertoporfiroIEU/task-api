@@ -36,8 +36,6 @@ public class Assign implements AutomaticValuesGeneration {
 
     private String applicationUser;
 
-    public Assign() {}
-
     @PrePersist
     @Override
     public void generateAutomatedValues() {

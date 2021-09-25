@@ -38,8 +38,6 @@ public class Comment implements AutomaticValuesGeneration {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
-    public Comment() {}
-
     @PrePersist
     @Override
     public void generateAutomatedValues() {
