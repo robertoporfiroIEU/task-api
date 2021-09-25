@@ -37,8 +37,6 @@ public class Spectator implements AutomaticValuesGeneration {
 
     private String applicationUser;
 
-    public Spectator() {}
-
     @PrePersist
     @Override
     public void generateAutomatedValues() {

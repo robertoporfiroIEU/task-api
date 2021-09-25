@@ -29,10 +29,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private boolean deleteTestData;
     private final UserPrincipal userPrincipal;
 
-    private final String taskIdentifier = "c8883d60-84fe-4eca-b8ea-0192f6239913";
-    private final String groupName = "test group";
-    private final String username = "Rafail";
-    private final int numberOfComments = 30;
+    private static final String TASK_IDENTIFIER = "c8883d60-84fe-4eca-b8ea-0192f6239913";
+    private static final String GROUP_NAME = "test group";
+    private static final String USERNAME = "Rafail";
+    private static final int NUMBER_OF_COMMENTS = 30;
 
     @Autowired
     public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService, UserPrincipal userPrincipal) {
@@ -49,7 +49,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             if (addTestData) {
                 // Create a user
                 User user = new User();
-                user.setUsername(username);
+                user.setUsername(USERNAME);
                 user.setEmail("rafail@gmail.gr");
                 user.setApplicationUser(userPrincipal.getApplicationUser());
 
@@ -61,7 +61,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
                 // Create a group
                 Group group = new Group();
-                group.setName(groupName);
+                group.setName(GROUP_NAME);
                 group.setDescription("This is a test group");
                 group.setApplicationUser(userPrincipal.getApplicationUser());
 
@@ -81,7 +81,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
                 // Create a task
                 Task task = new Task();
-                task.setIdentifier(taskIdentifier);
+                task.setIdentifier(TASK_IDENTIFIER);
                 task.setName("test task");
                 task.setStatus("created");
                 task.setCreatedBy(user);
@@ -99,9 +99,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 // persist
                 taskService.createTask(task);
             } else if (deleteTestData) {
-                taskService.deleteTask(taskIdentifier);
-                groupService.deleteGroup(groupName);
-                userService.deleteUser(username);
+                taskService.deleteTask(TASK_IDENTIFIER);
+                groupService.deleteGroup(GROUP_NAME);
+                userService.deleteUser(USERNAME);
             }
 
         } catch (ConstraintViolationException e) {
@@ -111,7 +111,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private List<Comment> createComments(Task task, User user) {
         List<Comment> comments = new ArrayList<>();
-        for (int i = 0; i < numberOfComments; i++) {
+        for (int i = 0; i < NUMBER_OF_COMMENTS; i++) {
             Comment comment = new Comment();
             comment.setText("This is a test text");
             comment.setCreatedBy(user);

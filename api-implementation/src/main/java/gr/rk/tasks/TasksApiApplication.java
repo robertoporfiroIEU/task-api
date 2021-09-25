@@ -26,9 +26,7 @@ public class TasksApiApplication {
             // This file must exist in the api-definition module. This bean has access to the resources of the other module due to the pom dependency
             wsResource.setName("Task API");
             wsResource.setLocation("/V1/openapi.yaml");
-
-            List<SwaggerResource> resources = List.of(wsResource);
-            return resources;
+            return List.of(wsResource);
         };
     }
 

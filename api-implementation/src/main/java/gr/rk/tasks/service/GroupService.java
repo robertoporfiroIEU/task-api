@@ -1,12 +1,9 @@
 package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.Group;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class GroupService {

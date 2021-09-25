@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -38,34 +39,17 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
         // count total results for pagination reason
         long totalResults = entityManager.createQuery(countJPQL, Long.class).getSingleResult();
 
-        List<String> filters = new ArrayList<>();
-
-        // create where clause
-        if (Objects.nonNull(identifier)) {
-            filters.add("t.identifier like :identifier");
-        }
-
-        if (Objects.nonNull(name)) {
-            filters.add("t.name like :name");
-        }
-
-        if (Objects.nonNull(status)) {
-            filters.add("t.status like :status");
-        }
-
-        if (Objects.nonNull(creationDate)) {
-            filters.add("t.createdAt = :createdAt");
-        }
-
-        if (Objects.nonNull(createdBy)) {
-            filters.add("t.createdBy like :createdBy");
-        }
-        if (Objects.nonNull(dueDate)) {
-            filters.add("t.dueDate = :dueDate");
-        }
+        List<String> filters = getFilters(
+                identifier,
+                name,
+                status,
+                creationDate,
+                createdBy,
+                dueDate
+        );
 
         if (!filters.isEmpty()) {
-            whereClause = "where " +  String.join(" AND ", filters);
+            whereClause = "where " + String.join(" AND ", filters);
         }
 
         TypedQuery<Task> taskTypedQuery = entityManager.createQuery(baseJQL + whereClause, Task.class)
@@ -99,8 +83,42 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
             }
         }
 
-        Page<Task> tasks = new PageImpl<>(taskTypedQuery.getResultList(), pageable, totalResults);
+        return new PageImpl<>(taskTypedQuery.getResultList(), pageable, totalResults);
+    }
 
-        return tasks;
+    private List<String> getFilters(
+            String identifier,
+            String name,
+            String status,
+            String creationDate,
+            String createdBy,
+            String dueDate) {
+        List<String> filters = new ArrayList<>();
+
+        // create where clause
+        if (Objects.nonNull(identifier)) {
+            filters.add("t.identifier like :identifier");
+        }
+
+        if (Objects.nonNull(name)) {
+            filters.add("t.name like :name");
+        }
+
+        if (Objects.nonNull(status)) {
+            filters.add("t.status like :status");
+        }
+
+        if (Objects.nonNull(creationDate)) {
+            filters.add("t.createdAt = :createdAt");
+        }
+
+        if (Objects.nonNull(createdBy)) {
+            filters.add("t.createdBy like :createdBy");
+        }
+        if (Objects.nonNull(dueDate)) {
+            filters.add("t.dueDate = :dueDate");
+        }
+
+        return filters;
     }
 }
