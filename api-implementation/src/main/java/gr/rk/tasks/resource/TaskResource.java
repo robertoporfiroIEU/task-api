@@ -7,6 +7,7 @@ import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.mapper.CommentMapper;
 import gr.rk.tasks.mapper.TaskMapper;
 import gr.rk.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,14 @@ import java.util.UUID;
 public class TaskResource implements TasksApi {
 
     private final TaskMapper taskMapper;
+    private final CommentMapper commentMapper;
     private final TaskService taskService;
 
     @Autowired
-    public TaskResource(TaskMapper taskMapper, TaskService taskService) {
+    public TaskResource(TaskMapper taskMapper, TaskService taskService, CommentMapper commentMapper) {
         this.taskMapper = taskMapper;
         this.taskService = taskService;
+        this.commentMapper = commentMapper;
     }
 
     @Override
@@ -94,7 +97,13 @@ public class TaskResource implements TasksApi {
 
     @Override
     public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO comment) {
-        return null;
+        Comment commentEntity = commentMapper.toComment(comment);
+        commentEntity = taskService.addTaskComment(identifier, commentEntity);
+
+        // Get commentDTO with information that exists in the Comment entity
+        CommentDTO commentDTO = commentMapper.toCommentDTO(commentEntity);
+
+        return ResponseEntity.ok(commentDTO);
     }
 
     @Override
@@ -115,7 +124,7 @@ public class TaskResource implements TasksApi {
         Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
 
         if (!commentsEntity.isEmpty()) {
-            commentsDTOPage = taskMapper.toPageCommentDTO(commentsEntity);
+            commentsDTOPage = commentMapper.toPageCommentDTO(commentsEntity);
         }
 
         return ResponseEntity.ok(commentsDTOPage);

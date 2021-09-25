@@ -2,8 +2,12 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.exceptions.TaskNotFoundException;
+import gr.rk.tasks.exceptions.i18n.I18nErrorMessage;
+import gr.rk.tasks.exceptions.i18n.UserNotFoundException;
 import gr.rk.tasks.repository.CommentRepository;
 import gr.rk.tasks.repository.TaskRepository;
+import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,18 +27,22 @@ public class TaskService {
 
     private final CommentRepository commentRepository;
 
+    private final UserRepository userRepository;
+
     private final UserPrincipal userPrincipal;
 
     @Value("${applicationConfigurations.taskService.commentPageMaxSize: 25}")
     private int maxSize;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository, UserPrincipal userPrincipal) {
+    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository, UserPrincipal userPrincipal, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.commentRepository = commentRepository;
         this.userPrincipal = userPrincipal;
+        this.userRepository = userRepository;
     }
 
+    @Transactional
     public void createTask(Task task) {
         taskRepository.save(task);
     }
@@ -80,5 +89,23 @@ public class TaskService {
         }
 
         return commentRepository.findCommentByTaskIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser(), page);
+    }
+
+    @Transactional
+    public Comment addTaskComment(UUID identifier, Comment comment) {
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser());
+
+        if (oTask.isEmpty()) {
+            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+        }
+
+        if (!userRepository.existsByUsername(comment.getCreatedBy().getUsername())) {
+            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+        }
+
+        Task task = oTask.get();
+        comment.setTask(task);
+        task.getComments().add(comment);
+        return commentRepository.save(comment);
     }
 }

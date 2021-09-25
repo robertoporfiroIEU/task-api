@@ -48,44 +48,51 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         try {
             if (addTestData) {
                 // Create a user
-                User user = new User(userPrincipal);
+                User user = new User();
                 user.setUsername(username);
                 user.setEmail("rafail@gmail.gr");
+                user.setApplicationUser(userPrincipal.getApplicationUser());
 
                 // Create a comment
-                Comment comment = new Comment(userPrincipal);
+                Comment comment = new Comment();
                 comment.setText("This is a test text");
                 comment.setCreatedBy(user);
+                comment.setApplicationUser(userPrincipal.getApplicationUser());
 
                 // Create a group
-                Group group = new Group(userPrincipal);
+                Group group = new Group();
                 group.setName(groupName);
                 group.setDescription("This is a test group");
+                group.setApplicationUser(userPrincipal.getApplicationUser());
 
                 user.setGroups(Arrays.asList(group));
 
                 // Create an assign
-                Assign assign = new Assign(userPrincipal);
+                Assign assign = new Assign();
                 assign.setUser(user);
                 assign.setGroup(group);
+                assign.setApplicationUser(userPrincipal.getApplicationUser());
 
                 // Create a spectator
-                Spectator spectator = new Spectator(userPrincipal);
+                Spectator spectator = new Spectator();
                 spectator.setUser(user);
                 spectator.setGroup(group);
+                spectator.setApplicationUser(userPrincipal.getApplicationUser());
 
                 // Create a task
-                Task task = new Task(userPrincipal);
+                Task task = new Task();
                 task.setIdentifier(taskIdentifier);
                 task.setName("test task");
                 task.setStatus("created");
                 task.setCreatedBy(user);
+                task.setApplicationUser(userPrincipal.getApplicationUser());
 
                 List<Comment> comments = createComments(task, user);
 
                 task.setComments(comments);
                 task.setAssigns(List.of(assign));
                 task.setSpectators(List.of(spectator));
+                task.setApplicationUser(userPrincipal.getApplicationUser());
 
                 assign.setTask(task);
                 spectator.setTask(task);
@@ -105,10 +112,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private List<Comment> createComments(Task task, User user) {
         List<Comment> comments = new ArrayList<>();
         for (int i = 0; i < numberOfComments; i++) {
-            Comment comment = new Comment(userPrincipal);
+            Comment comment = new Comment();
             comment.setText("This is a test text");
             comment.setCreatedBy(user);
             comment.setTask(task);
+            comment.setApplicationUser(userPrincipal.getApplicationUser());
             comments.add(comment);
         }
         return comments;
