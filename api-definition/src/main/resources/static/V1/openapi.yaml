@@ -473,6 +473,9 @@ components:
 
     Task:
       type: object
+      required:
+        - name
+        - createdBy
       properties:
         identifier:
           type: string
@@ -527,6 +530,7 @@ components:
       type: object
       required:
         - text
+        - createdBy
       properties:
         identifier:
           type: string
@@ -611,6 +615,8 @@ components:
     User:
       description: This is a user object that is coming from IDP
       type: object
+      required:
+        - name
       properties:
         name:
           type: string

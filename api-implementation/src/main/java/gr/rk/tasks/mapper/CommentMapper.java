@@ -4,6 +4,7 @@ import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.User;
+import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,12 @@ import java.util.UUID;
 public class CommentMapper {
 
     private final UserPrincipal userPrincipal;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CommentMapper(UserPrincipal userPrincipal) {
+    public CommentMapper(UserPrincipal userPrincipal, UserRepository userRepository) {
         this.userPrincipal = userPrincipal;
+        this.userRepository = userRepository;
     }
 
     public Page<CommentDTO> toPageCommentDTO(Page<Comment> commentsEntity) {
@@ -45,9 +48,7 @@ public class CommentMapper {
         Comment comment = new Comment();
         comment.setText(commentDTO.getText());
 
-        User user = new User();
-        user.setUsername(commentDTO.getCreatedBy().getName());
-
+        User user = this.userRepository.findById(commentDTO.getCreatedBy().getName()).get();
         comment.setCreatedBy(user);
         comment.setApplicationUser(userPrincipal.getApplicationUser());
         return comment;

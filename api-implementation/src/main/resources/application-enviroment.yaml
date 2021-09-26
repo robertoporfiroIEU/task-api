@@ -17,5 +17,5 @@ applicationConfigurations:
   addTestData: false
   deleteTestData: false
   taskService:
-    commentPageMaxSize: 25
+   pageMaxSize: 25
 

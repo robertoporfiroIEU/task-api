@@ -70,15 +70,14 @@ CREATE TABLE IF NOT EXISTS `tasksapidb`.`tasks` (
   `updatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
   `applicationUser` VARCHAR(250) NOT NULL COMMENT 'This column specifies the application name that used the API',
   `dueDate` DATETIME NULL DEFAULT NULL,
-  `users_username` VARCHAR(100) NULL,
+  `users_username` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `identifier_UNIQUE` (`identifier` ASC),
   INDEX `fk_tasks_users1_idx` (`users_username` ASC),
   CONSTRAINT `fk_tasks_users1`
     FOREIGN KEY (`users_username`)
     REFERENCES `tasksapidb`.`users` (`username`)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE)
+)
 ENGINE = InnoDB
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;

@@ -1,6 +1,7 @@
 package gr.rk.tasks;
 
 import gr.rk.tasks.entity.*;
+import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final TaskService taskService;
     private final UserService userService;
     private final GroupService groupService;
+    private final UserRepository userRepository;
 
     @Value("${applicationConfigurations.addTestData:false}")
     private boolean addTestData;
@@ -35,11 +37,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private static final int NUMBER_OF_COMMENTS = 30;
 
     @Autowired
-    public SetupDataLoader(TaskService taskService, UserService userService, GroupService groupService, UserPrincipal userPrincipal) {
+    public SetupDataLoader(
+            TaskService taskService,
+            UserService userService,
+            GroupService groupService,
+            UserPrincipal userPrincipal,
+            UserRepository userRepository
+            ) {
         this.taskService = taskService;
         this.userService = userService;
         this.groupService = groupService;
         this.userPrincipal = userPrincipal;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -52,6 +61,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 user.setUsername(USERNAME);
                 user.setEmail("rafail@gmail.gr");
                 user.setApplicationUser(userPrincipal.getApplicationUser());
+                user = userRepository.save(user);
 
                 // Create a comment
                 Comment comment = new Comment();
