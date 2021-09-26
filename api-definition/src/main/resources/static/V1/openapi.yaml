@@ -12,6 +12,7 @@ servers:
 tags:
   - name: Tasks
   - name: Groups
+  - name: Users
 
 paths:
   /tasks:
@@ -388,7 +389,7 @@ paths:
         - Groups
       operationId: getGroups
       x-paginated-object:
-        - gr.rk.tasks.V1.dto.TaskDTO
+        - gr.rk.tasks.V1.dto.GroupDTO
       responses:
         "200":
           description: Paginated groups.
@@ -402,8 +403,26 @@ paths:
                     $ref: '#/components/schemas/Group'
         default:
           $ref: '#/components/responses/ErrorResponse'
-
-
+    post:
+      description: Create a group
+      tags:
+        - Groups
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        "200":
+          description: A Group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /groups/{name}:
     get:
@@ -428,6 +447,73 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+
+
+  /users:
+    get:
+      description: |
+        These are the users that exist in the API
+      tags:
+        - Users
+      operationId: getUsers
+      x-paginated-object:
+        - gr.rk.tasks.V1.dto.UserDTO
+      responses:
+        "200":
+          description: Paginated users.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  items:
+                    $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      description: Create a new User
+      tags:
+        - Users
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: A User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /users/{name}:
+    get:
+      description: Return specific user
+      tags:
+        - Users
+      operationId: getUser
+      parameters:
+        - name: name
+          in: path
+          description: identifier of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
 components:
@@ -609,11 +695,17 @@ components:
           example: "{protocol}//{server-base-url}/groups/{identifier}/users"
 
     User:
-      description: This is a user object that is coming from IDP
+      description: This is a user object
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
+        email:
+          type: string
+          format: email
+
 
     History:
       description: This is the history object. This object describes the changes that happens to a specific object
