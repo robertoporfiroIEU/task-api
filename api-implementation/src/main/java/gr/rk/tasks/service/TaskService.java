@@ -31,7 +31,7 @@ public class TaskService {
 
     private final UserPrincipal userPrincipal;
 
-    @Value("${applicationConfigurations.taskService.commentPageMaxSize: 25}")
+    @Value("${applicationConfigurations.taskService.pageMaxSize: 25}")
     private int maxSize;
 
     @Autowired
@@ -43,8 +43,12 @@ public class TaskService {
     }
 
     @Transactional
-    public void createTask(Task task) {
-        taskRepository.save(task);
+    public Task createTask(Task task) {
+        if (!userRepository.existsByUsername(task.getCreatedBy().getUsername())) {
+            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+        }
+
+        return taskRepository.save(task);
     }
 
     public Page<Task> getTasks(

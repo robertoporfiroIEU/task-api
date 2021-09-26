@@ -42,7 +42,7 @@ public class Task implements AutomaticValuesGeneration {
     private LocalDateTime dueDate;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "users_username")
+    @JoinColumn(name = "users_username", nullable = false)
     private User createdBy;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)

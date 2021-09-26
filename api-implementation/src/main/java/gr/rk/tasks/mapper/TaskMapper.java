@@ -3,6 +3,8 @@ package gr.rk.tasks.mapper;
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.entity.User;
+import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,12 @@ import java.util.UUID;
 public class TaskMapper {
 
     private UserPrincipal userPrincipal;
+    private UserRepository userRepository;
 
     @Autowired
-    public TaskMapper(UserPrincipal userPrincipal) {
+    public TaskMapper(UserPrincipal userPrincipal, UserRepository userRepository) {
         this.userPrincipal = userPrincipal;
+        this.userRepository = userRepository;
     }
 
     public TaskDTO toTaskDTO(Task taskEntity) {
@@ -54,5 +58,32 @@ public class TaskMapper {
         List<TaskDTO> tasksDTO = new ArrayList<>();
         tasksEntity.forEach( task -> tasksDTO.add(toTaskDTO(task)));
         return new PageImpl<>(tasksDTO, tasksEntity.getPageable(), tasksEntity.getTotalElements());
+    }
+
+    public Task toTask(TaskDTO taskDTO) {
+        Task task = new Task();
+        task.setName(taskDTO.getName());
+
+        if (Objects.nonNull(taskDTO.getDescription())) {
+            task.setDescription(taskDTO.getDescription());
+        }
+
+        if (Objects.nonNull(taskDTO.getStatus())) {
+            task.setStatus(taskDTO.getStatus());
+        }
+
+        task.setApplicationUser(this.userPrincipal.getApplicationUser());
+
+        if (Objects.nonNull(taskDTO.getDueDate())) {
+            task.setDueDate(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()));
+        }
+
+        User user = this.userRepository.findById(taskDTO.getCreatedBy().getName()).get();
+
+        user.setApplicationUser(userPrincipal.getApplicationUser());
+
+        task.setCreatedBy(user);
+
+        return task;
     }
 }

@@ -96,19 +96,24 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO comment) {
-        Comment commentEntity = commentMapper.toComment(comment);
+    public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO commentDTO) {
+        Comment commentEntity = commentMapper.toComment(commentDTO);
         commentEntity = taskService.addTaskComment(identifier, commentEntity);
 
         // Get commentDTO with information that exists in the Comment entity
-        CommentDTO commentDTO = commentMapper.toCommentDTO(commentEntity);
+        CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
 
-        return ResponseEntity.ok(commentDTO);
+        return ResponseEntity.ok(commentDTOResponse);
     }
 
     @Override
-    public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
-        return null;
+    public ResponseEntity<TaskDTO> createTask(@Valid TaskDTO taskDTO) {
+        Task taskEntity = taskMapper.toTask(taskDTO);
+        taskEntity = taskService.createTask(taskEntity);
+
+        // Get taskDTO with information that exists in the Task entity
+        TaskDTO taskDTOResponse = taskMapper.toTaskDTO(taskEntity);
+        return ResponseEntity.ok(taskDTOResponse);
     }
 
     @Override

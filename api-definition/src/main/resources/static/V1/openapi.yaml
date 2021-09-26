@@ -559,6 +559,9 @@ components:
 
     Task:
       type: object
+      required:
+        - name
+        - createdBy
       properties:
         identifier:
           type: string
@@ -613,6 +616,7 @@ components:
       type: object
       required:
         - text
+        - createdBy
       properties:
         identifier:
           type: string
