@@ -16,6 +16,8 @@ spring:
 applicationConfigurations:
   addTestData: false
   deleteTestData: false
+  projectService:
+    pageMaxSize: 25
   taskService:
    pageMaxSize: 25
 

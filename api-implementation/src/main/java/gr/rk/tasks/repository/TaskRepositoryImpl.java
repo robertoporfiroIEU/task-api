@@ -16,21 +16,23 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
-public class TaskRepositoryImpl implements TasksRepositoryCustom {
+public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
     @Override
-    public Page<Task> findTasksDynamicJPQL(
+    public Page<Task> findTaskDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,
             String status,
-            String creationDate,
+            String creationDateFrom,
+            String creationDateTo,
             String createdBy,
-            String dueDate) {
+            String dueDateFrom,
+            String dueDateTo) {
 
         String baseJQL = "SELECT t from Task t ";
         String countJPQL = "SELECT count(t.id) from Task t";
@@ -43,9 +45,11 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
                 identifier,
                 name,
                 status,
-                creationDate,
+                creationDateFrom,
+                creationDateTo,
                 createdBy,
-                dueDate
+                dueDateFrom,
+                dueDateTo
         );
 
         if (!filters.isEmpty()) {
@@ -70,16 +74,26 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
                 taskTypedQuery.setParameter("status", "%" + status + "%");
             }
 
-            if (Objects.nonNull(creationDate)) {
-                taskTypedQuery.setParameter("createdAt", ZonedDateTime.parse(creationDate).toLocalDateTime());
-            }
-
             if (Objects.nonNull(createdBy)) {
                 taskTypedQuery.setParameter("createdBy", "%" + createdBy + "%");
             }
 
-            if (Objects.nonNull(dueDate)) {
-                taskTypedQuery.setParameter("dueDate", ZonedDateTime.parse(dueDate).toLocalDateTime());
+            if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
+                taskTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
+                taskTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
+            } else if (Objects.nonNull(creationDateFrom)) {
+                taskTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
+            } else if (Objects.nonNull(creationDateTo)) {
+                taskTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
+            }
+
+            if (Objects.nonNull(dueDateFrom) && Objects.nonNull(dueDateTo)) {
+                taskTypedQuery.setParameter("dueDateFrom", ZonedDateTime.parse(dueDateFrom).toLocalDateTime());
+                taskTypedQuery.setParameter("dueDateTo", ZonedDateTime.parse(dueDateTo).toLocalDateTime());
+            } else if (Objects.nonNull(dueDateFrom)) {
+                taskTypedQuery.setParameter("dueDateFrom", ZonedDateTime.parse(dueDateFrom).toLocalDateTime());
+            } else if (Objects.nonNull(dueDateTo)) {
+                taskTypedQuery.setParameter("dueDateTo", ZonedDateTime.parse(dueDateTo).toLocalDateTime());
             }
         }
 
@@ -90,9 +104,11 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
             String identifier,
             String name,
             String status,
-            String creationDate,
+            String creationDateFrom,
+            String creationDateTo,
             String createdBy,
-            String dueDate) {
+            String dueDateFrom,
+            String dueDateTo) {
         List<String> filters = new ArrayList<>();
 
         // create where clause
@@ -108,15 +124,25 @@ public class TaskRepositoryImpl implements TasksRepositoryCustom {
             filters.add("t.status like :status");
         }
 
-        if (Objects.nonNull(creationDate)) {
-            filters.add("t.createdAt = :createdAt");
-        }
-
         if (Objects.nonNull(createdBy)) {
             filters.add("t.createdBy like :createdBy");
         }
-        if (Objects.nonNull(dueDate)) {
-            filters.add("t.dueDate = :dueDate");
+
+        if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
+            filters.add("t.createdAt >= :creationDateFrom AND t.createdAt <= :creationDateTo");
+        } else if (Objects.nonNull(creationDateFrom)) {
+            filters.add("t.createdAt >= :creationDateFrom");
+        } else if (Objects.nonNull(creationDateTo)) {
+            filters.add("t.createdAt <= :creationDateTo");
+        }
+
+
+        if (Objects.nonNull(dueDateFrom) && Objects.nonNull(dueDateTo)) {
+            filters.add("t.dueDate >= :creationDateFrom AND t.createdAt <= :creationDateTo");
+        } else if (Objects.nonNull(dueDateFrom)) {
+            filters.add("t.dueDate >= :dueDateFrom");
+        } else if (Objects.nonNull(dueDateTo)) {
+            filters.add("t.dueDate <= :dueDateTo");
         }
 
         return filters;

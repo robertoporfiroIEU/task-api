@@ -4,6 +4,7 @@ import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
+import gr.rk.tasks.service.ProjectService;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,11 +22,14 @@ public abstract class TaskMapper {
     protected UserPrincipal userPrincipal;
     @Autowired
     protected UserRepository userRepository;
+    @Autowired
+    protected ProjectService projectService;
 
-    public Page<TaskDTO> toPageTaskDTO(Page<Task> tasksEntity) {
+    public Page<TaskDTO> toPageTasksDTO(Page<Task> tasksEntity) {
         return new PageImpl<>(toTasksDTO(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
     }
 
+    @Mapping(target = "project", expression = "java(projectService.getProject(taskDTO.getProjectIdentifier().toString()).orElse(null))")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
     @Mapping(target = "createdBy", expression = "java(userRepository.findById(taskDTO.getCreatedBy().getName()).get())")
@@ -34,7 +38,9 @@ public abstract class TaskMapper {
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(task.getIdentifier()))")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
+    @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
     @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
+    @Mapping(target = "projectIdentifier", expression = "java(UUID.fromString(task.getProject().getIdentifier()))")
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
     @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/assigns\"))")
     @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")

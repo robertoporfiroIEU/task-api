@@ -54,6 +54,10 @@ public class Task implements AutomaticValuesGeneration {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Spectator> spectators;
 
+    @ManyToOne()
+    @JoinColumn(name = "projects_id")
+    private Project project;
+
     public Task() {
         this.comments = new ArrayList<>();
         this.assigns = new ArrayList<>();
@@ -105,6 +109,10 @@ public class Task implements AutomaticValuesGeneration {
         this.createdBy = createdBy;
     }
 
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
@@ -116,6 +124,7 @@ public class Task implements AutomaticValuesGeneration {
     public void setSpectators(List<Spectator> spectators) {
         this.spectators = spectators;
     }
+
 
     public Long getId() {
         return id;
@@ -155,6 +164,10 @@ public class Task implements AutomaticValuesGeneration {
 
     public User getCreatedBy() {
         return createdBy;
+    }
+
+    public Project getProject() {
+        return project;
     }
 
     public List<Comment> getComments() {
