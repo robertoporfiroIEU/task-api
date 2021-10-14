@@ -1,89 +1,44 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.TaskDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.stereotype.Component;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-@Component
-public class TaskMapper {
-
-    private UserPrincipal userPrincipal;
-    private UserRepository userRepository;
+@Mapper(componentModel = "spring", imports = { Util.class, UUID.class })
+public abstract class TaskMapper {
 
     @Autowired
-    public TaskMapper(UserPrincipal userPrincipal, UserRepository userRepository) {
-        this.userPrincipal = userPrincipal;
-        this.userRepository = userRepository;
-    }
-
-    public TaskDTO toTaskDTO(Task taskEntity) {
-        TaskDTO task = new TaskDTO();
-
-        task.setIdentifier(UUID.fromString(taskEntity.getIdentifier()));
-        task.setName(taskEntity.getName());
-        task.setDescription(taskEntity.getDescription());
-        task.setStatus(taskEntity.getStatus());
-        task.creationDate(Util.toDateISO8601WithTimeZone(taskEntity.getCreatedAt()));
-
-        if (Objects.nonNull(taskEntity.getCreatedBy())) {
-            UserDTO userDTO = new UserDTO();
-            task.createdBy(userDTO.name(taskEntity.getCreatedBy().getUsername()));
-        }
-
-        task.realm(taskEntity.getApplicationUser());
-
-        if (Objects.nonNull(taskEntity.getDueDate())) {
-            task.setDueDate(taskEntity.toString());
-        }
-
-        task.setCommentsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/comments"));
-        task.setAssignsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/assigns"));
-        task.setSpectatorsUrl(Util.getEndPointRelationURL(task.getIdentifier() + "/spectators"));
-        return task;
-    }
+    protected UserPrincipal userPrincipal;
+    @Autowired
+    protected UserRepository userRepository;
 
     public Page<TaskDTO> toPageTaskDTO(Page<Task> tasksEntity) {
-        List<TaskDTO> tasksDTO = new ArrayList<>();
-        tasksEntity.forEach( task -> tasksDTO.add(toTaskDTO(task)));
-        return new PageImpl<>(tasksDTO, tasksEntity.getPageable(), tasksEntity.getTotalElements());
+        return new PageImpl<>(toTasksDTO(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
     }
 
-    public Task toTask(TaskDTO taskDTO) {
-        Task task = new Task();
-        task.setName(taskDTO.getName());
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
+    @Mapping(target = "createdBy", expression = "java(userRepository.findById(taskDTO.getCreatedBy().getName()).get())")
+    @Mapping(ignore = true, target = "identifier")
+    public abstract Task toTask(TaskDTO taskDTO);
 
-        if (Objects.nonNull(taskDTO.getDescription())) {
-            task.setDescription(taskDTO.getDescription());
-        }
+    @Mapping(target = "identifier", expression = "java(UUID.fromString(task.getIdentifier()))")
+    @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
+    @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
+    @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
+    @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/assigns\"))")
+    @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")
+    public abstract TaskDTO toTaskDTO(Task task);
 
-        if (Objects.nonNull(taskDTO.getStatus())) {
-            task.setStatus(taskDTO.getStatus());
-        }
-
-        task.setApplicationUser(this.userPrincipal.getApplicationUser());
-
-        if (Objects.nonNull(taskDTO.getDueDate())) {
-            task.setDueDate(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()));
-        }
-
-        User user = this.userRepository.findById(taskDTO.getCreatedBy().getName()).get();
-
-        user.setApplicationUser(userPrincipal.getApplicationUser());
-
-        task.setCreatedBy(user);
-
-        return task;
-    }
+    protected abstract List<TaskDTO> toTasksDTO(Page<Task> tasks);
 }
