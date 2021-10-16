@@ -10,11 +10,112 @@ servers:
     description: Task API location
 
 tags:
+  - name: Projects
   - name: Tasks
   - name: Groups
   - name: Users
 
 paths:
+  /projects:
+    get:
+      description: Returns all the projects from the system that the user has access to
+      tags:
+        - "Projects"
+      operationId: getProjects
+      x-paginated-object:
+        - gr.rk.tasks.V1.dto.ProjectDTO
+      parameters:
+        - in: query
+          name: pageable
+          required: false
+          schema:
+            $ref: '#/components/schemas/Pageable'
+        - in: query
+          name: identifier
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: creationDateFrom
+          required: false
+          schema:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+        - in: query
+          name: creationDateTo
+          required: false
+          schema:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+        - in: query
+          name: createdBy
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Paginated Projects
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                properties:
+                  content:
+                    items:
+                      $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      description: Create a new Project
+      tags:
+        - "Projects"
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        "200":
+          description: A Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /projects/{identifier}:
+    get:
+      description: Return specific project
+      tags:
+        - "Projects"
+      operationId: getProject
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Project
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: A Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
   /tasks:
     get:
       description: Returns all tasks from the system that the user has access to
@@ -35,6 +136,11 @@ paths:
           schema:
             type: string
         - in: query
+          name: projectIdentifier
+          required: false
+          schema:
+            type: string
+        - in: query
           name: name
           required: false
           schema:
@@ -45,7 +151,13 @@ paths:
           schema:
             type: string
         - in: query
-          name: creationDate
+          name: creationDateFrom
+          required: false
+          schema:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+        - in: query
+          name: creationDateTo
           required: false
           schema:
             type: string
@@ -56,7 +168,13 @@ paths:
           schema:
             type: string
         - in: query
-          name: dueDate
+          name: dueDateFrom
+          required: false
+          schema:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+        - in: query
+          name: dueDateTo
           required: false
           schema:
             type: string
@@ -557,6 +675,38 @@ components:
           type: boolean
           example: false
 
+    Project:
+     type: object
+     required:
+       - name
+       - createdBy
+     properties:
+       identifier:
+         type: string
+         format: uuid
+         description: Returned by GET, not used in POST/PUT/PATCH
+         readOnly: true
+       name:
+         description: This is the name of the project
+         type: string
+       description:
+         description: This is the description of the project
+         type: string
+       creationDate:
+         type: string
+         pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+         description: Creation date and time
+         example: "2021-01-30T08:30:00Z"
+         readOnly: true
+       createdBy:
+         $ref: '#/components/schemas/User'
+       realm:
+         type: string
+         description: This field is the realm from the IDP
+         example: Application1
+         readOnly: true
+
+
     Task:
       type: object
       required:
@@ -585,6 +735,9 @@ components:
           readOnly: true
         createdBy:
           $ref: '#/components/schemas/User'
+        projectIdentifier:
+          type: string
+          format: uuid
         realm:
           type: string
           description: This field is the realm from the IDP
@@ -707,6 +860,7 @@ components:
         name:
           type: string
         email:
+          readOnly: true
           type: string
           format: email
 

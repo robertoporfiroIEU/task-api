@@ -4,8 +4,10 @@ import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.exceptions.TaskNotFoundException;
 import gr.rk.tasks.exceptions.i18n.I18nErrorMessage;
+import gr.rk.tasks.exceptions.i18n.ProjectNotFoundException;
 import gr.rk.tasks.exceptions.i18n.UserNotFoundException;
 import gr.rk.tasks.repository.CommentRepository;
+import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.repository.TaskRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +27,8 @@ import java.util.UUID;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+
+    private final ProjectRepository projectRepository;
 
     private final CommentRepository commentRepository;
 
@@ -35,8 +40,15 @@ public class TaskService {
     private int maxSize;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, CommentRepository commentRepository, UserPrincipal userPrincipal, UserRepository userRepository) {
+    public TaskService(
+            TaskRepository taskRepository,
+            ProjectRepository projectRepository,
+            CommentRepository commentRepository,
+            UserPrincipal userPrincipal,
+            UserRepository userRepository
+    ) {
         this.taskRepository = taskRepository;
+        this.projectRepository = projectRepository;
         this.commentRepository = commentRepository;
         this.userPrincipal = userPrincipal;
         this.userRepository = userRepository;
@@ -48,6 +60,10 @@ public class TaskService {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
+        if (Objects.isNull(task.getProject())) {
+            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+        }
+
         return taskRepository.save(task);
     }
 
@@ -56,9 +72,11 @@ public class TaskService {
             String identifier,
             String name,
             String status,
-            String creationDate,
+            String creationDateFrom,
+            String creationDateTo,
             String createdBy,
-            String dueDate
+            String dueDateFrom,
+            String dueDateTo
     ) {
         Pageable page = pageable;
 
@@ -66,14 +84,16 @@ public class TaskService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return taskRepository.findTasksDynamicJPQL(
+        return taskRepository.findTaskDynamicJPQL(
                 page,
                 identifier,
                 name,
                 status,
-                creationDate,
+                creationDateFrom,
+                creationDateTo,
                 createdBy,
-                dueDate
+                dueDateFrom,
+                dueDateTo
         );
     }
 

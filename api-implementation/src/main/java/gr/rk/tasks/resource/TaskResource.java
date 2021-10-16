@@ -19,12 +19,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 
 @RestController
 @Validated
@@ -41,37 +39,6 @@ public class TaskResource implements TasksApi {
         this.commentMapper = commentMapper;
     }
 
-    @Override
-    public ResponseEntity<Page<TaskDTO>> getTasks(
-            @Valid Pageable pageable,
-            @Valid String identifier,
-            @Valid String name,
-            @Valid String status,
-            @Pattern(regexp = "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$")
-            @Valid String creationDate,
-            @Valid String createdBy,
-            @Pattern(regexp = "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$")
-            @Valid String dueDate) {
-
-        List<TaskDTO> tasksDTO = new ArrayList<>();
-        Page<TaskDTO> tasksDTOPage= new PageImpl<>(tasksDTO);
-
-        Page<Task> tasksEntity = taskService.getTasks(
-                pageable,
-                identifier,
-                name,
-                status,
-                creationDate,
-                createdBy,
-                dueDate
-        );
-
-        if (!tasksEntity.isEmpty()) {
-            tasksDTOPage = taskMapper.toPageTaskDTO(tasksEntity);
-        }
-
-        return ResponseEntity.ok(tasksDTOPage);
-    }
 
     @Override
     public ResponseEntity<TaskDTO> getTask(UUID identifier) {
@@ -83,6 +50,41 @@ public class TaskResource implements TasksApi {
         }
 
         return ResponseEntity.ok(taskDTO);
+    }
+
+    @Override
+    public ResponseEntity<Page<TaskDTO>> getTasks(
+            Pageable pageable,
+            String identifier,
+            String projectIdentifier,
+            String name,
+            String status,
+            String creationDateFrom,
+            String creationDateTo,
+            String createdBy,
+            String dueDateFrom,
+            String dueDateTo) {
+
+        List<TaskDTO> tasksDTO = new ArrayList<>();
+        Page<TaskDTO> tasksDTOPage = new PageImpl<>(tasksDTO);
+
+        Page<Task> tasksEntity = taskService.getTasks(
+                pageable,
+                identifier,
+                name,
+                status,
+                creationDateFrom,
+                creationDateTo,
+                createdBy,
+                dueDateFrom,
+                dueDateTo
+        );
+
+        if (!tasksEntity.isEmpty()) {
+            tasksDTOPage = taskMapper.toPageTasksDTO(tasksEntity);
+        }
+
+        return ResponseEntity.ok(tasksDTOPage);
     }
 
     @Override

@@ -4,13 +4,15 @@ import gr.rk.tasks.entity.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface TasksRepositoryCustom {
-    Page<Task> findTasksDynamicJPQL(
+public interface TaskRepositoryCustom {
+    Page<Task> findTaskDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,
             String status,
-            String creationDate,
+            String creationDateFrom,
+            String creationDateTo,
             String createdBy,
-            String dueDate);
+            String dueDateFrom,
+            String dueDateTo);
 }
