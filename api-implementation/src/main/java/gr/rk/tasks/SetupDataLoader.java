@@ -20,7 +20,6 @@ import java.util.List;
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ProjectService projectService;
-    private final TaskService taskService;
     private final UserService userService;
     private final GroupService groupService;
     private final UserRepository userRepository;
@@ -32,8 +31,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private boolean deleteTestData;
     private final UserPrincipal userPrincipal;
 
-    private static final String PROJECT_IDENTIFIER = "c8883d60-84fe-4eca-b8ea-0192f6239912";
-    private static final String TASK_IDENTIFIER = "c8883d60-84fe-4eca-b8ea-0192f6239913";
+    private static final Long PROJECT_ID = 1L;
+    private static final String PROJECT_PREFIX = "TASK_PROJECT";
+    private static final Long TASK_ID = 1L;
     private static final String GROUP_NAME = "test group";
     private static final String USERNAME = "Rafail";
     private static final int NUMBER_OF_COMMENTS = 30;
@@ -41,14 +41,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     public SetupDataLoader(
             ProjectService projectService,
-            TaskService taskService,
             UserService userService,
             GroupService groupService,
             UserPrincipal userPrincipal,
             UserRepository userRepository
             ) {
         this.projectService = projectService;
-        this.taskService = taskService;
         this.userService = userService;
         this.groupService = groupService;
         this.userPrincipal = userPrincipal;
@@ -95,7 +93,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
                 // Create a task
                 Task task = new Task();
-                task.setIdentifier(TASK_IDENTIFIER);
+                task.setId(TASK_ID);
                 task.setName("test task");
                 task.setStatus("created");
                 task.setCreatedBy(user);
@@ -111,7 +109,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 spectator.setTask(task);
 
                 Project project = new Project();
-                project.setIdentifier(PROJECT_IDENTIFIER);
+                project.setId(PROJECT_ID);
+                project.setPrefixIdentifier(PROJECT_PREFIX);
                 project.setName("Test Project");
                 project.setDescription("This is a project description");
                 project.setCreatedBy(user);
@@ -123,7 +122,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 // persist
                 projectService.createProject(project);
             } else if (deleteTestData) {
-                projectService.deleteProject(PROJECT_IDENTIFIER);
+                Project project = new Project();
+                project.setId(PROJECT_ID);
+                project.setPrefixIdentifier(PROJECT_PREFIX);
+                projectService.deleteProject(project);
                 groupService.deleteGroup(GROUP_NAME);
                 userService.deleteUser(USERNAME);
             }

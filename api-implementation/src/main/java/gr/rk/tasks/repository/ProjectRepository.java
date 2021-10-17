@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ProjectRepository extends JpaRepository<Project, String>, ProjectRepositoryCustom {
+public interface ProjectRepository extends JpaRepository<Project, Long>, ProjectRepositoryCustom {
 
-    Optional<Project> findProjectByIdentifierAndApplicationUser(String identifier, String applicationUser);
+    Optional<Project> findProjectByIdAndPrefixIdentifierAndApplicationUser(Long id, String prefixIdentifier, String applicationUser);
 
-    void deleteByIdentifier(String identifier);
+    void deleteByIdAndPrefixIdentifierAndApplicationUser(Long id, String prefixIdentifier, String applicationUser);
 }

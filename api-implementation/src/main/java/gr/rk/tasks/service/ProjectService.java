@@ -1,11 +1,11 @@
 package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.exceptions.i18n.I18nErrorMessage;
-import gr.rk.tasks.exceptions.i18n.UserNotFoundException;
+import gr.rk.tasks.exception.i18n.I18nErrorMessage;
+import gr.rk.tasks.exception.UserNotFoundException;
 import gr.rk.tasks.repository.ProjectRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
+import gr.rk.tasks.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,14 +14,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-
-    private final UserRepository userRepository;
 
     private final UserPrincipal userPrincipal;
 
@@ -31,17 +30,15 @@ public class ProjectService {
     @Autowired
     public ProjectService(
             ProjectRepository projectRepository,
-            UserRepository userRepository,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
         this.userPrincipal = userPrincipal;
     }
 
     @Transactional
     public Project createProject(Project project) {
-        if (!userRepository.existsByUsername(project.getCreatedBy().getUsername())) {
+        if (Objects.isNull(project.getCreatedBy())) {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
@@ -73,13 +70,19 @@ public class ProjectService {
     }
 
     public Optional<Project> getProject(String identifier) {
-        return projectRepository.findProjectByIdentifierAndApplicationUser(
-                identifier,
+        // The format of the identifier is <prefixIdentifier>-<number>
+        return projectRepository.findProjectByIdAndPrefixIdentifierAndApplicationUser(
+                Util.getIdFromIdentifier(identifier),
+                Util.getPrefixIdentifierFromIdentifier(identifier),
                 userPrincipal.getApplicationUser()
         );
     }
 
-    public void deleteProject(String projectIdentifier) {
-        projectRepository.deleteByIdentifier(projectIdentifier);
+    public void deleteProject(Project project) {
+        projectRepository.deleteByIdAndPrefixIdentifierAndApplicationUser(
+                project.getId(),
+                project.getPrefixIdentifier(),
+                userPrincipal.getApplicationUser()
+        );
     }
 }

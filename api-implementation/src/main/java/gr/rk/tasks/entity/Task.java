@@ -8,18 +8,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tasks")
-public class Task implements AutomaticValuesGeneration {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
-    private String identifier;
 
     @Column(nullable = false)
     private String name;
@@ -64,18 +60,7 @@ public class Task implements AutomaticValuesGeneration {
         this.spectators = new ArrayList<>();
     }
 
-    @PrePersist
-    @Override
-    public void generateAutomatedValues() {
-        if (Objects.isNull(this.identifier)) {
-            this.identifier = UUID.randomUUID().toString();
-        }
-    }
-
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+    public void setId(Long id) { this.id = id; }
 
     public void setName(String name) {
         this.name = name;
@@ -130,10 +115,6 @@ public class Task implements AutomaticValuesGeneration {
         return id;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
     public String getName() {
         return name;
     }
@@ -166,9 +147,7 @@ public class Task implements AutomaticValuesGeneration {
         return createdBy;
     }
 
-    public Project getProject() {
-        return project;
-    }
+    public Project getProject() { return project; }
 
     public List<Comment> getComments() {
         return comments;
