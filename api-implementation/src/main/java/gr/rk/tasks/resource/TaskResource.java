@@ -39,19 +39,6 @@ public class TaskResource implements TasksApi {
         this.commentMapper = commentMapper;
     }
 
-
-    @Override
-    public ResponseEntity<TaskDTO> getTask(UUID identifier) {
-        TaskDTO taskDTO = new TaskDTO();
-        Optional<Task> oTaskEntity = taskService.getTask(identifier.toString());
-
-        if (oTaskEntity.isPresent()) {
-            taskDTO = taskMapper.toTaskDTO(oTaskEntity.get());
-        }
-
-        return ResponseEntity.ok(taskDTO);
-    }
-
     @Override
     public ResponseEntity<Page<TaskDTO>> getTasks(
             Pageable pageable,
@@ -71,6 +58,7 @@ public class TaskResource implements TasksApi {
         Page<Task> tasksEntity = taskService.getTasks(
                 pageable,
                 identifier,
+                projectIdentifier,
                 name,
                 status,
                 creationDateFrom,
@@ -88,19 +76,32 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<AssignDTO> addAssign(UUID identifier, @Valid AssignDTO assign) {
+    public ResponseEntity<TaskDTO> getTask(String identifier) {
+        TaskDTO taskDTO = new TaskDTO();
+        Optional<Task> oTaskEntity = taskService.getTask(identifier);
+
+        if (oTaskEntity.isPresent()) {
+            taskDTO = taskMapper.toTaskDTO(oTaskEntity.get());
+        }
+
+        return ResponseEntity.ok(taskDTO);
+    }
+
+    @Override
+    public ResponseEntity<AssignDTO> addAssign(String identifier, AssignDTO assignDTO) {
         return null;
     }
 
     @Override
-    public ResponseEntity<SpectatorDTO> addSpectator(UUID identifier, @Valid SpectatorDTO spectator) {
+    public ResponseEntity<SpectatorDTO> addSpectator(UUID identifier, SpectatorDTO spectatorDTO) {
         return null;
     }
 
+
     @Override
-    public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> addTaskComment(String taskIdentifier, @Valid CommentDTO commentDTO) {
         Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.addTaskComment(identifier, commentEntity);
+        commentEntity = taskService.addTaskComment(taskIdentifier, commentEntity);
 
         // Get commentDTO with information that exists in the Comment entity
         CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
@@ -119,12 +120,12 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<TaskDTO>> getAssigns(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<Page<TaskDTO>> getAssigns(String identifier, @Valid Pageable pageable) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<CommentDTO>> getComments(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<Page<CommentDTO>> getComments(String identifier, @Valid Pageable pageable) {
         List<CommentDTO> commentsDTO = new ArrayList<>();
         Page<CommentDTO> commentsDTOPage= new PageImpl<>(commentsDTO);
 
