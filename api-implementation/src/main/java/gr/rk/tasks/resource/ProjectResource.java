@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @Validated
@@ -59,9 +60,9 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
-    public ResponseEntity<ProjectDTO> getProject(String identifier) {
+    public ResponseEntity<ProjectDTO> getProject(UUID identifier) {
         ProjectDTO projectDTO = new ProjectDTO();
-        Optional<Project> oProjectEntity = projectService.getProject(identifier);
+        Optional<Project> oProjectEntity = projectService.getProject(identifier.toString());
 
         if (oProjectEntity.isPresent()) {
             projectDTO = this.projectMapper.toProjectDTO(oProjectEntity.get());

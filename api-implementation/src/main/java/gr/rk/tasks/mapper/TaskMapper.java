@@ -1,9 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.TaskDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.service.ProjectService;
@@ -15,8 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = { Util.class })
+@Mapper(componentModel = "spring", imports = { Util.class, UUID.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -34,20 +33,18 @@ public abstract class TaskMapper {
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
     @Mapping(target = "createdBy", expression = "java(userRepository.findById(taskDTO.getCreatedBy().getName()).get())")
+    @Mapping(ignore = true, target = "identifier")
     public abstract Task toTask(TaskDTO taskDTO);
 
-    @Mapping(target = "identifier", expression = "java(task.getProject().getPrefixIdentifier() + \"-\" + task.getId())")
+    @Mapping(target = "identifier", expression = "java(UUID.fromString(task.getIdentifier()))")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
     @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
     @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
-    @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getPrefixIdentifier() + \"-\" + task.getProject().getId())")
-    @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(taskDTO.getIdentifier() + \"/comments\"))")
-    @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(taskDTO.getIdentifier() + \"/assigns\"))")
-    @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(taskDTO.getIdentifier() + \"/spectators\"))")
+    @Mapping(target = "projectIdentifier", expression = "java(UUID.fromString(task.getProject().getIdentifier()))")
+    @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
+    @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/assigns\"))")
+    @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")
     public abstract TaskDTO toTaskDTO(Task task);
 
     protected abstract List<TaskDTO> toTasksDTO(Page<Task> tasks);
-
-    @Mapping(target = "name", source = "username")
-    public abstract UserDTO toUserDTO(User user);
 }

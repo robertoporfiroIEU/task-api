@@ -5,7 +5,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class Util {
@@ -28,29 +27,5 @@ public class Util {
             return null;
         }
         return ZonedDateTime.parse(dateTime).toLocalDateTime();
-    }
-
-    public static Long getIdFromIdentifier(String identifier) {
-        // The format of the identifier is <prefixIdentifier>-<number>
-        if (Objects.isNull(identifier)) {
-            return null;
-        }
-
-        String []identifierParts = identifier.split("-");
-        try {
-            return Long.parseLong(identifierParts[identifierParts.length - 1]);
-        } catch (NumberFormatException nfe) {
-            return null;
-        }
-    }
-
-    public static String getPrefixIdentifierFromIdentifier(String identifier) {
-        // The format of the identifier is <prefixIdentifier>-<number>
-        if (Objects.isNull(identifier)) {
-            return null;
-        }
-
-        String []identifierParts = identifier.split("-");
-        return String.join("-", Arrays.copyOfRange(identifierParts, 0, identifierParts.length-1));
     }
 }

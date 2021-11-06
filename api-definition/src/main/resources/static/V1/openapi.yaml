@@ -35,7 +35,6 @@ paths:
           required: false
           schema:
             type: string
-            format: string
         - in: query
           name: name
           required: false
@@ -106,7 +105,7 @@ paths:
           required: true
           schema:
             type: string
-            format: string
+            format: uuid
       responses:
         "200":
           description: A Project
@@ -230,6 +229,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         "200":
           description: A Task
@@ -257,6 +257,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
         - in: query
           name: pageable
           required: false
@@ -291,6 +292,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -324,6 +326,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
         - in: query
           name: pageable
           required: false
@@ -355,6 +358,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -679,7 +683,7 @@ components:
      properties:
        identifier:
          type: string
-         format: string
+         format: uuid
          description: Returned by GET, not used in POST/PUT/PATCH
          readOnly: true
        name:
@@ -687,9 +691,6 @@ components:
          type: string
        description:
          description: This is the description of the project
-         type: string
-       prefixIdentifier:
-         description: The prefix part that every identifier haves. For example, if the prefix is <my-project> then the identifier will be <my-project-number>
          type: string
        creationDate:
          type: string
@@ -714,7 +715,7 @@ components:
       properties:
         identifier:
           type: string
-          format: string
+          format: uuid
           description: Returned by GET, not used in POST/PUT/PATCH
           readOnly: true
         name:
@@ -736,7 +737,7 @@ components:
           $ref: '#/components/schemas/User'
         projectIdentifier:
           type: string
-          format: string
+          format: uuid
         realm:
           type: string
           description: This field is the realm from the IDP

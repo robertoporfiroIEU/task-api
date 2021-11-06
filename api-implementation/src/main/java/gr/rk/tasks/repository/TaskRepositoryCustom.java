@@ -8,7 +8,6 @@ public interface TaskRepositoryCustom {
     Page<Task> findTaskDynamicJPQL(
             Pageable pageable,
             String identifier,
-            String projectIdentifier,
             String name,
             String status,
             String creationDateFrom,
