@@ -1,9 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.CommentDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Comment;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
@@ -36,7 +34,4 @@ public abstract class CommentMapper {
     public abstract CommentDTO toCommentDTO(Comment comment);
 
     protected abstract List<CommentDTO> toCommentsDTO(Page<Comment> comments);
-
-    @Mapping(target = "name", source = "username")
-    public abstract UserDTO toUserDTO(User user);
 }

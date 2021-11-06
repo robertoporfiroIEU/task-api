@@ -1,7 +1,6 @@
 package gr.rk.tasks.repository;
 
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.util.Util;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -58,10 +57,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         // bind the parameters to avoid sql injections
         if (!filters.isEmpty()) {
             if (Objects.nonNull(identifier)) {
-                Long id = Util.getIdFromIdentifier(identifier);
-                String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(identifier);
-                projectTypedQuery.setParameter("id", id );
-                projectTypedQuery.setParameter("prefixIdentifier", prefixIdentifier );
+                projectTypedQuery.setParameter("identifier", "%" + identifier + "%");
             }
 
             if (Objects.nonNull(name)) {
@@ -97,7 +93,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 
         // create where clause
         if (Objects.nonNull(identifier)) {
-            filters.add("p.id = :id AND p.prefixIdentifier = :prefixIdentifier");
+            filters.add("p.identifier like :identifier");
         }
 
         if (Objects.nonNull(name)) {

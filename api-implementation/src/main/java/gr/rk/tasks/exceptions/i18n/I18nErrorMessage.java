@@ -1,4 +1,4 @@
-package gr.rk.tasks.exception.i18n;
+package gr.rk.tasks.exceptions.i18n;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -2,16 +2,15 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.exception.TaskNotFoundException;
-import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.ProjectNotFoundException;
-import gr.rk.tasks.exception.UserNotFoundException;
+import gr.rk.tasks.exceptions.TaskNotFoundException;
+import gr.rk.tasks.exceptions.i18n.I18nErrorMessage;
+import gr.rk.tasks.exceptions.i18n.ProjectNotFoundException;
+import gr.rk.tasks.exceptions.i18n.UserNotFoundException;
 import gr.rk.tasks.repository.CommentRepository;
 import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.repository.TaskRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
-import gr.rk.tasks.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TaskService {
@@ -70,7 +70,6 @@ public class TaskService {
     public Page<Task> getTasks(
             Pageable pageable,
             String identifier,
-            String projectIdentifier,
             String name,
             String status,
             String creationDateFrom,
@@ -88,7 +87,6 @@ public class TaskService {
         return taskRepository.findTaskDynamicJPQL(
                 page,
                 identifier,
-                projectIdentifier,
                 name,
                 status,
                 creationDateFrom,
@@ -100,28 +98,26 @@ public class TaskService {
     }
 
     public Optional<Task> getTask(String identifier) {
-        Long id = Util.getIdFromIdentifier(identifier);
-        String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(identifier);
-        return taskRepository.findTaskByByIdAndPrefixIdentifierAndApplicationUser(id, prefixIdentifier, userPrincipal.getApplicationUser());
+        return taskRepository.findTaskByIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser());
     }
 
-    public Page<Comment> getComments(String taskIdentifier, Pageable pageable) {
+    public void deleteTask(String taskIdentifier) {
+        taskRepository.deleteByIdentifier(taskIdentifier);
+    }
+
+    public Page<Comment> getComments(UUID identifier, Pageable pageable) {
         Pageable page = pageable;
 
         if (pageable.getPageSize() > maxSize) {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        Long id = Util.getIdFromIdentifier(taskIdentifier);
-        String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(taskIdentifier);
-        return commentRepository.findCommentByTaskIdAndApplicationUser(id, userPrincipal.getApplicationUser(), page);
+        return commentRepository.findCommentByTaskIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser(), page);
     }
 
     @Transactional
-    public Comment addTaskComment(String taskIdentifier, Comment comment) {
-        Long id = Util.getIdFromIdentifier(taskIdentifier);
-        String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(taskIdentifier);
-        Optional<Task> oTask = taskRepository.findTaskByByIdAndPrefixIdentifierAndApplicationUser(id, prefixIdentifier, userPrincipal.getApplicationUser());
+    public Comment addTaskComment(UUID identifier, Comment comment) {
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser());
 
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);

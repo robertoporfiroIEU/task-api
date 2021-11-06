@@ -1,7 +1,6 @@
 package gr.rk.tasks.repository;
 
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.util.Util;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,6 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
     public Page<Task> findTaskDynamicJPQL(
             Pageable pageable,
             String identifier,
-            String projectIdentifier,
             String name,
             String status,
             String creationDateFrom,
@@ -45,7 +43,6 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
         List<String> filters = getFilters(
                 identifier,
-                projectIdentifier,
                 name,
                 status,
                 creationDateFrom,
@@ -66,17 +63,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         // bind the parameters to avoid sql injections
         if (!filters.isEmpty()) {
             if (Objects.nonNull(identifier)) {
-                Long id = Util.getIdFromIdentifier(identifier);
-                String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(identifier);
-                taskTypedQuery.setParameter("id", id);
-                taskTypedQuery.setParameter("prefixIdentifier", prefixIdentifier);
-            }
-
-            if (Objects.nonNull(projectIdentifier)) {
-                Long id = Util.getIdFromIdentifier(projectIdentifier);
-                String prefixIdentifier = Util.getPrefixIdentifierFromIdentifier(projectIdentifier);
-                taskTypedQuery.setParameter("projectId", id);
-                taskTypedQuery.setParameter("projectPrefixIdentifier", prefixIdentifier);
+                taskTypedQuery.setParameter("identifier", "%" + identifier + "%");
             }
 
             if (Objects.nonNull(name)) {
@@ -115,7 +102,6 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
     private List<String> getFilters(
             String identifier,
-            String projectIdentifier,
             String name,
             String status,
             String creationDateFrom,
@@ -127,11 +113,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
         // create where clause
         if (Objects.nonNull(identifier)) {
-            filters.add("t.id = :id AND t.project.prefixIdentifier = :prefixIdentifier");
-        }
-
-        if (Objects.nonNull(projectIdentifier)) {
-            filters.add("t.project.id = :projectId AND t.project.prefixIdentifier = :projectPrefixIdentifier");
+            filters.add("t.identifier like :identifier");
         }
 
         if (Objects.nonNull(name)) {

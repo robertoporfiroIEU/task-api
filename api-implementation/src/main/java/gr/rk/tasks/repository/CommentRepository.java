@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findCommentByIdentifier(String identifier);
 
-    Page<Comment> findCommentByTaskIdAndApplicationUser(Long id, String applicationUser, Pageable pageable);
+    Page<Comment> findCommentByTaskIdentifierAndApplicationUser(String identifier, String applicationUser, Pageable pageable);
 }

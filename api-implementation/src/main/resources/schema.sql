@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS `tasksapidb`.`users` ;
 
 CREATE TABLE IF NOT EXISTS `tasksapidb`.`users` (
   `username` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(320),
+  `email` VARCHAR(320) NOT NULL,
   `applicationUser` VARCHAR(250) NOT NULL,
   `createdAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
   `updatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
@@ -59,15 +59,15 @@ DROP TABLE IF EXISTS `tasksapidb`.`projects` ;
 
 CREATE TABLE IF NOT EXISTS `tasksapidb`.`projects` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `identifier` CHAR(36) NOT NULL,
   `name` VARCHAR(250) NOT NULL,
   `description` VARCHAR(500) NULL DEFAULT NULL,
-  `prefixIdentifier` VARCHAR(45) NOT NULL,
   `createdAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
   `updatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
   `applicationUser` VARCHAR(250) NOT NULL COMMENT 'This column specifies the application name that used the API',
   `users_username` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `prefixIdentifier_UNIQUE` (`prefixIdentifier` ASC),
+  UNIQUE INDEX `identifier_UNIQUE` (`identifier` ASC),
   INDEX `fk_tasks_users1_idx` (`users_username` ASC),
   CONSTRAINT `fk_tasks_users10`
     FOREIGN KEY (`users_username`)
@@ -86,6 +86,7 @@ DROP TABLE IF EXISTS `tasksapidb`.`tasks` ;
 
 CREATE TABLE IF NOT EXISTS `tasksapidb`.`tasks` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `identifier` CHAR(36) NOT NULL,
   `name` VARCHAR(250) NOT NULL,
   `description` VARCHAR(500) NULL DEFAULT NULL,
   `status` VARCHAR(100) NULL DEFAULT NULL,
@@ -96,6 +97,7 @@ CREATE TABLE IF NOT EXISTS `tasksapidb`.`tasks` (
   `users_username` VARCHAR(100) NOT NULL,
   `projects_id` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`, `projects_id`),
+  UNIQUE INDEX `identifier_UNIQUE` (`identifier` ASC),
   INDEX `fk_tasks_users1_idx` (`users_username` ASC),
   INDEX `fk_tasks_projects1_idx` (`projects_id` ASC),
   CONSTRAINT `fk_tasks_users1`
