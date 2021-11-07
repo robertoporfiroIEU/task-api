@@ -8,11 +8,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
-public class Project implements AutomaticValuesGeneration {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +24,9 @@ public class Project implements AutomaticValuesGeneration {
     private String name;
 
     private String description;
+
+    @Column(unique = true)
+    private String prefixIdentifier;
 
     @Generated(GenerationTime.INSERT)
     @Column(insertable = false, updatable = false)
@@ -46,14 +48,6 @@ public class Project implements AutomaticValuesGeneration {
 
     public Project() {
         tasks = new ArrayList<>();
-    }
-
-    @PrePersist
-    @Override
-    public void generateAutomatedValues() {
-        if (Objects.isNull(this.identifier)) {
-            this.identifier = UUID.randomUUID().toString();
-        }
     }
 
     public Long getId() {
@@ -83,6 +77,10 @@ public class Project implements AutomaticValuesGeneration {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getPrefixIdentifier() { return prefixIdentifier; }
+
+    public void setPrefixIdentifier(String prefixIdentifier) { this.prefixIdentifier = prefixIdentifier; }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

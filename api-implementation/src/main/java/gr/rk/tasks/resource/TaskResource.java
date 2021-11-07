@@ -18,11 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @Validated
@@ -37,19 +36,6 @@ public class TaskResource implements TasksApi {
         this.taskMapper = taskMapper;
         this.taskService = taskService;
         this.commentMapper = commentMapper;
-    }
-
-
-    @Override
-    public ResponseEntity<TaskDTO> getTask(UUID identifier) {
-        TaskDTO taskDTO = new TaskDTO();
-        Optional<Task> oTaskEntity = taskService.getTask(identifier.toString());
-
-        if (oTaskEntity.isPresent()) {
-            taskDTO = taskMapper.toTaskDTO(oTaskEntity.get());
-        }
-
-        return ResponseEntity.ok(taskDTO);
     }
 
     @Override
@@ -88,28 +74,19 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<AssignDTO> addAssign(UUID identifier, @Valid AssignDTO assign) {
-        return null;
+    public ResponseEntity<TaskDTO> getTask(String identifier) {
+        TaskDTO taskDTO = new TaskDTO();
+        Optional<Task> oTaskEntity = taskService.getTask(identifier);
+
+        if (oTaskEntity.isPresent()) {
+            taskDTO = taskMapper.toTaskDTO(oTaskEntity.get());
+        }
+
+        return ResponseEntity.ok(taskDTO);
     }
 
     @Override
-    public ResponseEntity<SpectatorDTO> addSpectator(UUID identifier, @Valid SpectatorDTO spectator) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<CommentDTO> addTaskComment(UUID identifier, @Valid CommentDTO commentDTO) {
-        Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.addTaskComment(identifier, commentEntity);
-
-        // Get commentDTO with information that exists in the Comment entity
-        CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
-
-        return ResponseEntity.ok(commentDTOResponse);
-    }
-
-    @Override
-    public ResponseEntity<TaskDTO> createTask(@Valid TaskDTO taskDTO) {
+    public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
         Task taskEntity = taskMapper.toTask(taskDTO);
         taskEntity = taskService.createTask(taskEntity);
 
@@ -119,12 +96,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<TaskDTO>> getAssigns(UUID identifier, @Valid Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Page<CommentDTO>> getComments(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<Page<CommentDTO>> getComments(String identifier,  Pageable pageable) {
         List<CommentDTO> commentsDTO = new ArrayList<>();
         Page<CommentDTO> commentsDTOPage= new PageImpl<>(commentsDTO);
 
@@ -138,12 +110,38 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<SpectatorDTO>> getSpectators(UUID identifier, @Valid Pageable pageable) {
+    public ResponseEntity<CommentDTO> addTaskComment(String identifier, CommentDTO commentDTO) {
+        Comment commentEntity = commentMapper.toComment(commentDTO);
+        commentEntity = taskService.addTaskComment(identifier, commentEntity);
+
+        // Get commentDTO with information that exists in the Comment entity
+        CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
+
+        return ResponseEntity.ok(commentDTOResponse);
+    }
+
+    @Override
+    public ResponseEntity<AssignDTO> addAssign(String identifier, AssignDTO assign) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Page<TaskDTO>> getHistory(UUID identifier, @Valid Pageable pageable, @Valid String identifier2, @Valid String newHashCode, @Valid String changedBy) {
+    public ResponseEntity<SpectatorDTO> addSpectator(String identifier, SpectatorDTO spectator) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<TaskDTO>> getAssigns(String identifier,  Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<SpectatorDTO>> getSpectators(String identifier, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<TaskDTO>> getHistory(String identifier,  Pageable pageable,  String identifier2, String newHashCode, String changedBy) {
         return null;
     }
 }

@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,22 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional
+    @Override
+    public Project saveProject(Project project) {
+        String lastProjectIdSQL = "SELECT p.id from Project p order by p.id desc";
+        // Get the last id of the project entity and increment by one
+        long lastId;
+        try {
+            lastId = entityManager.createQuery(lastProjectIdSQL, Long.class).setMaxResults(1).getSingleResult();
+            lastId ++;
+        } catch (NoResultException e){
+            lastId = 0;
+        }
+        project.setIdentifier(project.getPrefixIdentifier() + "-" + lastId);
+        entityManager.persist(project);
+        return project;
+    }
+
     @Override
     public Page<Project> findProjectDynamicJPQL(
             Pageable pageable,

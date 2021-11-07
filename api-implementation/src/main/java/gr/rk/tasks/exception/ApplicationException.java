@@ -1,6 +1,6 @@
-package gr.rk.tasks.exceptions;
+package gr.rk.tasks.exception;
 
-import gr.rk.tasks.exceptions.i18n.I18nErrorMessage;
+import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 
 public class ApplicationException extends RuntimeException {
 

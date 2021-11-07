@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,24 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional
+    @Override
+    public Task saveTask(Task task) {
+        String lastTaskIdSQL = "SELECT t.id from Task t order by t.id desc";
+        // Get the last id of the task entity and increment by one
+        long lastId;
+
+        try {
+            lastId = entityManager.createQuery(lastTaskIdSQL, Long.class).setMaxResults(1).getSingleResult();
+            lastId++;
+        } catch (NoResultException e) {
+            lastId = 0;
+        }
+
+        task.setIdentifier(task.getProject().getPrefixIdentifier() + "-" + lastId);
+        entityManager.persist(task);
+        return task;
+    }
+
     @Override
     public Page<Task> findTaskDynamicJPQL(
             Pageable pageable,
