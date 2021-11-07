@@ -8,11 +8,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tasks")
-public class Task implements AutomaticValuesGeneration {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,15 +62,6 @@ public class Task implements AutomaticValuesGeneration {
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
     }
-
-    @PrePersist
-    @Override
-    public void generateAutomatedValues() {
-        if (Objects.isNull(this.identifier)) {
-            this.identifier = UUID.randomUUID().toString();
-        }
-    }
-
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;

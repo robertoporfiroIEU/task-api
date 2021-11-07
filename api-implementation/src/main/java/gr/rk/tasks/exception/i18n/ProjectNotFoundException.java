@@ -1,6 +1,6 @@
-package gr.rk.tasks.exceptions.i18n;
+package gr.rk.tasks.exception.i18n;
 
-import gr.rk.tasks.exceptions.ApplicationException;
+import gr.rk.tasks.exception.ApplicationException;
 
 public class ProjectNotFoundException extends ApplicationException {
 
