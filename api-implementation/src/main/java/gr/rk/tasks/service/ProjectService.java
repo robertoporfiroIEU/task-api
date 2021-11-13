@@ -63,7 +63,7 @@ public class ProjectService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return projectRepository.findProjectDynamicJPQL(
+        return projectRepository.findProjectsDynamicJPQL(
                 page,
                 identifier,
                 name,

@@ -38,7 +38,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     }
 
     @Override
-    public Page<Project> findProjectDynamicJPQL(
+    public Page<Project> findProjectsDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,

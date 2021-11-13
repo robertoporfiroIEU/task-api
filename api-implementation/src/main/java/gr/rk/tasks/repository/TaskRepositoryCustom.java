@@ -11,7 +11,7 @@ public interface TaskRepositoryCustom {
     @Transactional
     Task saveTask(Task task);
 
-    Page<Task> findTaskDynamicJPQL(
+    Page<Task> findTasksDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,
