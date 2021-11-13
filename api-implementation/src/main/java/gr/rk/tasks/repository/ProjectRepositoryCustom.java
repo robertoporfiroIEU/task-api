@@ -11,7 +11,7 @@ public interface ProjectRepositoryCustom {
     @Transactional
     Project saveProject(Project project);
 
-    Page<Project> findProjectDynamicJPQL(
+    Page<Project> findProjectsDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,

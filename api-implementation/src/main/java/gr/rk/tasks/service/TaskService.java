@@ -78,7 +78,7 @@ public class TaskService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return taskRepository.findTaskDynamicJPQL(
+        return taskRepository.findTasksDynamicJPQL(
                 page,
                 identifier,
                 name,

@@ -22,4 +22,6 @@ applicationConfigurations:
     pageMaxSize: 25
   groupService:
     pageMaxSize: 25
+  userService:
+    pageMaxSize: 25
 

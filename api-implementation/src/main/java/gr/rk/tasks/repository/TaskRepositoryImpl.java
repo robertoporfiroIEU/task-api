@@ -40,7 +40,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
     }
 
     @Override
-    public Page<Task> findTaskDynamicJPQL(
+    public Page<Task> findTasksDynamicJPQL(
             Pageable pageable,
             String identifier,
             String name,
