@@ -34,8 +34,7 @@ CREATE TABLE IF NOT EXISTS `tasksapidb`.`groups`
     `applicationUser` VARCHAR(250) NOT NULL,
     `createdAt`       TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP(),
     `updatedAt`       TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
-    PRIMARY KEY (`name`),
-    UNIQUE INDEX `applicationUser_UNIQUE` (`applicationUser` ASC)
+    PRIMARY KEY (`name`)
 )
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8;
