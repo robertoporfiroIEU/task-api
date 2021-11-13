@@ -19,5 +19,7 @@ applicationConfigurations:
   projectService:
     pageMaxSize: 25
   taskService:
-   pageMaxSize: 25
+    pageMaxSize: 25
+  groupService:
+    pageMaxSize: 25
 

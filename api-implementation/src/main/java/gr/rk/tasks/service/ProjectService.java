@@ -64,7 +64,7 @@ public class ProjectService {
         }
 
         return projectRepository.findProjectDynamicJPQL(
-                pageable,
+                page,
                 identifier,
                 name,
                 creationDateFrom,
