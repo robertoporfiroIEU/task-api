@@ -314,7 +314,7 @@ paths:
         - "Tasks"
       operationId: getAssigns
       x-paginated-object:
-        - gr.rk.tasks.V1.dto.TaskDTO
+        - gr.rk.tasks.V1.dto.AssignDTO
       parameters:
         - name: identifier
           in: path
@@ -828,7 +828,7 @@ components:
           readOnly: true
         group:
           $ref: '#/components/schemas/Group'
-        users:
+        user:
           $ref: '#/components/schemas/User'
         assignDate:
           type: string

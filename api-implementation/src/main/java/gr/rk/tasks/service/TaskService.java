@@ -1,14 +1,16 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.exception.TaskNotFoundException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.exception.i18n.ProjectNotFoundException;
 import gr.rk.tasks.exception.i18n.UserNotFoundException;
+import gr.rk.tasks.exception.i18n.UserOrGroupNotFoundException;
+import gr.rk.tasks.repository.AssignRepository;
 import gr.rk.tasks.repository.CommentRepository;
 import gr.rk.tasks.repository.TaskRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,7 @@ public class TaskService {
 
     private final CommentRepository commentRepository;
 
-    private final UserRepository userRepository;
+    private final AssignRepository assignRepository;
 
     private final UserPrincipal userPrincipal;
 
@@ -39,18 +41,18 @@ public class TaskService {
     public TaskService(
             TaskRepository taskRepository,
             CommentRepository commentRepository,
-            UserPrincipal userPrincipal,
-            UserRepository userRepository
+            AssignRepository assignRepository,
+            UserPrincipal userPrincipal
     ) {
         this.taskRepository = taskRepository;
         this.commentRepository = commentRepository;
+        this.assignRepository = assignRepository;
         this.userPrincipal = userPrincipal;
-        this.userRepository = userRepository;
     }
 
     @Transactional
     public Task createTask(Task task) {
-        if (Objects.isNull(task.getCreatedBy()) || !userRepository.existsByUsername(task.getCreatedBy().getUsername())) {
+        if (Objects.isNull(task.getCreatedBy())) {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
@@ -106,7 +108,7 @@ public class TaskService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return commentRepository.findCommentByTaskIdentifierAndApplicationUser(identifier.toString(), userPrincipal.getApplicationUser(), page);
+        return commentRepository.findCommentByTaskIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser(), page);
     }
 
     @Transactional
@@ -117,7 +119,7 @@ public class TaskService {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
-        if (!userRepository.existsByUsername(comment.getCreatedBy().getUsername())) {
+        if (Objects.isNull(comment.getCreatedBy())) {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
@@ -126,4 +128,33 @@ public class TaskService {
         task.getComments().add(comment);
         return commentRepository.save(comment);
     }
+
+    public Page<Assign> getAssigns(String identifier, Pageable pageable) {
+        Pageable page = pageable;
+
+        if (pageable.getPageSize() > maxSize) {
+            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        }
+
+        return assignRepository.findAssignByTaskIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser(), page);
+    }
+
+    @Transactional
+    public Assign addAssign(String identifier, Assign assign) {
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser());
+
+        if (oTask.isEmpty()) {
+            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+        }
+
+        if (Objects.isNull(assign.getUser()) && Objects.isNull(assign.getGroup())) {
+            throw new UserOrGroupNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+        }
+
+        Task task = oTask.get();
+        assign.setTask(task);
+        task.getAssigns().add(assign);
+        return assignRepository.save(assign);
+    }
+
 }

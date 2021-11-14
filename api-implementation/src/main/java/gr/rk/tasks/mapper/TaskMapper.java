@@ -1,9 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.TaskDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.service.ProjectService;
@@ -16,7 +14,7 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = { Util.class })
+@Mapper(componentModel = "spring", imports = { Util.class }, uses = { UserMapper.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -53,7 +51,4 @@ public abstract class TaskMapper {
     public abstract TaskDTO toTaskDTO(Task task);
 
     protected abstract List<TaskDTO> toTasksDTO(Page<Task> tasks);
-
-    @Mapping(target = "name", source = "username")
-    public abstract UserDTO toUserDTO(User user);
 }

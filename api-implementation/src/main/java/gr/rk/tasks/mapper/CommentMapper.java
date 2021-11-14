@@ -1,9 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.CommentDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Comment;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
@@ -15,7 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = { Util.class, UUID.class })
+@Mapper(componentModel = "spring", imports = { Util.class, UUID.class }, uses = { UserMapper.class })
 public abstract class CommentMapper {
 
     @Autowired
@@ -23,12 +21,12 @@ public abstract class CommentMapper {
     @Autowired
     protected UserRepository userRepository;
 
-    public Page<CommentDTO> toPageCommentDTO(Page<Comment> commentsEntity) {
+    public Page<CommentDTO> toPageCommentsDTO(Page<Comment> commentsEntity) {
         return new PageImpl<>( toCommentsDTO(commentsEntity), commentsEntity.getPageable(), commentsEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
-    @Mapping(target = "createdBy", expression = "java(userRepository.findById(commentDTO.getCreatedBy().getName()).get())")
+    @Mapping(target = "createdBy", expression = "java(userRepository.findById(commentDTO.getCreatedBy().getName()).orElse(null))")
     public abstract Comment toComment(CommentDTO commentDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")
@@ -36,7 +34,4 @@ public abstract class CommentMapper {
     public abstract CommentDTO toCommentDTO(Comment comment);
 
     protected abstract List<CommentDTO> toCommentsDTO(Page<Comment> comments);
-
-    @Mapping(target = "name", source = "username")
-    public abstract UserDTO toUserDTO(User user);
 }

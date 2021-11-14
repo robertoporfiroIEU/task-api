@@ -4,7 +4,6 @@ import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.exception.i18n.UserNotFoundException;
 import gr.rk.tasks.repository.ProjectRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +21,6 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    private final UserRepository userRepository;
-
     private final UserPrincipal userPrincipal;
 
     @Value("${applicationConfigurations.projectService.pageMaxSize: 25}")
@@ -32,17 +29,15 @@ public class ProjectService {
     @Autowired
     public ProjectService(
             ProjectRepository projectRepository,
-            UserRepository userRepository,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
         this.userPrincipal = userPrincipal;
     }
 
     @Transactional
     public Project createProject(Project project) {
-        if (Objects.isNull(project.getCreatedBy()) || !userRepository.existsByUsername(project.getCreatedBy().getUsername())) {
+        if (Objects.isNull(project.getCreatedBy())) {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 

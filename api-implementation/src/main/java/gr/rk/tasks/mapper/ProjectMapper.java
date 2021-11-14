@@ -1,9 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.ProjectDTO;
-import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
@@ -15,7 +13,7 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports =  { Util.class })
+@Mapper(componentModel = "spring", imports =  { Util.class }, uses = { UserMapper.class })
 public abstract class ProjectMapper {
 
     @Autowired
@@ -39,9 +37,6 @@ public abstract class ProjectMapper {
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(project.getCreatedAt()))")
     @Mapping(target = "realm", expression = "java(project.getApplicationUser())")
     public abstract ProjectDTO toProjectDTO(Project project);
-
-    @Mapping(target = "name", source = "username")
-    public abstract UserDTO toUserDTO(User user);
 
     protected abstract List<ProjectDTO> toProjectsDTO(Page<Project> projects);
 }
