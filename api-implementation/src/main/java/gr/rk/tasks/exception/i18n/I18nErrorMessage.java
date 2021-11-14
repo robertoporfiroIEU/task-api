@@ -5,9 +5,10 @@ import java.util.Set;
 
 public enum I18nErrorMessage {
 
-    TASK_NOT_FOUND("The task not found", "001", 400, "taskApi.task-not-found", ErrorStatusEnum.FAIL),
-    USER_NOT_FOUND("The user not found", "002", 400, "taskApi.user-not-found", ErrorStatusEnum.FAIL),
-    PROJECT_NOT_FOUND("The project not found", "003", 400, "taskApi.project-not-found", ErrorStatusEnum.FAIL);
+    TASK_NOT_FOUND("Task not found", "001", 400, "taskApi.task-not-found", ErrorStatusEnum.FAIL),
+    USER_NOT_FOUND("User not found", "002", 400, "taskApi.user-not-found", ErrorStatusEnum.FAIL),
+    PROJECT_NOT_FOUND("Project not found", "003", 400, "taskApi.project-not-found", ErrorStatusEnum.FAIL),
+    USER_OR_GROUP_NOT_FOUND("User or Group not found", "004", 400, "taskApi.user-or-group-not-found", ErrorStatusEnum.FAIL);
 
     private String summary;
     private String errorCode;

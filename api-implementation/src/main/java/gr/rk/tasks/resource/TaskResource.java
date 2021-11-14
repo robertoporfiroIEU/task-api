@@ -5,8 +5,10 @@ import gr.rk.tasks.V1.dto.AssignDTO;
 import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
+import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.mapper.AssignMapper;
 import gr.rk.tasks.mapper.CommentMapper;
 import gr.rk.tasks.mapper.TaskMapper;
 import gr.rk.tasks.service.TaskService;
@@ -30,12 +32,14 @@ public class TaskResource implements TasksApi {
     private final TaskMapper taskMapper;
     private final CommentMapper commentMapper;
     private final TaskService taskService;
+    private final AssignMapper assignMapper;
 
     @Autowired
-    public TaskResource(TaskMapper taskMapper, TaskService taskService, CommentMapper commentMapper) {
+    public TaskResource(TaskMapper taskMapper, TaskService taskService, CommentMapper commentMapper, AssignMapper assignMapper) {
         this.taskMapper = taskMapper;
         this.taskService = taskService;
         this.commentMapper = commentMapper;
+        this.assignMapper = assignMapper;
     }
 
     @Override
@@ -103,7 +107,7 @@ public class TaskResource implements TasksApi {
         Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
 
         if (!commentsEntity.isEmpty()) {
-            commentsDTOPage = commentMapper.toPageCommentDTO(commentsEntity);
+            commentsDTOPage = commentMapper.toPageCommentsDTO(commentsEntity);
         }
 
         return ResponseEntity.ok(commentsDTOPage);
@@ -121,17 +125,31 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<AssignDTO> addAssign(String identifier, AssignDTO assign) {
-        return null;
+    public ResponseEntity<Page<AssignDTO>> getAssigns(String identifier,  Pageable pageable) {
+        List<AssignDTO> assignsDTO = new ArrayList<>();
+        Page<AssignDTO> assignsDTOPage = new PageImpl<>(assignsDTO);
+
+        Page<Assign> assignsEntity = taskService.getAssigns(identifier, pageable);
+
+        if (!assignsEntity.isEmpty()) {
+            assignsDTOPage = assignMapper.toPageAssignsDTO(assignsEntity);
+        }
+
+        return ResponseEntity.ok(assignsDTOPage);
+    }
+
+    @Override
+    public ResponseEntity<AssignDTO> addAssign(String identifier, AssignDTO assignDTO) {
+        Assign assignEntity = assignMapper.toAssign(assignDTO);
+        assignEntity = taskService.addAssign(identifier, assignEntity);
+
+        AssignDTO assignDTOResponse = assignMapper.toAssignDTO(assignEntity);
+
+        return ResponseEntity.ok(assignDTOResponse);
     }
 
     @Override
     public ResponseEntity<SpectatorDTO> addSpectator(String identifier, SpectatorDTO spectator) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Page<TaskDTO>> getAssigns(String identifier,  Pageable pageable) {
         return null;
     }
 
