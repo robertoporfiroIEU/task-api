@@ -565,13 +565,44 @@ paths:
       parameters:
         - name: name
           in: path
-          description: identifier of the Group
+          description: name of the Group
           required: true
           schema:
             type: string
       responses:
         "200":
           description: A Group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+
+
+  /groups/{name}/users:
+    post:
+      description: Return the specific group with the new user inside
+      tags:
+        - Groups
+      operationId: addUserToGroup
+      parameters:
+        - name: name
+          in: path
+          description: name of the Group
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: A Group with the User list
           content:
             application/json:
               schema:
@@ -876,11 +907,11 @@ components:
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
           readOnly: true
-        users_url:
+        users:
           readOnly: true
-          type: string
-          format: url
-          example: "{protocol}//{server-base-url}/groups/{identifier}/users"
+          items:
+            $ref: '#/components/schemas/User'
+
 
     User:
       description: This is a user object
@@ -893,6 +924,10 @@ components:
         email:
           type: string
           format: email
+        groups:
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/Group"
 
 
     History:

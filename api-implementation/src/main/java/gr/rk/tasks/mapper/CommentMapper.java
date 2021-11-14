@@ -22,7 +22,7 @@ public abstract class CommentMapper {
     protected UserRepository userRepository;
 
     public Page<CommentDTO> toPageCommentsDTO(Page<Comment> commentsEntity) {
-        return new PageImpl<>( toCommentsDTO(commentsEntity), commentsEntity.getPageable(), commentsEntity.getTotalElements());
+        return new PageImpl<>( toCommentsDTOList(commentsEntity), commentsEntity.getPageable(), commentsEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
@@ -33,5 +33,5 @@ public abstract class CommentMapper {
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(comment.getCreatedAt()))")
     public abstract CommentDTO toCommentDTO(Comment comment);
 
-    protected abstract List<CommentDTO> toCommentsDTO(Page<Comment> comments);
+    protected abstract List<CommentDTO> toCommentsDTOList(Page<Comment> comments);
 }
