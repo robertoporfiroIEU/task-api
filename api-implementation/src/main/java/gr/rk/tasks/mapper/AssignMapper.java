@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class }, uses = { GroupMapper.class, UserMapper.class })
+@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class }, uses = { GroupMapper.class })
 public abstract class AssignMapper {
 
     @Autowired
@@ -26,11 +26,12 @@ public abstract class AssignMapper {
     protected GroupRepository groupRepository;
 
     public Page<AssignDTO> toPageAssignsDTO(Page<Assign> assignsEntity) {
-        return new PageImpl<>(toAssignsDTO(assignsEntity), assignsEntity.getPageable(), assignsEntity.getTotalElements());
+        return new PageImpl<>(toAssignsDTOList(assignsEntity), assignsEntity.getPageable(), assignsEntity.getTotalElements());
     }
 
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "assignDate")
+    @Mapping(ignore = true, target = "task")
     @Mapping(target = "user", expression = "java(userRepository.findById(assignDTO.getUser().getName()).orElse(null))")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     public abstract Assign toAssign(AssignDTO assignDTO);
@@ -39,5 +40,5 @@ public abstract class AssignMapper {
     @Mapping(target = "assignDate", expression = "java(Util.toDateISO8601WithTimeZone(assign.getAssignDate()))")
     public abstract AssignDTO toAssignDTO(Assign assign);
 
-    protected abstract List<AssignDTO> toAssignsDTO(Page<Assign> assigns);
+    protected abstract List<AssignDTO> toAssignsDTOList(Page<Assign> assigns);
 }

@@ -5,9 +5,7 @@ import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "groups")
@@ -28,8 +26,8 @@ public class Group {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "groups", cascade = CascadeType.PERSIST)
-    private List<User> users;
+    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
+    private Set<User> users;
 
     @OneToMany(mappedBy = "group")
     private List<Assign> assigns;
@@ -38,7 +36,7 @@ public class Group {
     private List<Spectator> spectators;
 
     public Group() {
-        this.users = new ArrayList<>();
+        this.users = new HashSet<>();
         this.assigns = new ArrayList<>();
         this.spectators = new ArrayList<>();
     }
@@ -63,7 +61,7 @@ public class Group {
         this.updatedAt = updateAt;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
@@ -95,7 +93,7 @@ public class Group {
         return updatedAt;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 

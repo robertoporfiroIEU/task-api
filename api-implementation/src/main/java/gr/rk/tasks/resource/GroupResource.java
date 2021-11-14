@@ -2,8 +2,11 @@ package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.GroupsApi;
 import gr.rk.tasks.V1.dto.GroupDTO;
+import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Group;
+import gr.rk.tasks.entity.User;
 import gr.rk.tasks.mapper.GroupMapper;
+import gr.rk.tasks.mapper.UserMapper;
 import gr.rk.tasks.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,11 +24,13 @@ public class GroupResource implements GroupsApi {
 
     private final GroupService groupService;
     private final GroupMapper groupMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public GroupResource(GroupService groupService, GroupMapper groupMapper) {
+    public GroupResource(GroupService groupService, GroupMapper groupMapper, UserMapper userMapper) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -64,4 +69,12 @@ public class GroupResource implements GroupsApi {
         return ResponseEntity.ok(groupDTOResponse);
     }
 
+    @Override
+    public ResponseEntity<GroupDTO> addUserToGroup(String name, UserDTO userDTO) {
+        User userEntity = userMapper.toUser(userDTO);
+        Group group = groupService.addUserToGroup(name, userEntity);
+
+        GroupDTO groupDTO = groupMapper.toGroupDTO(group);
+        return ResponseEntity.ok(groupDTO);
+    }
 }

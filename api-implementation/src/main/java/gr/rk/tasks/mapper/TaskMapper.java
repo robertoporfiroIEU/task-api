@@ -25,7 +25,7 @@ public abstract class TaskMapper {
     protected ProjectService projectService;
 
     public Page<TaskDTO> toPageTasksDTO(Page<Task> tasksEntity) {
-        return new PageImpl<>(toTasksDTO(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
+        return new PageImpl<>(toTasksDTOList(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
     }
 
     @Mapping(target = "project", expression = "java(projectService.getProject(taskDTO.getProjectIdentifier()).orElse(null))")
@@ -50,5 +50,5 @@ public abstract class TaskMapper {
     @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")
     public abstract TaskDTO toTaskDTO(Task task);
 
-    protected abstract List<TaskDTO> toTasksDTO(Page<Task> tasks);
+    protected abstract List<TaskDTO> toTasksDTOList(Page<Task> tasks);
 }

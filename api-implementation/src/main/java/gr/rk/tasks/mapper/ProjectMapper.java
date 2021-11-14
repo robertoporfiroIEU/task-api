@@ -22,7 +22,7 @@ public abstract class ProjectMapper {
     protected UserRepository userRepository;
 
     public Page<ProjectDTO> toPageProjectsDTO(Page<Project> projectEntity) {
-        return new PageImpl<>(toProjectsDTO(projectEntity), projectEntity.getPageable(), projectEntity.getTotalElements());
+        return new PageImpl<>(toProjectsDTOList(projectEntity), projectEntity.getPageable(), projectEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
@@ -38,5 +38,5 @@ public abstract class ProjectMapper {
     @Mapping(target = "realm", expression = "java(project.getApplicationUser())")
     public abstract ProjectDTO toProjectDTO(Project project);
 
-    protected abstract List<ProjectDTO> toProjectsDTO(Page<Project> projects);
+    protected abstract List<ProjectDTO> toProjectsDTOList(Page<Project> projects);
 }

@@ -8,7 +8,8 @@ public enum I18nErrorMessage {
     TASK_NOT_FOUND("Task not found", "001", 400, "taskApi.task-not-found", ErrorStatusEnum.FAIL),
     USER_NOT_FOUND("User not found", "002", 400, "taskApi.user-not-found", ErrorStatusEnum.FAIL),
     PROJECT_NOT_FOUND("Project not found", "003", 400, "taskApi.project-not-found", ErrorStatusEnum.FAIL),
-    USER_OR_GROUP_NOT_FOUND("User or Group not found", "004", 400, "taskApi.user-or-group-not-found", ErrorStatusEnum.FAIL);
+    USER_OR_GROUP_NOT_FOUND("User or Group not found", "004", 400, "taskApi.user-or-group-not-found", ErrorStatusEnum.FAIL),
+    GROUP_NOT_FOUND("Group not found", "005", 400, "taskApi.group-not-found", ErrorStatusEnum.FAIL);
 
     private String summary;
     private String errorCode;
