@@ -8,6 +8,7 @@ import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +27,7 @@ public abstract class UserMapper {
 
     protected abstract List<UserDTO> toUsersDTOList(Page<User> users);
 
+    @Named("toUser")
     @Mapping(target = "username", source = "name")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(ignore = true, target = "createdAt")
@@ -35,9 +37,12 @@ public abstract class UserMapper {
     @Mapping(ignore = true, target = "spectators")
     public abstract User toUser(UserDTO userDTO);
 
+    @Named("toUserDTO")
     @Mapping(target = "name", source = "username")
+    @Mapping(target = "groups", source = "groups", qualifiedByName = "groupDTOFromUser")
     public abstract UserDTO toUserDTO(User user);
 
+    @Named("groupDTOFromUser")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")
     @Mapping(target = "realm", expression = "java(group.getApplicationUser())")
     @Mapping(ignore = true, target = "users")

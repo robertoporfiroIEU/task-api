@@ -1,16 +1,9 @@
 package gr.rk.tasks.service;
 
-import gr.rk.tasks.entity.Assign;
-import gr.rk.tasks.entity.Comment;
-import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.entity.*;
 import gr.rk.tasks.exception.TaskNotFoundException;
-import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.i18n.ProjectNotFoundException;
-import gr.rk.tasks.exception.i18n.UserNotFoundException;
-import gr.rk.tasks.exception.i18n.UserOrGroupNotFoundException;
-import gr.rk.tasks.repository.AssignRepository;
-import gr.rk.tasks.repository.CommentRepository;
-import gr.rk.tasks.repository.TaskRepository;
+import gr.rk.tasks.exception.i18n.*;
+import gr.rk.tasks.repository.*;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +25,12 @@ public class TaskService {
 
     private final AssignRepository assignRepository;
 
+    private final SpectatorRepository spectatorRepository;
+
+    private final UserRepository userRepository;
+
+    private final GroupRepository groupRepository;
+
     private final UserPrincipal userPrincipal;
 
     @Value("${applicationConfigurations.taskService.pageMaxSize: 25}")
@@ -42,11 +41,17 @@ public class TaskService {
             TaskRepository taskRepository,
             CommentRepository commentRepository,
             AssignRepository assignRepository,
+            SpectatorRepository spectatorRepository,
+            UserRepository userRepository,
+            GroupRepository groupRepository,
             UserPrincipal userPrincipal
     ) {
         this.taskRepository = taskRepository;
         this.commentRepository = commentRepository;
         this.assignRepository = assignRepository;
+        this.spectatorRepository = spectatorRepository;
+        this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
         this.userPrincipal = userPrincipal;
     }
 
@@ -148,13 +153,72 @@ public class TaskService {
         }
 
         if (Objects.isNull(assign.getUser()) && Objects.isNull(assign.getGroup())) {
-            throw new UserOrGroupNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            throw new UserAndGroupNotFoundException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
         }
 
         Task task = oTask.get();
+
+        if (Objects.nonNull(assign.getUser())) {
+            Optional<User> oUser = userRepository.findById(assign.getUser().getUsername());
+
+            if (oUser.isEmpty()) {
+                throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            }
+
+            assign.setUser(oUser.get());
+        }
+
+        if (Objects.nonNull(assign.getGroup())) {
+            Optional<Group> oGroup = groupRepository.findById(assign.getGroup().getName());
+
+            if (oGroup.isEmpty()) {
+                throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+            }
+
+            assign.setGroup(oGroup.get());
+        }
+
         assign.setTask(task);
         task.getAssigns().add(assign);
         return assignRepository.save(assign);
     }
 
+    @Transactional
+    public Spectator addSpectator(String identifier, Spectator spectator) {
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser());
+
+        if (oTask.isEmpty()) {
+            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+        }
+
+        if (Objects.isNull(spectator.getUser()) && Objects.isNull(spectator.getGroup())) {
+            throw new UserAndGroupNotFoundException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
+        }
+
+        Task task = oTask.get();
+
+        if (Objects.nonNull(spectator.getUser())) {
+            Optional<User> oUser = userRepository.findById(spectator.getUser().getUsername());
+
+            if (oUser.isEmpty()) {
+                throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            }
+
+            spectator.setUser(oUser.get());
+        }
+
+        if (Objects.nonNull(spectator.getGroup())) {
+            Optional<Group> oGroup = groupRepository.findById(spectator.getGroup().getName());
+
+            if (oGroup.isEmpty()) {
+                throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+            }
+
+            spectator.setGroup(oGroup.get());
+        }
+
+        spectator.setTask(task);
+        task.getSpectators().add(spectator);
+        return spectatorRepository.save(spectator);
+    }
 }

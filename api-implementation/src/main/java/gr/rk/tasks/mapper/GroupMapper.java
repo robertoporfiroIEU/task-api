@@ -9,6 +9,7 @@ import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +27,7 @@ public abstract class GroupMapper {
         return new PageImpl<>(toGroupsDTOList(groupEntity), groupEntity.getPageable(), groupEntity.getTotalElements());
     }
 
+    @Named("toGroup")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(ignore = true, target = "users")
     @Mapping(ignore = true, target = "assigns")
@@ -42,5 +44,5 @@ public abstract class GroupMapper {
 
     @Mapping(target = "name", source = "username")
     @Mapping(ignore = true, target = "groups")
-    public abstract UserDTO toUserDTO(User user);
+    protected abstract UserDTO toUserDTO(User user);
 }
