@@ -1,9 +1,8 @@
 package gr.rk.tasks.mapper;
 
-import gr.rk.tasks.V1.dto.AssignDTO;
-import gr.rk.tasks.entity.Assign;
+import gr.rk.tasks.V1.dto.SpectatorDTO;
+import gr.rk.tasks.entity.Spectator;
 import gr.rk.tasks.repository.GroupRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -16,29 +15,29 @@ import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring", imports =  { Util.class, UUID.class }, uses = { GroupMapper.class, UserMapper.class })
-public abstract class AssignMapper {
+public abstract class SpectatorMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
     @Autowired
     protected GroupRepository groupRepository;
 
-    public Page<AssignDTO> toPageAssignsDTO(Page<Assign> assignsEntity) {
-        return new PageImpl<>(toAssignsDTOList(assignsEntity), assignsEntity.getPageable(), assignsEntity.getTotalElements());
+    public Page<SpectatorDTO> toPageSpectatorDTO(Page<Spectator> spectatorEntity) {
+        return new PageImpl<>(toSpectatorDTOList(spectatorEntity), spectatorEntity.getPageable(), spectatorEntity.getTotalElements());
     }
 
     @Mapping(ignore = true, target = "identifier")
-    @Mapping(ignore = true, target = "assignDate")
+    @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "task")
     @Mapping(target = "user", source = "user", qualifiedByName = "toUser")
     @Mapping(target = "group", source = "group", qualifiedByName = "toGroup")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
-    public abstract Assign toAssign(AssignDTO assignDTO);
+    public abstract Spectator toSpectator(SpectatorDTO spectatorDTO);
 
-    @Mapping(target = "identifier", expression = "java(UUID.fromString(assign.getIdentifier()))")
-    @Mapping(target = "assignDate", expression = "java(Util.toDateISO8601WithTimeZone(assign.getAssignDate()))")
+    @Mapping(target = "identifier", expression = "java(UUID.fromString(spectator.getIdentifier()))")
+    @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(spectator.getCreatedAt()))")
     @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTO")
-    public abstract AssignDTO toAssignDTO(Assign assign);
+    public abstract SpectatorDTO toSpectatorDTO(Spectator spectator);
 
-    protected abstract List<AssignDTO> toAssignsDTOList(Page<Assign> assigns);
+    protected abstract List<SpectatorDTO> toSpectatorDTOList(Page<Spectator> spectators);
 }

@@ -7,9 +7,11 @@ import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.entity.Comment;
+import gr.rk.tasks.entity.Spectator;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.mapper.AssignMapper;
 import gr.rk.tasks.mapper.CommentMapper;
+import gr.rk.tasks.mapper.SpectatorMapper;
 import gr.rk.tasks.mapper.TaskMapper;
 import gr.rk.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +35,21 @@ public class TaskResource implements TasksApi {
     private final CommentMapper commentMapper;
     private final TaskService taskService;
     private final AssignMapper assignMapper;
+    private final SpectatorMapper spectatorMapper;
 
     @Autowired
-    public TaskResource(TaskMapper taskMapper, TaskService taskService, CommentMapper commentMapper, AssignMapper assignMapper) {
+    public TaskResource(
+            TaskMapper taskMapper,
+            TaskService taskService,
+            CommentMapper commentMapper,
+            AssignMapper assignMapper,
+            SpectatorMapper spectatorMapper
+    ) {
         this.taskMapper = taskMapper;
         this.taskService = taskService;
         this.commentMapper = commentMapper;
         this.assignMapper = assignMapper;
+        this.spectatorMapper = spectatorMapper;
     }
 
     @Override
@@ -149,8 +159,13 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<SpectatorDTO> addSpectator(String identifier, SpectatorDTO spectator) {
-        return null;
+    public ResponseEntity<SpectatorDTO> addSpectator(String identifier, SpectatorDTO spectatorDTO) {
+        Spectator spectatorEntity = spectatorMapper.toSpectator(spectatorDTO);
+        spectatorEntity = taskService.addSpectator(identifier, spectatorEntity);
+
+        SpectatorDTO spectatorDTOResponse = spectatorMapper.toSpectatorDTO(spectatorEntity);
+
+        return ResponseEntity.ok(spectatorDTOResponse);
     }
 
     @Override
