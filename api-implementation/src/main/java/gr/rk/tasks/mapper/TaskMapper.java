@@ -48,6 +48,7 @@ public abstract class TaskMapper {
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
     @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/assigns\"))")
     @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")
+    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
     public abstract TaskDTO toTaskDTO(Task task);
 
     protected abstract List<TaskDTO> toTasksDTOList(Page<Task> tasks);

@@ -2,7 +2,6 @@ package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.SpectatorDTO;
 import gr.rk.tasks.entity.Spectator;
-import gr.rk.tasks.repository.GroupRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -19,8 +18,6 @@ public abstract class SpectatorMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected GroupRepository groupRepository;
 
     public Page<SpectatorDTO> toPageSpectatorDTO(Page<Spectator> spectatorEntity) {
         return new PageImpl<>(toSpectatorDTOList(spectatorEntity), spectatorEntity.getPageable(), spectatorEntity.getTotalElements());

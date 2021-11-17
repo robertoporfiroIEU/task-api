@@ -31,6 +31,7 @@ public abstract class CommentMapper {
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(comment.getCreatedAt()))")
+    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
     public abstract CommentDTO toCommentDTO(Comment comment);
 
     protected abstract List<CommentDTO> toCommentsDTOList(Page<Comment> comments);

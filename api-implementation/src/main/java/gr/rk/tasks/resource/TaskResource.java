@@ -170,7 +170,16 @@ public class TaskResource implements TasksApi {
 
     @Override
     public ResponseEntity<Page<SpectatorDTO>> getSpectators(String identifier, Pageable pageable) {
-        return null;
+        List<SpectatorDTO> spectatorsDTO = new ArrayList<>();
+        Page<SpectatorDTO> spectatorsDTOPage = new PageImpl<>(spectatorsDTO);
+
+        Page<Spectator> spectatorsEntity = taskService.getSpectators(identifier, pageable);
+
+        if (!spectatorsEntity.isEmpty()) {
+            spectatorsDTOPage = spectatorMapper.toPageSpectatorDTO(spectatorsEntity);
+        }
+
+        return ResponseEntity.ok(spectatorsDTOPage);
     }
 
     @Override

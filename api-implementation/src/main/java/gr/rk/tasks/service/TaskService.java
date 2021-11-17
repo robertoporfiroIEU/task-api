@@ -221,4 +221,14 @@ public class TaskService {
         task.getSpectators().add(spectator);
         return spectatorRepository.save(spectator);
     }
+
+    public Page<Spectator> getSpectators(String identifier, Pageable pageable) {
+        Pageable page = pageable;
+
+        if (pageable.getPageSize() > maxSize) {
+            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        }
+
+        return spectatorRepository.findSpectatorByTaskIdentifierAndApplicationUser(identifier, userPrincipal.getApplicationUser(), page);
+    }
 }
