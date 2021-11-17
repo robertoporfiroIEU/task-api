@@ -6,6 +6,7 @@ import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -25,8 +26,6 @@ public abstract class UserMapper {
         return new PageImpl<>(toUsersDTOList(usersEntity), usersEntity.getPageable(), usersEntity.getTotalElements());
     }
 
-    protected abstract List<UserDTO> toUsersDTOList(Page<User> users);
-
     @Named("toUser")
     @Mapping(target = "username", source = "name")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
@@ -37,10 +36,15 @@ public abstract class UserMapper {
     @Mapping(ignore = true, target = "spectators")
     public abstract User toUser(UserDTO userDTO);
 
+    protected abstract List<UserDTO> toUsersDTOList(Page<User> users);
+
     @Named("toUserDTO")
     @Mapping(target = "name", source = "username")
-    @Mapping(target = "groups", source = "groups", qualifiedByName = "groupDTOFromUser")
+    @Mapping(target = "groups", source = "groups")
     public abstract UserDTO toUserDTO(User user);
+
+    @IterableMapping(qualifiedByName="groupDTOFromUser")
+    protected abstract List<GroupDTO> groupListToGroupDTOList(List<Group> list);
 
     @Named("groupDTOFromUser")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")

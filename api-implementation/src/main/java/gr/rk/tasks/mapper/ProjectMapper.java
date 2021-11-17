@@ -34,6 +34,7 @@ public abstract class ProjectMapper {
     @Mapping(ignore = true, target = "identifier")
     public abstract Project toProject(ProjectDTO projectDTO);
 
+    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(project.getCreatedAt()))")
     @Mapping(target = "realm", expression = "java(project.getApplicationUser())")
     public abstract ProjectDTO toProjectDTO(Project project);
