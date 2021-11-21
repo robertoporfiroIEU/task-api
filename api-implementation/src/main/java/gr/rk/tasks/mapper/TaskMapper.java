@@ -2,9 +2,7 @@ package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Task;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
-import gr.rk.tasks.service.ProjectService;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,25 +17,21 @@ public abstract class TaskMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected UserRepository userRepository;
-    @Autowired
-    protected ProjectService projectService;
 
     public Page<TaskDTO> toPageTasksDTO(Page<Task> tasksEntity) {
         return new PageImpl<>(toTasksDTOList(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
     }
 
-    @Mapping(target = "project", expression = "java(projectService.getProject(taskDTO.getProjectIdentifier()).orElse(null))")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
-    @Mapping(target = "createdBy", expression = "java(userRepository.findById(taskDTO.getCreatedBy().getName()).orElse(null))")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "comments")
     @Mapping(ignore = true, target = "assigns")
     @Mapping(ignore = true, target = "spectators")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "updatedAt")
+    @Mapping(ignore = true, target = "createdBy")
+    @Mapping(ignore = true, target = "project")
     public abstract Task toTask(TaskDTO taskDTO);
 
 

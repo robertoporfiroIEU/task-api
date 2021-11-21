@@ -49,10 +49,12 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
             String creationDateTo,
             String createdBy,
             String dueDateFrom,
-            String dueDateTo) {
+            String dueDateTo,
+            String applicationUser
+            ) {
 
-        String baseJQL = "SELECT t from Task t ";
-        String countJPQL = "SELECT count(t.id) from Task t";
+        String baseJPQL = "SELECT t from Task t where t.deleted = false and t.applicationUser = '" + applicationUser + "' ";
+        String countJPQL = "SELECT count(t.id) from Task t where t.deleted = false and t.applicationUser = '" + applicationUser + "'";
         String whereClause = "";
 
         // count total results for pagination reason
@@ -70,10 +72,10 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         );
 
         if (!filters.isEmpty()) {
-            whereClause = "where " + String.join(" AND ", filters);
+            whereClause = "and " + String.join(" AND ", filters);
         }
 
-        TypedQuery<Task> taskTypedQuery = entityManager.createQuery(baseJQL + whereClause, Task.class)
+        TypedQuery<Task> taskTypedQuery = entityManager.createQuery(baseJPQL + whereClause, Task.class)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 
@@ -142,7 +144,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         }
 
         if (Objects.nonNull(createdBy)) {
-            filters.add("t.createdBy like :createdBy");
+            filters.add("t.createdBy.username like :createdBy");
         }
 
         if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {

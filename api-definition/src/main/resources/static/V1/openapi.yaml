@@ -92,6 +92,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+
   /projects/{identifier}:
     get:
       description: Return specific project
@@ -114,6 +115,24 @@ paths:
                 $ref: '#/components/schemas/Project'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    delete:
+      description: Delete the project logical
+      tags:
+        - "Projects"
+      operationId: deleteProject
+      parameters:
+      - name: identifier
+        in: path
+        description: identifier of the Project
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 
   /tasks:
     get:
@@ -237,7 +256,23 @@ paths:
                 $ref: '#/components/schemas/Task'
         default:
           $ref: '#/components/responses/ErrorResponse'
-
+    delete:
+      description: Delete the task logical
+      tags:
+        - "Tasks"
+      operationId: deleteTask
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /tasks/{identifier}/comments:
@@ -274,9 +309,6 @@ paths:
                       $ref: '#/components/schemas/Comment'
         default:
           $ref: '#/components/responses/ErrorResponse'
-
-
-
     post:
       description: Add a new comment to the Task
       tags:
@@ -302,6 +334,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /tasks/{taskIdentifier}/comments/{commentIdentifier}:
+    delete:
+      description: Delete the comment logical
+      tags:
+        - "Tasks"
+      operationId: deleteComment
+      parameters:
+        - name: taskIdentifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+        - name: commentIdentifier
+          in: path
+          description: identifier of the Comment
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -369,6 +426,31 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+  /tasks/{taskIdentifier}/assigns/{assignIdentifier}:
+    delete:
+      description: Delete the assign logical
+      tags:
+        - "Tasks"
+      operationId: deleteAssign
+      parameters:
+        - name: taskIdentifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+        - name: assignIdentifier
+          in: path
+          description: identifier of the assign
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 
 
   /tasks/{identifier}/spectators:
@@ -405,9 +487,6 @@ paths:
                       $ref: '#/components/schemas/Spectator'
         default:
           $ref: '#/components/responses/ErrorResponse'
-
-
-
     post:
       description: Adding user and/or group as the spectator of the task
       tags:
@@ -433,6 +512,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Spectator'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /tasks/{taskIdentifier}/spectators/{spectatorIdentifier}:
+    delete:
+      description: Delete the spectator logical
+      tags:
+        - "Tasks"
+      operationId: deleteSpectator
+      parameters:
+        - name: taskIdentifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+        - name: spectatorIdentifier
+          in: path
+          description: identifier of the spectator
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -578,6 +682,24 @@ paths:
                 $ref: '#/components/schemas/Group'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    delete:
+      description: Delete the group logical
+      tags:
+        - "Groups"
+      operationId: deleteGroup
+      parameters:
+        - name: name
+          in: path
+          description: name of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 
 
 
@@ -610,6 +732,31 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
+
+  /groups/{groupName}/users/{username}:
+    delete:
+      description: Delete the user from the group logical
+      tags:
+        - "Groups"
+      operationId: deleteUserFromGroup
+      parameters:
+        - name: groupName
+          in: path
+          description: name of the Group
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: path
+          description: name of the User
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /users:
@@ -692,6 +839,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      description: Delete the user logical
+      tags:
+        - "Users"
+      operationId: deleteUser
+      parameters:
+        - name: name
+          in: path
+          description: identifier of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully logical delete.
         default:
           $ref: '#/components/responses/ErrorResponse'
 

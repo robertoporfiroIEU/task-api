@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
 @Repository
 public interface AssignRepository extends JpaRepository<Assign, Long> {
-    Page<Assign> findAssignByTaskIdentifierAndApplicationUser(String identifier, String applicationUser, Pageable pageable);
+    Optional<Assign> findAssignByIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted);
+    Page<Assign> findAssignByTaskIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted, Pageable pageable);
 }

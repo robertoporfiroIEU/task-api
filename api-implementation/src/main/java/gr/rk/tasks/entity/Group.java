@@ -2,7 +2,6 @@ package gr.rk.tasks.entity;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,19 +25,21 @@ public class Group {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "groups", cascade = CascadeType.PERSIST)
     private Set<User> users;
 
     @OneToMany(mappedBy = "group")
-    private List<Assign> assigns;
+    private Set<Assign> assigns;
 
     @OneToMany(mappedBy = "group")
-    private List<Spectator> spectators;
+    private Set<Spectator> spectators;
+
+    private boolean deleted;
 
     public Group() {
         this.users = new HashSet<>();
-        this.assigns = new ArrayList<>();
-        this.spectators = new ArrayList<>();
+        this.assigns = new HashSet<>();
+        this.spectators = new HashSet<>();
     }
 
     public void setName(String name) {
@@ -65,11 +66,13 @@ public class Group {
         this.users = users;
     }
 
-    public void setAssigns(List<Assign> assigns) {
+    public void setAssigns(Set<Assign> assigns) {
+        assigns.forEach(a -> a.setGroup(this));
         this.assigns = assigns;
     }
 
-    public void setSpectators(List<Spectator> spectators) {
+    public void setSpectators(Set<Spectator> spectators) {
+        spectators.forEach( s -> s.setGroup(this));
         this.spectators = spectators;
     }
 
@@ -93,16 +96,22 @@ public class Group {
         return updatedAt;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
+    public Set<User> getUsers() { return users; }
 
-    public List<Assign> getAssigns() {
+    public Set<Assign> getAssigns() {
         return assigns;
     }
 
-    public List<Spectator> getSpectators() {
+    public Set<Spectator> getSpectators() {
         return spectators;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

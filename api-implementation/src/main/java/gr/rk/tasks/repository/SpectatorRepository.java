@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface SpectatorRepository extends JpaRepository<Spectator, Long> {
-    Page<Spectator> findSpectatorByTaskIdentifierAndApplicationUser(String identifier, String applicationUser, Pageable pageable);
+    Optional<Spectator> findSpectatorByIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted);
+    Page<Spectator> findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted, Pageable pageable);
 }

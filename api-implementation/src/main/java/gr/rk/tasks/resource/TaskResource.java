@@ -102,7 +102,7 @@ public class TaskResource implements TasksApi {
     @Override
     public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
         Task taskEntity = taskMapper.toTask(taskDTO);
-        taskEntity = taskService.createTask(taskEntity);
+        taskEntity = taskService.createTask(taskEntity, taskDTO.getCreatedBy().getName(), taskDTO.getProjectIdentifier());
 
         // Get taskDTO with information that exists in the Task entity
         TaskDTO taskDTOResponse = taskMapper.toTaskDTO(taskEntity);
@@ -126,7 +126,7 @@ public class TaskResource implements TasksApi {
     @Override
     public ResponseEntity<CommentDTO> addTaskComment(String identifier, CommentDTO commentDTO) {
         Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.addTaskComment(identifier, commentEntity);
+        commentEntity = taskService.addTaskComment(identifier, commentEntity, commentDTO.getCreatedBy().getName());
 
         // Get commentDTO with information that exists in the Comment entity
         CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
@@ -180,6 +180,31 @@ public class TaskResource implements TasksApi {
         }
 
         return ResponseEntity.ok(spectatorsDTOPage);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteTask(String identifier) {
+        taskService.deleteTaskLogical(identifier);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteComment(String taskIdentifier, String commentIdentifier) {
+        taskService.deleteCommentLogical(taskIdentifier, commentIdentifier);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteAssign(String taskIdentifier, String assignIdentifier) {
+        taskService.deleteAssignLogical(taskIdentifier, assignIdentifier);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @Override
+    public ResponseEntity<Void> deleteSpectator(String taskIdentifier, String spectatorIdentifier) {
+        taskService.deleteSpectatorLogical(taskIdentifier, spectatorIdentifier);
+        return ResponseEntity.ok().build();
     }
 
     @Override

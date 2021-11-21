@@ -6,9 +6,7 @@ import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -31,23 +29,25 @@ public class User {
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "users_has_groups",
             joinColumns = @JoinColumn(name = "users_username"),
             inverseJoinColumns = @JoinColumn(name = "groups_name"))
-    private List<Group> groups;
+    private Set<Group> groups;
 
     @OneToMany(mappedBy = "user")
-    private List<Assign> assigns;
+    private Set<Assign> assigns;
 
     @OneToMany(mappedBy = "user")
-    private List<Spectator> spectators;
+    private Set<Spectator> spectators;
+
+    private boolean deleted;
 
     public User() {
-        this.groups = new ArrayList<>();
-        this.assigns = new ArrayList<>();
-        this.spectators = new ArrayList<>();
+        this.groups = new HashSet<>();
+        this.assigns = new HashSet<>();
+        this.spectators = new HashSet<>();
     }
 
     public String getUsername() {
@@ -82,27 +82,28 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public List<Group> getGroups() {
+    public Set<Group> getGroups() {
         return groups;
     }
 
-    public void setGroups(List<Group> groups) {
+    public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
 
-    public List<Assign> getAssigns() {
+    public Set<Assign> getAssigns() {
         return assigns;
     }
 
-    public void setAssigns(List<Assign> assigns) {
+    public void setAssigns(Set<Assign> assigns) {
+        assigns.forEach(a -> a.setUser(this));
         this.assigns = assigns;
     }
 
-    public List<Spectator> getSpectators() {
+    public Set<Spectator> getSpectators() {
         return spectators;
     }
 
-    public void setSpectators(List<Spectator> spectators) {
+    public void setSpectators(Set<Spectator> spectators) {
         this.spectators = spectators;
     }
 
@@ -112,6 +113,14 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

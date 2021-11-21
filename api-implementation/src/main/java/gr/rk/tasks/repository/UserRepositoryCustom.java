@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserRepositoryCustom {
-    Page<User> findUsersDynamicJPQL(Pageable pageable, String name, String email);
+    Page<User> findUsersDynamicJPQL(Pageable pageable, String name, String email, String applicationUser);
 }

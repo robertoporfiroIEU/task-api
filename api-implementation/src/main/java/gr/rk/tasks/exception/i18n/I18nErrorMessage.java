@@ -9,7 +9,10 @@ public enum I18nErrorMessage {
     USER_NOT_FOUND("User not found", "002", 400, "taskApi.user-not-found", ErrorStatusEnum.FAIL),
     PROJECT_NOT_FOUND("Project not found", "003", 400, "taskApi.project-not-found", ErrorStatusEnum.FAIL),
     USER_AND_GROUP_NOT_FOUND("User and Group not found", "004", 400, "taskApi.user-and-group-not-found", ErrorStatusEnum.FAIL),
-    GROUP_NOT_FOUND("Group not found", "005", 400, "taskApi.group-not-found", ErrorStatusEnum.FAIL);
+    GROUP_NOT_FOUND("Group not found", "005", 400, "taskApi.group-not-found", ErrorStatusEnum.FAIL),
+    COMMENT_NOT_FOUND("Comment not found", "006", 400, "taskApi.comment-not-found", ErrorStatusEnum.FAIL),
+    ASSIGN_NOT_FOUND("Assign not found", "007", 400, "taskApi.assign-not-found", ErrorStatusEnum.FAIL),
+    SPECTATOR_NOT_FOUND("Spectator not found", "008", 400, "taskApi.spectator-not-found", ErrorStatusEnum.FAIL);
 
     private String summary;
     private String errorCode;

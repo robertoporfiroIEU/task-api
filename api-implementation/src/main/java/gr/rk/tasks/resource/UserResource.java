@@ -62,4 +62,10 @@ public class UserResource implements UsersApi {
         return ResponseEntity.ok(userDTOResponse);
     }
 
+    @Override
+    public ResponseEntity<Void> deleteUser(String name) {
+       userService.deleteUserLogical(name);
+       return ResponseEntity.ok().build();
+    }
+
 }

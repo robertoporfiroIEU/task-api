@@ -18,9 +18,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
     private EntityManager entityManager;
 
     @Override
-    public Page<User> findUsersDynamicJPQL(Pageable pageable, String name, String email) {
-        String baseJQL = "SELECT u from User u ";
-        String countJPQL = "SELECT count(u.username) from User u";
+    public Page<User> findUsersDynamicJPQL(Pageable pageable, String name, String email, String applicationUser) {
+        String baseJPQL = "SELECT u from User u where u.deleted = false and u.applicationUser = '" + applicationUser + "' ";
+        String countJPQL = "SELECT count(u.username) from User u where u.deleted = false and u.applicationUser = '" + applicationUser + "'";
         String whereClause = "";
 
         // count total results for pagination reason
@@ -29,10 +29,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         List<String> filters = getFilters(name, email);
 
         if (!filters.isEmpty()) {
-            whereClause = "where " + String.join(" AND ", filters);
+            whereClause += "and " + String.join("AND ", filters);
         }
 
-        TypedQuery<User> userTypedQuery = entityManager.createQuery(baseJQL + whereClause, User.class)
+        TypedQuery<User> userTypedQuery = entityManager.createQuery(baseJPQL + whereClause, User.class)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 
@@ -61,7 +61,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         if (Objects.nonNull(email)) {
             filters.add("u.email like :email");
         }
-
         return filters;
     }
 }

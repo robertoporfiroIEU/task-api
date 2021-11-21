@@ -4,7 +4,6 @@ import gr.rk.tasks.V1.dto.GroupDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -20,8 +19,6 @@ public abstract class GroupMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected UserRepository userRepository;
 
     public Page<GroupDTO> toPageGroupsDTO(Page<Group> groupEntity) {
         return new PageImpl<>(toGroupsDTOList(groupEntity), groupEntity.getPageable(), groupEntity.getTotalElements());
@@ -38,10 +35,12 @@ public abstract class GroupMapper {
 
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")
     @Mapping(target = "realm", expression = "java(group.getApplicationUser())")
+    @Mapping(target = "users", source = "users", qualifiedByName = "toUserDTOWithoutGroup")
     public abstract GroupDTO toGroupDTO(Group group);
 
     protected abstract List<GroupDTO> toGroupsDTOList(Page<Group> groups);
 
+    @Named("toUserDTOWithoutGroup")
     @Mapping(target = "name", source = "username")
     @Mapping(ignore = true, target = "groups")
     protected abstract UserDTO toUserDTO(User user);

@@ -5,9 +5,9 @@ import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
@@ -40,27 +40,29 @@ public class Task {
 
     private LocalDateTime dueDate;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     @JoinColumn(name = "users_username", nullable = false)
     private User createdBy;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private List<Assign> assigns;
+    private Set<Assign> assigns;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private List<Spectator> spectators;
+    private Set<Spectator> spectators;
 
-    @ManyToOne()
+    private boolean deleted;
+
+    @ManyToOne
     @JoinColumn(name = "projects_id")
     private Project project;
 
     public Task() {
-        this.comments = new ArrayList<>();
-        this.assigns = new ArrayList<>();
-        this.spectators = new ArrayList<>();
+        this.comments = new HashSet<>();
+        this.assigns = new HashSet<>();
+        this.spectators = new HashSet<>();
     }
 
     public void setIdentifier(String identifier) {
@@ -103,18 +105,20 @@ public class Task {
         this.project = project;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
+        comments.forEach( c -> c.setTask(this));
         this.comments = comments;
     }
 
-    public void setAssigns(List<Assign> assigns) {
+    public void setAssigns(Set<Assign> assigns) {
+        assigns.forEach(a -> a.setTask(this));
         this.assigns = assigns;
     }
 
-    public void setSpectators(List<Spectator> spectators) {
+    public void setSpectators(Set<Spectator> spectators) {
+        spectators.forEach(s -> s.setTask(this));
         this.spectators = spectators;
     }
-
 
     public Long getId() {
         return id;
@@ -160,16 +164,24 @@ public class Task {
         return project;
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public List<Assign> getAssigns() {
+    public Set<Assign> getAssigns() {
         return assigns;
     }
 
-    public List<Spectator> getSpectators() {
+    public Set<Spectator> getSpectators() {
         return spectators;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
@@ -177,11 +189,11 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(id, task.id);
+        return Objects.equals(identifier, task.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(identifier);
     }
 }

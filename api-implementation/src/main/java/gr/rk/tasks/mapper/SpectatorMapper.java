@@ -33,7 +33,8 @@ public abstract class SpectatorMapper {
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(spectator.getIdentifier()))")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(spectator.getCreatedAt()))")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTO")
+    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTOWithoutGroup")
+    @Mapping(target = "group", source = "group", qualifiedByName = "groupDTOFromUser")
     public abstract SpectatorDTO toSpectatorDTO(Spectator spectator);
 
     protected abstract List<SpectatorDTO> toSpectatorDTOList(Page<Spectator> spectators);

@@ -2,7 +2,6 @@ package gr.rk.tasks.entity;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,7 +17,7 @@ public class Assign implements AutomaticValuesGeneration {
     @Column(unique = true)
     private String identifier;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "groups_name")
     private Group group;
 
@@ -35,6 +34,8 @@ public class Assign implements AutomaticValuesGeneration {
     private LocalDateTime assignDate;
 
     private String applicationUser;
+
+    private boolean deleted;
 
     @PrePersist
     @Override
@@ -92,16 +93,24 @@ public class Assign implements AutomaticValuesGeneration {
         this.identifier = identifier;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Assign assign = (Assign) o;
-        return Objects.equals(id, assign.id);
+        return Objects.equals(identifier, assign.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(identifier);
     }
 }

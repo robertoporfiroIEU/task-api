@@ -21,9 +21,15 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<Group> findGroupDynamicJPQL(Pageable pageable, String name, String creationDateFrom, String creationDateTo) {
-        String baseJQL = "SELECT g from Group g ";
-        String countJPQL = "SELECT count(g.name) from Group g";
+    public Page<Group> findGroupDynamicJPQL(
+            Pageable pageable,
+            String name,
+            String creationDateFrom,
+            String creationDateTo,
+            String applicationUser
+    ) {
+        String baseJPQL = "select g from Group g where g.deleted = false and g.applicationUser = '" + applicationUser + "' ";
+        String countJPQL = "select count(g.name) from Group g where g.deleted = false and g.applicationUser = '" + applicationUser + "'";
         String whereClause = "";
 
         // count total results for pagination reason
@@ -36,10 +42,10 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
         );
 
         if (!filters.isEmpty()) {
-            whereClause = "where " + String.join(" AND ", filters);
+            whereClause += "and " + String.join("and ", filters);
         }
 
-        TypedQuery<Group> groupTypedQuery = entityManager.createQuery(baseJQL + whereClause, Group.class)
+        TypedQuery<Group> groupTypedQuery = entityManager.createQuery(baseJPQL + whereClause, Group.class)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 

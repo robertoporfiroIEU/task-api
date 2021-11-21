@@ -36,15 +36,13 @@ public abstract class UserMapper {
     @Mapping(ignore = true, target = "spectators")
     public abstract User toUser(UserDTO userDTO);
 
+    @IterableMapping(qualifiedByName = "toUserDTO")
     protected abstract List<UserDTO> toUsersDTOList(Page<User> users);
 
     @Named("toUserDTO")
     @Mapping(target = "name", source = "username")
-    @Mapping(target = "groups", source = "groups")
+    @Mapping(target = "groups", source = "groups", qualifiedByName = "groupDTOFromUser")
     public abstract UserDTO toUserDTO(User user);
-
-    @IterableMapping(qualifiedByName="groupDTOFromUser")
-    protected abstract List<GroupDTO> groupListToGroupDTOList(List<Group> list);
 
     @Named("groupDTOFromUser")
     @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")

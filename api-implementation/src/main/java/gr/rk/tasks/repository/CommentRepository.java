@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Optional<Comment> findCommentByIdentifier(String identifier);
-
-    Page<Comment> findCommentByTaskIdentifierAndApplicationUser(String identifier, String applicationUser, Pageable pageable);
+    Page<Comment> findCommentByTaskIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted, Pageable pageable);
+    Optional<Comment> findCommentByIdentifierAndApplicationUserAndDeleted(String identifier, String applicationUser, boolean deleted);
 }

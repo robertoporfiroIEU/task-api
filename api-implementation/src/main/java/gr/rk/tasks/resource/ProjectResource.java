@@ -73,10 +73,17 @@ public class ProjectResource implements ProjectsApi {
     @Override
     public ResponseEntity<ProjectDTO> createProject(ProjectDTO projectDTO) {
         Project projectEntity = projectMapper.toProject(projectDTO);
-        projectEntity = projectService.createProject(projectEntity);
+        projectEntity = projectService.createProject(projectEntity, projectDTO.getCreatedBy().getName());
 
         ProjectDTO projectDTOResponse = projectMapper.toProjectDTO(projectEntity);
         return  ResponseEntity.ok(projectDTOResponse);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteProject(String identifier) {
+        projectService.deleteProjectLogical(identifier);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

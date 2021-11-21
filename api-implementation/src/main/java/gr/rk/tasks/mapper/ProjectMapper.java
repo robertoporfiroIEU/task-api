@@ -2,7 +2,6 @@ package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.ProjectDTO;
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -18,20 +17,18 @@ public abstract class ProjectMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected UserRepository userRepository;
 
     public Page<ProjectDTO> toPageProjectsDTO(Page<Project> projectEntity) {
         return new PageImpl<>(toProjectsDTOList(projectEntity), projectEntity.getPageable(), projectEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
-    @Mapping(target = "createdBy", expression = "java(userRepository.findById(projectDTO.getCreatedBy().getName()).orElse(null))")
     @Mapping(ignore = true, target = "id")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(ignore = true, target = "tasks")
     @Mapping(ignore = true, target = "identifier")
+    @Mapping(ignore = true, target = "createdBy")
     public abstract Project toProject(ProjectDTO projectDTO);
 
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
