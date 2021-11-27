@@ -17,5 +17,7 @@ public interface ProjectRepositoryCustom {
             String name,
             String creationDateFrom,
             String creationDateTo,
-            String createdBy);
+            String createdBy,
+            String applicationUser
+            );
 }

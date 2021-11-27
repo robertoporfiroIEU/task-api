@@ -2,12 +2,9 @@ package gr.rk.tasks.entity;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "projects")
@@ -39,15 +36,17 @@ public class Project {
     @Column(nullable = false)
     private String applicationUser;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     @JoinColumn(name = "users_username", nullable = false)
     private User createdBy;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
+    private Set<Task> tasks;
+
+    private boolean deleted;
 
     public Project() {
-        tasks = new ArrayList<>();
+        tasks = new HashSet<>();
     }
 
     public Long getId() {
@@ -114,12 +113,21 @@ public class Project {
         this.createdBy = createdBy;
     }
 
-    public List<Task> getTasks() {
+    public Set<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(Set<Task> tasks) {
+        tasks.forEach(t -> t.setProject(this));
         this.tasks = tasks;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
@@ -127,11 +135,11 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(id, project.id);
+        return Objects.equals(identifier, project.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(identifier);
     }
 }

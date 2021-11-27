@@ -20,5 +20,7 @@ public interface TaskRepositoryCustom {
             String creationDateTo,
             String createdBy,
             String dueDateFrom,
-            String dueDateTo);
+            String dueDateTo,
+            String applicationUser
+            );
 }

@@ -44,10 +44,12 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
             String name,
             String creationDateFrom,
             String creationDateTo,
-            String createdBy) {
+            String createdBy,
+            String applicationUser
+            ) {
 
-        String baseJQL = "SELECT p from Project p ";
-        String countJPQL = "SELECT count(p.id) from Project p";
+        String baseJPQL = "SELECT p from Project p where p.deleted = false and p.applicationUser = '"+ applicationUser + "' " ;
+        String countJPQL = "SELECT count(p.id) from Project p where p.deleted = false and p.applicationUser = '" + applicationUser + "'";
         String whereClause = "";
 
         // count total results for pagination reason
@@ -62,10 +64,10 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         );
 
         if (!filters.isEmpty()) {
-            whereClause = "where " + String.join(" AND ", filters);
+            whereClause += "and " + String.join(" AND ", filters);
         }
 
-        TypedQuery<Project> projectTypedQuery = entityManager.createQuery(baseJQL + whereClause, Project.class)
+        TypedQuery<Project> projectTypedQuery = entityManager.createQuery(baseJPQL + whereClause, Project.class)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 
@@ -116,7 +118,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         }
 
         if (Objects.nonNull(createdBy)) {
-            filters.add("p.createdBy like :createdBy");
+            filters.add("p.createdBy.username like :createdBy");
         }
 
         if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {

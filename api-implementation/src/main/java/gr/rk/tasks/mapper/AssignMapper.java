@@ -2,8 +2,6 @@ package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.AssignDTO;
 import gr.rk.tasks.entity.Assign;
-import gr.rk.tasks.repository.GroupRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -20,8 +18,6 @@ public abstract class AssignMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected GroupRepository groupRepository;
 
     public Page<AssignDTO> toPageAssignsDTO(Page<Assign> assignsEntity) {
         return new PageImpl<>(toAssignsDTOList(assignsEntity), assignsEntity.getPageable(), assignsEntity.getTotalElements());
@@ -37,7 +33,8 @@ public abstract class AssignMapper {
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(assign.getIdentifier()))")
     @Mapping(target = "assignDate", expression = "java(Util.toDateISO8601WithTimeZone(assign.getAssignDate()))")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTO")
+    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTOWithoutGroup")
+    @Mapping(target = "group", source = "group", qualifiedByName = "groupDTOFromUser")
     public abstract AssignDTO toAssignDTO(Assign assign);
 
     protected abstract List<AssignDTO> toAssignsDTOList(Page<Assign> assigns);

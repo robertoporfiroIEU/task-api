@@ -2,7 +2,6 @@ package gr.rk.tasks.entity;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -31,9 +30,12 @@ public class Comment implements AutomaticValuesGeneration {
 
     private String applicationUser;
 
+    private boolean deleted;
+
     @Generated(GenerationTime.INSERT)
     @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
     @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
     private LocalDateTime updatedAt;
@@ -48,6 +50,10 @@ public class Comment implements AutomaticValuesGeneration {
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getText() {
@@ -91,16 +97,24 @@ public class Comment implements AutomaticValuesGeneration {
         this.applicationUser = applicationUser;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id);
+        return Objects.equals(identifier, comment.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(identifier);
     }
 }

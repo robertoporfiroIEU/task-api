@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface GroupRepositoryCustom {
 
-    Page<Group> findGroupDynamicJPQL(Pageable pageable, String name, String creationDateFrom, String creationDateTo);
+    Page<Group> findGroupDynamicJPQL(Pageable pageable, String name, String creationDateFrom, String creationDateTo, String applicationUser);
 }

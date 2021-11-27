@@ -2,7 +2,6 @@ package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.CommentDTO;
 import gr.rk.tasks.entity.Comment;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
 import org.mapstruct.Mapper;
@@ -18,15 +17,14 @@ public abstract class CommentMapper {
 
     @Autowired
     protected UserPrincipal userPrincipal;
-    @Autowired
-    protected UserRepository userRepository;
 
     public Page<CommentDTO> toPageCommentsDTO(Page<Comment> commentsEntity) {
         return new PageImpl<>( toCommentsDTOList(commentsEntity), commentsEntity.getPageable(), commentsEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
-    @Mapping(target = "createdBy", expression = "java(userRepository.findById(commentDTO.getCreatedBy().getName()).orElse(null))")
+    @Mapping(ignore = true, target = "identifier")
+    @Mapping(ignore = true, target = "createdBy")
     public abstract Comment toComment(CommentDTO commentDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")

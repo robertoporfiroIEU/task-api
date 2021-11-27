@@ -19,7 +19,7 @@ public class Spectator implements AutomaticValuesGeneration {
     @Column(unique = true)
     private String identifier;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "groups_name")
     private Group group;
 
@@ -36,6 +36,8 @@ public class Spectator implements AutomaticValuesGeneration {
     private LocalDateTime createdAt;
 
     private String applicationUser;
+
+    private boolean deleted;
 
     @PrePersist
     @Override
@@ -93,16 +95,24 @@ public class Spectator implements AutomaticValuesGeneration {
         this.identifier = identifier;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Spectator spectator = (Spectator) o;
-        return Objects.equals(id, spectator.id);
+        return Objects.equals(identifier, spectator.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(identifier);
     }
 }

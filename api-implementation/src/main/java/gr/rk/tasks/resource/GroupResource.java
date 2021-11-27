@@ -77,4 +77,17 @@ public class GroupResource implements GroupsApi {
         GroupDTO groupDTO = groupMapper.toGroupDTO(group);
         return ResponseEntity.ok(groupDTO);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteGroup(String name) {
+        groupService.deleteGroupLogical(name);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteUserFromGroup(String groupName, String username) {
+        groupService.deleteUserFromGroupLogical(groupName, username);
+        return ResponseEntity.ok().build();
+    }
+
 }
