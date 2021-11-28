@@ -17,6 +17,7 @@
     <modules>
         <module>api-definition</module>
         <module>api-implementation</module>
+        <module>task-ui</module>
     </modules>
 
     <parent>
