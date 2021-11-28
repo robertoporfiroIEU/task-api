@@ -2,9 +2,9 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
-import gr.rk.tasks.exception.i18n.GroupNotFoundException;
+import gr.rk.tasks.exception.GroupNotFoundException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.i18n.UserNotFoundException;
+import gr.rk.tasks.exception.UserNotFoundException;
 import gr.rk.tasks.repository.GroupRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;

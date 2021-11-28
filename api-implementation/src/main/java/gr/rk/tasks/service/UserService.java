@@ -2,7 +2,7 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.i18n.UserNotFoundException;
+import gr.rk.tasks.exception.UserNotFoundException;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;

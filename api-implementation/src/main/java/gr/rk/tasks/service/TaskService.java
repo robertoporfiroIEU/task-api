@@ -1,7 +1,7 @@
 package gr.rk.tasks.service;
 
 import gr.rk.tasks.entity.*;
-import gr.rk.tasks.exception.TaskNotFoundException;
+import gr.rk.tasks.exception.*;
 import gr.rk.tasks.exception.i18n.*;
 import gr.rk.tasks.repository.*;
 import gr.rk.tasks.security.UserPrincipal;
