@@ -1,0 +1,23 @@
+<header class="header">
+    <div class="row">
+        <div class="col-6">
+            <div routerLink="{{homeUrl}}">
+                <img src="{{logoImage}}" height="70" class="p-mr-2">
+                <span class="corinthiaFont">{{title}}</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="float-end mt-3">
+                <i pTooltip="{{'taskUI.logout' | translate}}"
+                   tooltipPosition="left"
+                   class="fas fa-sign-out-alt fa-2x mt-1 me-5"
+                   (click)="logout()"
+                ></i>
+            </div>
+        </div>
+    </div>
+</header>
+<app-dock></app-dock>
+<main class="container">
+    <router-outlet></router-outlet>
+</main>
