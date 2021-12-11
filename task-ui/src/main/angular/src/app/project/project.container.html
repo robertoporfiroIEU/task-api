@@ -1,0 +1,7 @@
+<app-project-ui
+    [paginatedProjects]="paginatedProjects$ | async"
+    [isFullScreen]="isFullScreen"
+    (onFullScreenMode)="fullScreenMode($event)"
+    (lazyLoadPaginatedProjects)="lazyLoadPaginatedProjects($event)"
+>
+</app-project-ui>

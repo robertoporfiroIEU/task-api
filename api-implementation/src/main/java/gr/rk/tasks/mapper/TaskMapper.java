@@ -1,5 +1,6 @@
 package gr.rk.tasks.mapper;
 
+import gr.rk.tasks.V1.dto.PaginatedTasksDTO;
 import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.security.UserPrincipal;
@@ -8,7 +9,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -18,8 +18,10 @@ public abstract class TaskMapper {
     @Autowired
     protected UserPrincipal userPrincipal;
 
-    public Page<TaskDTO> toPageTasksDTO(Page<Task> tasksEntity) {
-        return new PageImpl<>(toTasksDTOList(tasksEntity), tasksEntity.getPageable(), tasksEntity.getTotalElements());
+    public PaginatedTasksDTO toPaginatedTasksDTO(Page<Task> tasksEntity) {
+        return new PaginatedTasksDTO()
+                .content(toTasksDTOList(tasksEntity))
+                .totalElements((int) tasksEntity.getTotalElements());
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
@@ -35,7 +37,7 @@ public abstract class TaskMapper {
     public abstract Task toTask(TaskDTO taskDTO);
 
 
-    @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
+    @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
     @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
     @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
     @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getPrefixIdentifier())")

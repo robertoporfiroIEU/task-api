@@ -9,7 +9,6 @@ import { ShellService } from './shell/shell.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
     dockItemsState: ApplicationMenuItem[] = [
         {
             id: 'projects',
@@ -49,8 +48,11 @@ export class AppComponent {
         }
     ];
 
-    constructor(private translateService: TranslateService, private shellService: ShellService) {
+    constructor(private translateService: TranslateService, private shellService: ShellService) {}
+
+    ngOnInit(): void {
         this.shellService.setDockItemsState(this.dockItemsState);
+        this.shellService.setLoadingSpinner(false);
     }
 
     logout(): void {

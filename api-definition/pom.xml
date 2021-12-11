@@ -34,11 +34,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.1</version>
@@ -55,7 +50,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>5.0.1</version>
+                <version>5.3.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -68,10 +63,8 @@
                             <apiPackage>gr.rk.tasks.${oas.version}.api</apiPackage>
                             <modelPackage>gr.rk.tasks.${oas.version}.dto</modelPackage>
                             <generatorName>spring</generatorName>
-                            <templateDirectory>${project.basedir}/src/main/resources/templates/</templateDirectory>
-                            <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
-                            <importMappings>Page=org.springframework.data.domain.Page, Pageable=org.springframework.data.domain.Pageable</importMappings>
                             <modelNameSuffix>DTO</modelNameSuffix>
+                            <importMappings>Pageable=org.springframework.data.domain.Pageable</importMappings>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
@@ -85,8 +78,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>14</source>
-                    <target>14</target>
+                    <source>15</source>
+                    <target>15</target>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,20 +1,20 @@
 package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.ProjectsApi;
+import gr.rk.tasks.V1.dto.PaginatedProjectsDTO;
 import gr.rk.tasks.V1.dto.ProjectDTO;
+import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.mapper.ProjectMapper;
 import gr.rk.tasks.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,31 +31,33 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
-    public ResponseEntity<Page<ProjectDTO>> getProjects(
+    public ResponseEntity<PaginatedProjectsDTO> getProjects(
             Pageable pageable,
             String identifier,
             String name,
             String creationDateFrom,
             String creationDateTo,
-            String createdBy) {
+            String createdBy
+    ) {
+        ProjectCriteriaDTO projectCriteriaDTO = new ProjectCriteriaDTO();
+        projectCriteriaDTO.setPageable(pageable);
+        projectCriteriaDTO.setIdentifier(identifier);
+        projectCriteriaDTO.setName(name);
+        projectCriteriaDTO.setCreationDateFrom(creationDateFrom);
+        projectCriteriaDTO.setCreationDateTo(creationDateTo);
+        projectCriteriaDTO.setCreatedBy(createdBy);
 
-        List<ProjectDTO> projectsDTO = new ArrayList<>();
-        Page<ProjectDTO> projectsDTOPage = new PageImpl<>(projectsDTO);
+        Page<Project> projectsEntity = projectService.getProjects(projectCriteriaDTO);
 
-        Page<Project> projectsEntity = projectService.getProjects(
-                pageable,
-                identifier,
-                name,
-                creationDateFrom,
-                creationDateTo,
-                createdBy
-        );
+        PaginatedProjectsDTO paginatedProjectsDTO = new PaginatedProjectsDTO()
+                .totalElements(0)
+                .content(new ArrayList<>());
 
         if (!projectsEntity.isEmpty()) {
-            projectsDTOPage = projectMapper.toPageProjectsDTO(projectsEntity);
+            paginatedProjectsDTO = projectMapper.toPaginatedProjectsDTO(projectsEntity);
         }
 
-        return ResponseEntity.ok(projectsDTOPage);
+        return ResponseEntity.ok(paginatedProjectsDTO);
     }
 
     @Override

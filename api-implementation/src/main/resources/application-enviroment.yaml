@@ -21,7 +21,6 @@ logging:
           descriptor:
             sql: trace
 
-
 applicationConfigurations:
   addTestData: false
   deleteTestData: false
@@ -32,5 +31,7 @@ applicationConfigurations:
   groupService:
     pageMaxSize: 25
   userService:
+    pageMaxSize: 25
+  Default:
     pageMaxSize: 25
 

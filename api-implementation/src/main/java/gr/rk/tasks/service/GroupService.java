@@ -1,5 +1,6 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.dto.GroupCriteriaDTO;
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.GroupNotFoundException;
@@ -36,14 +37,17 @@ public class GroupService {
         this.userPrincipal = userPrincipal;
     }
 
-    public Page<Group> getGroups(Pageable pageable, String name, String creationDateFrom, String creationDateTo) {
-        Pageable page = pageable;
+    public Page<Group> getGroups(GroupCriteriaDTO groupCriteriaDTO) {
+        Pageable page = groupCriteriaDTO.getPageable();
 
-        if (pageable.getPageSize() > maxSize) {
-            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        if (groupCriteriaDTO.getPageable().getPageSize() > maxSize) {
+            page = PageRequest.of(groupCriteriaDTO.getPageable().getPageNumber(), maxSize, groupCriteriaDTO.getPageable().getSort());
         }
 
-        Page<Group> groups =  groupRepository.findGroupDynamicJPQL(page, name, creationDateFrom, creationDateTo, userPrincipal.getApplicationUser());
+        groupCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        groupCriteriaDTO.setPageable(page);
+
+        Page<Group> groups =  groupRepository.findGroupDynamicJPQL(groupCriteriaDTO);
 
         // Remove the deleted users
         groups.forEach( g ->

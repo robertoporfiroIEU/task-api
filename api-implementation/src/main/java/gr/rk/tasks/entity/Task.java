@@ -2,7 +2,6 @@ package gr.rk.tasks.entity;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -27,8 +26,6 @@ public class Task {
 
     private String status;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Generated(GenerationTime.ALWAYS)
@@ -79,14 +76,6 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public void setApplicationUser(String applicationUser) {

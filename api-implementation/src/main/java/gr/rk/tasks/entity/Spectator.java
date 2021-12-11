@@ -1,8 +1,5 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -31,9 +28,7 @@ public class Spectator implements AutomaticValuesGeneration {
     @JoinColumn(name = "users_username")
     private User user;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private String applicationUser;
 
@@ -69,10 +64,6 @@ public class Spectator implements AutomaticValuesGeneration {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime assignDate) {
-        this.createdAt = assignDate;
     }
 
     public Task getTask() {

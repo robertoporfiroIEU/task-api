@@ -2,7 +2,9 @@ package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.GroupsApi;
 import gr.rk.tasks.V1.dto.GroupDTO;
+import gr.rk.tasks.V1.dto.PaginatedGroupsDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
+import gr.rk.tasks.dto.GroupCriteriaDTO;
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.mapper.GroupMapper;
@@ -10,13 +12,11 @@ import gr.rk.tasks.mapper.UserMapper;
 import gr.rk.tasks.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,17 +34,25 @@ public class GroupResource implements GroupsApi {
     }
 
     @Override
-    public ResponseEntity<Page<GroupDTO>> getGroups(Pageable pageable, String name, String creationDateFrom, String creationDateTo) {
-        List<GroupDTO> groupsDTO = new ArrayList<>();
-        Page<GroupDTO> groupsDTOPage = new PageImpl<>(groupsDTO);
+    public ResponseEntity<PaginatedGroupsDTO> getGroups(Pageable pageable, String name, String creationDateFrom, String creationDateTo) {
 
-        Page<Group> groupsEntity = groupService.getGroups(pageable, name, creationDateFrom, creationDateTo);
+        GroupCriteriaDTO groupCriteriaDTO = new GroupCriteriaDTO();
+        groupCriteriaDTO.setPageable(pageable);
+        groupCriteriaDTO.setName(name);
+        groupCriteriaDTO.setCreationDateFrom(creationDateFrom);
+        groupCriteriaDTO.setCreationDateTo(creationDateTo);
+
+        Page<Group> groupsEntity = groupService.getGroups(groupCriteriaDTO);
+
+        PaginatedGroupsDTO paginatedGroupsDTO = new PaginatedGroupsDTO()
+                .content(new ArrayList<>())
+                .totalElements(0);
 
         if (!groupsEntity.isEmpty()) {
-            groupsDTOPage = groupMapper.toPageGroupsDTO(groupsEntity);
+            paginatedGroupsDTO = groupMapper.toPaginatedGroupsDTO(groupsEntity);
         }
 
-        return ResponseEntity.ok(groupsDTOPage);
+        return ResponseEntity.ok(paginatedGroupsDTO);
     }
 
     @Override

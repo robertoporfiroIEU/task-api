@@ -13,6 +13,7 @@ public enum I18nErrorMessage {
     COMMENT_NOT_FOUND("Comment not found", "006", 400, "taskApi.comment-not-found", ErrorStatusEnum.FAIL),
     ASSIGN_NOT_FOUND("Assign not found", "007", 400, "taskApi.assign-not-found", ErrorStatusEnum.FAIL),
     SPECTATOR_NOT_FOUND("Spectator not found", "008", 400, "taskApi.spectator-not-found", ErrorStatusEnum.FAIL),
+    INVALID_SORT_FIELD("Invalid sort field", "009", 400, "taskApi.invalid-sort-field", ErrorStatusEnum.FAIL),
     CONSTRAINT_VIOLATION("Constraint Violation", "400", 400, "taskApi.constraint-violation", ErrorStatusEnum.FAIL),
     SERVER_ERROR("Server Error", "500", 500, "taskApi.server-error", ErrorStatusEnum.ERROR);
 

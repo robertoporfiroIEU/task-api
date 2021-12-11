@@ -17,9 +17,7 @@ public class Group {
 
     private String applicationUser;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
@@ -52,14 +50,6 @@ public class Group {
 
     public void setApplicationUser(String applicationUser) {
         this.applicationUser = applicationUser;
-    }
-
-    public void setCreatedAt(LocalDateTime createAt) {
-        this.createdAt = createAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updateAt) {
-        this.updatedAt = updateAt;
     }
 
     public void setUsers(Set<User> users) {

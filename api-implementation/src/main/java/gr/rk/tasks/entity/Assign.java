@@ -1,7 +1,5 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -29,9 +27,7 @@ public class Assign implements AutomaticValuesGeneration {
     @JoinColumn(name = "users_username")
     private User user;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime assignDate;
+    private LocalDateTime assignDate = LocalDateTime.now();
 
     private String applicationUser;
 
@@ -67,10 +63,6 @@ public class Assign implements AutomaticValuesGeneration {
 
     public LocalDateTime getAssignDate() {
         return assignDate;
-    }
-
-    public void setAssignDate(LocalDateTime assignDate) {
-        this.assignDate = assignDate;
     }
 
     public Task getTask() {

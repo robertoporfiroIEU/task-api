@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
 import { ApplicationMenuItem } from './dock/ApplicationMenuItem';
 
 @Injectable({
@@ -8,15 +8,22 @@ import { ApplicationMenuItem } from './dock/ApplicationMenuItem';
 export class ShellService {
     private dockItemsStateSubject = new ReplaySubject<ApplicationMenuItem[]>(1);
     private dockItemChangedSubject = new ReplaySubject<ApplicationMenuItem>(1);
+    private fullScreenModeSubject = new ReplaySubject<boolean>(1);
+    private loadingSpinnerSubject = new Subject<boolean>();
 
-    dockItemsState$ = this.dockItemsStateSubject.asObservable();
-    onDockItemChanged$ = this.dockItemChangedSubject.asObservable();
+    dockItemsState$: Observable<ApplicationMenuItem[]> = this.dockItemsStateSubject.asObservable();
+    onFullScreenMode$ = this.fullScreenModeSubject.asObservable();
+    onLoadingSpinner$ = this.loadingSpinnerSubject.asObservable();
 
     setDockItemsState(dockItemsState: ApplicationMenuItem[]) {
         this.dockItemsStateSubject.next(dockItemsState);
     }
 
-    setDockItemChanged(item: ApplicationMenuItem): void {
-        this.dockItemChangedSubject.next(item);
+    setFullScreenMode(state: boolean): void {
+        this.fullScreenModeSubject.next(state);
+    }
+
+    setLoadingSpinner(state: boolean): void {
+        this.loadingSpinnerSubject.next(state);
     }
 }
