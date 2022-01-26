@@ -1,7 +1,7 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { ShellService } from './shell.service';
 import { DOCUMENT } from '@angular/common';
-import {Observable} from 'rxjs';
+import { RoutesEnum } from '../RoutesEnum';
 
 @Component({
   selector: 'app-shell',
@@ -18,8 +18,13 @@ export class ShellComponent implements OnInit {
     elem: any;
 
     loadingSpinner: boolean =  false;
+    homePageURL: string =  '/' + RoutesEnum.projects.toString();
 
-    constructor(private shellService: ShellService, @Inject(DOCUMENT) private document: any, private cd: ChangeDetectorRef) {}
+    constructor(
+        private shellService: ShellService,
+        @Inject(DOCUMENT) private document: any,
+        private cd: ChangeDetectorRef
+    ) {}
 
     ngOnInit(): void {
         this.shellService.onLoadingSpinner$.subscribe(state => {

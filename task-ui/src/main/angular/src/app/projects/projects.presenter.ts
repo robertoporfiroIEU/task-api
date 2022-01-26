@@ -6,7 +6,7 @@ import { FormControl, FormGroup} from '@angular/forms';
 import { Column } from '../shared/ModelsForUI';
 
 @Injectable()
-export class ProjectPresenter {
+export class ProjectsPresenter {
 
     private loadPaginatedProjectsSubject: Subject<ProjectsParams> = new Subject<ProjectsParams>();
     onLoadPaginatedProjects$: Observable<ProjectsParams> = this.loadPaginatedProjectsSubject.asObservable();

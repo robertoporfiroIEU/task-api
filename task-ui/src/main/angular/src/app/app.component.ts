@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApplicationMenuItem } from './shell/dock/ApplicationMenuItem';
 import { TranslateService } from '@ngx-translate/core';
 import { ShellService } from './shell/shell.service';
+import { RoutesEnum } from './RoutesEnum';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent {
                 positionTop: -40,
                 positionLeft: 15
             },
-            routerLink: 'project',
+            routerLink: RoutesEnum.projects,
             fontAwesomeClass: "fas fa-project-diagram fa-2x text-dark",
             isSelected: true
         },

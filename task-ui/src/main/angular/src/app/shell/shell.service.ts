@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { ApplicationMenuItem } from './dock/ApplicationMenuItem';
 
 @Injectable({
@@ -14,6 +14,8 @@ export class ShellService {
     dockItemsState$: Observable<ApplicationMenuItem[]> = this.dockItemsStateSubject.asObservable();
     onFullScreenMode$ = this.fullScreenModeSubject.asObservable();
     onLoadingSpinner$ = this.loadingSpinnerSubject.asObservable();
+
+    constructor() {}
 
     setDockItemsState(dockItemsState: ApplicationMenuItem[]) {
         this.dockItemsStateSubject.next(dockItemsState);

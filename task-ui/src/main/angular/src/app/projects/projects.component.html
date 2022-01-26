@@ -5,7 +5,9 @@
         </div>
         <div class="col-6">
             <button type="button"
-                    class="btn green-button float-end glow-effect">
+                    class="btn green-button float-end glow-effect"
+                    [routerLink]="[createProjectURL]"
+            >
                 {{'taskUI.create-new-project' | translate}}
             </button>
         </div>
@@ -15,12 +17,12 @@
         <div class="col">
             <div *ngIf="!isFullScreen"
                  (click)="fullScreenMode(true)"
-                 class="float-end" pTooltip="{{'taskUI.fullscreen' | translate}}">
+                 class="float-end" pTooltip="{{'taskUI.fullscreen' | translate}}" tooltipPosition="top">
                 <i class="pi pi-window-maximize text-dark hover"></i>
             </div>
             <div *ngIf="isFullScreen"
                  (click)="fullScreenMode(false)"
-                 class="float-end" pTooltip="{{'taskUI.normal-screen' | translate}}">
+                 class="float-end" pTooltip="{{'taskUI.normal-screen' | translate}}" tooltipPosition="top">
                 <i class="pi pi-window-minimize text-dark hover"></i>
             </div>
             <div class="float-end">

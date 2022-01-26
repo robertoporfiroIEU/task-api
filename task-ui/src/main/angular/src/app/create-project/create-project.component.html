@@ -1,0 +1,50 @@
+<div class="container">
+
+    <h5 class="mt-2 grey-color">{{'taskUI.create-project-title' | translate}}</h5>
+    <form
+        (submit)="createProjectSubmit()"
+        [formGroup]="createProjectForm"
+        class="mt-4">
+        <div class="mb-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="name"
+                    id="projectName"
+                    type="text"
+                    maxlength="250"
+                    pInputText
+                    [ngClass]="'form-control ng-invalid ng-dirty'"
+                >
+                <label for="projectName"><span class="red">*</span> {{'taskUI.create-project-project-name' | translate }}</label>
+            </span>
+            <small *ngIf="createProjectForm?.get('name')?.invalid && createProjectForm?.get('name')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
+        </div>
+        <div class="mb-3 mt-4">
+            <span class="p-float-label">
+                <input formControlName="prefixIdentifier" id="prefixIdentifier" type="text" maxlength="45" pInputText class="form-control">
+                <label for="prefixIdentifier"><span class="red">*</span> {{'taskUI.create-project-project-prefix' | translate}}</label>
+            </span>
+            <div class="form-text">{{'taskUI.create-project-project-prefix-help' | translate}}</div>
+            <small *ngIf="createProjectForm?.get('prefixIdentifier')?.invalid && createProjectForm?.get('prefixIdentifier')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
+        </div>
+        <div class="mb-3 mt-4">
+           <span class="p-float-label">
+               <textarea
+                   formControlName="description"
+                   maxlength="500"
+                   class="form-control"
+                   id="descriptionTextArea"
+                   rows="5"
+                   cols="30"
+                   pInputTextarea
+                   autoResize="autoResize"></textarea>
+               <label for="descriptionTextArea">{{'taskUI.create-project-project-description' | translate}}</label>
+            </span>
+        </div>
+        <button
+            [disabled]="createProjectForm.invalid"
+            type="submit" class="btn btn-primary">
+            {{'taskUI.create-project-create-button' | translate}}
+        </button>
+    </form>
+</div>

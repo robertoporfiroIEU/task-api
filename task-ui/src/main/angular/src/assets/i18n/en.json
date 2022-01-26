@@ -16,5 +16,27 @@
     "taskUI.projects-header-name": "Name",
     "taskUI.projects-header-username": "User Name",
     "taskUI.projects-header-creation-date": "Creation Date",
-    "taskUI.projects-header-action": "Action"
+    "taskUI.projects-header-action": "Action",
+    "taskUI.create-project-title": "Create new Project",
+    "taskUI.create-project-project-name": "Project Name",
+    "taskUI.create-project-project-prefix": "Prefix Identifier",
+    "taskUI.create-project-project-prefix-help": "This value indicates the prefix for the new tasks.",
+    "taskUI.create-project-project-description": "Description",
+    "taskUI.create-project-create-button": "Create Project",
+    "taskUI.create-project-success-message": "The project has been created successfully",
+    "taskUI.success": "success",
+    "taskUI.unknown-error": "Unknown error",
+    "taskUI.field-required": "This field is required",
+
+    "taskApi.task-not-found": "Task not found",
+    "taskApi.user-not-found": "User not found",
+    "taskApi.project-not-found": "Project not found",
+    "taskApi.user-and-group-not-found": "User and Group not found",
+    "taskApi.group-not-found": "Group not found",
+    "taskApi.comment-not-found": "Comment not found",
+    "taskApi.assign-not-found": "Assign not found",
+    "taskApi.spectator-not-found": "Spectator not found",
+    "taskApi.invalid-sort-field": "Invalid sort field",
+    "taskApi.constraint-violation": "Constraint Violation",
+    "taskApi.server-error": "Server Error"
 }

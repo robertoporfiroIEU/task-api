@@ -1,20 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PaginatedProjects } from '../api';
 import { LazyLoadEvent } from 'primeng/api';
-import { ProjectPresenter } from './project.presenter';
+import { ProjectsPresenter } from './projects.presenter';
 import { Subject, takeUntil } from 'rxjs';
 import { ProjectsParams } from './ProjectsParams';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
-import {Column} from '../shared/ModelsForUI';
+import { Column } from '../shared/ModelsForUI';
+import { RoutesEnum } from '../RoutesEnum';
 
 @Component({
     selector: 'app-project-ui',
-    templateUrl: './project.component.html',
-    styleUrls: ['./project.component.css'],
-    providers: [ProjectPresenter]
+    templateUrl: './projects.component.html',
+    styleUrls: ['./projects.component.css'],
+    providers: [ProjectsPresenter]
 })
-export class ProjectComponent implements OnInit {
+export class ProjectsComponent implements OnInit {
 
     private destroy: Subject<void>  = new Subject();
 
@@ -23,7 +24,7 @@ export class ProjectComponent implements OnInit {
     @Output() lazyLoadPaginatedProjects: EventEmitter<ProjectsParams> = new EventEmitter<ProjectsParams>();
     @Output() onFullScreenMode: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-
+    createProjectURL: string = '/' + RoutesEnum.createProject.toString();
     creationDate: Date = new Date();
     pCalendarDateFormat = Utils.pCalendarDateFormat;
     datePipeDateFormat = Utils.datePipeDateFormat;
@@ -40,7 +41,7 @@ export class ProjectComponent implements OnInit {
        return this.projectPresenter.responsiveLayout;
     }
 
-    constructor(private projectPresenter: ProjectPresenter) {}
+    constructor(private projectPresenter: ProjectsPresenter) {}
 
     ngOnInit(): void {
         this.projectPresenter.init();

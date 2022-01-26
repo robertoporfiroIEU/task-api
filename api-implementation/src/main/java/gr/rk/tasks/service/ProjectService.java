@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 @Service
@@ -43,7 +44,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project createProject(Project project, String createdBy) {
+    public Project createProject(Project project, String createdBy) throws org.springframework.dao.DataIntegrityViolationException {
         // validations
         Optional<User> oUser = userRepository
                 .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
@@ -54,7 +55,12 @@ public class ProjectService {
 
         // happy path
         project.setCreatedBy(oUser.get());
-        return projectRepository.saveProject(project);
+        try {
+            return projectRepository.saveProject(project);
+        }
+        catch(org.springframework.dao.DataIntegrityViolationException e) {
+            throw new ConstraintViolationException("Prefix identification already exist", null);
+        }
     }
 
     public Page<Project> getProjects(ProjectCriteriaDTO projectCriteriaDTO) {

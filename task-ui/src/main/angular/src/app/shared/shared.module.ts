@@ -9,6 +9,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
+import {MessageService} from 'primeng/api';
+
 
 @NgModule({
     declarations: [],
@@ -23,7 +27,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         CalendarModule,
         FormsModule,
         ReactiveFormsModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        InputTextareaModule,
+        ToastModule
     ],
     exports: [
         BrowserModule,
@@ -35,7 +41,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         CalendarModule,
         FormsModule,
         ReactiveFormsModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        InputTextareaModule,
+        ToastModule
     ]
 })
 export class SharedModule {

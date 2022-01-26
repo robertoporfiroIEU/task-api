@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { PaginatedProjects, ProjectsService } from '../api';
-import { Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ProjectsParams } from './ProjectsParams';
 import { ShellService } from '../shell/shell.service';
+import { ErrorService } from '../error.service';
 
 @Component({
     selector: 'app-project',
-    templateUrl: './project.container.html'
+    templateUrl: './projects.container.html'
 })
 export class ProjectContainerComponent implements OnInit {
 
@@ -26,13 +27,20 @@ export class ProjectContainerComponent implements OnInit {
         ),
         tap( (t) => {
             this.shellService.setLoadingSpinner(false);
+        }),
+        catchError( error =>{
+            this.errorService.showErrorMessage(error);
+            return [];
         })
     )
 
-    constructor(private projectsService: ProjectsService, private shellService: ShellService) {}
+    constructor(
+        private projectsService: ProjectsService,
+        private shellService: ShellService,
+        private errorService: ErrorService
+    ) {}
 
     ngOnInit(): void {
-
         this.shellService.onFullScreenMode$.pipe(
             takeUntil(this.destroy)
         ).subscribe( state => {
@@ -49,9 +57,6 @@ export class ProjectContainerComponent implements OnInit {
         this.shellService.setFullScreenMode(state);
     }
 
-    ngOnDestroy(): void {
-        this.destroy.next();
-        this.destroy.complete();
-    }
+
 
 }
