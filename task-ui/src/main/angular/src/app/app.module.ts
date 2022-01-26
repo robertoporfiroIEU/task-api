@@ -10,10 +10,15 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { ShellModule } from './shell/shell.module';
+import { ProjectComponent } from './project/project.component';
+import { ProjectContainerComponent } from './project/project.container';
+import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
     declarations: [
         AppComponent,
+        ProjectComponent,
+        ProjectContainerComponent
     ],
     imports: [
         BrowserModule,
@@ -29,6 +34,7 @@ import { ShellModule } from './shell/shell.module';
                 deps: [HttpClient]
             }
         }),
+        TooltipModule,
     ],
     providers: [ {
         provide: APP_INITIALIZER,

@@ -1,23 +1,29 @@
-<header class="header">
-    <div class="row">
+<header *ngIf="!fullScreenMode" class="shadowBottom">
+    <div class="row m-0">
         <div class="col-6">
             <div routerLink="{{homeUrl}}">
-                <img src="{{logoImage}}" height="70" class="p-mr-2">
-                <span class="corinthiaFont">{{title}}</span>
+                <img src="{{logoImage}}" height="40">
+                <span class="corinthiaFont">{{applicationTitle}}</span>
             </div>
         </div>
         <div class="col-6">
-            <div class="float-end mt-3">
+            <div class="float-end mt-2">
                 <i pTooltip="{{'taskUI.logout' | translate}}"
                    tooltipPosition="left"
-                   class="fas fa-sign-out-alt fa-2x mt-1 me-5"
+                   class="pi pi-sign-out fs-5 mt-1 me-5"
                    (click)="logout()"
                 ></i>
             </div>
         </div>
     </div>
 </header>
-<app-dock></app-dock>
-<main class="container">
+
+<main [ngClass]="fullScreenMode ? 'fullScreenModeMain': 'nonFullScreenMode'">
     <router-outlet></router-outlet>
 </main>
+
+<app-dock *ngIf="!fullScreenMode"></app-dock>
+
+<div class="loading" *ngIf="loadingSpinner">
+    <p-progressSpinner></p-progressSpinner>
+</div>

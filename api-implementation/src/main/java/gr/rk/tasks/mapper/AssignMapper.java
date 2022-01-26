@@ -1,6 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.AssignDTO;
+import gr.rk.tasks.V1.dto.PaginatedAssignsDTO;
 import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
@@ -8,7 +9,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,8 +19,10 @@ public abstract class AssignMapper {
     @Autowired
     protected UserPrincipal userPrincipal;
 
-    public Page<AssignDTO> toPageAssignsDTO(Page<Assign> assignsEntity) {
-        return new PageImpl<>(toAssignsDTOList(assignsEntity), assignsEntity.getPageable(), assignsEntity.getTotalElements());
+    public PaginatedAssignsDTO toPaginatedAssignsDTO(Page<Assign> assignsEntity) {
+        return new PaginatedAssignsDTO()
+                .content(toAssignsDTOList(assignsEntity))
+                .totalElements((int)assignsEntity.getTotalElements());
     }
 
     @Mapping(ignore = true, target = "identifier")

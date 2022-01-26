@@ -1,5 +1,6 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
@@ -56,29 +57,17 @@ public class ProjectService {
         return projectRepository.saveProject(project);
     }
 
-    public Page<Project> getProjects(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy
-    ) {
-        Pageable page = pageable;
+    public Page<Project> getProjects(ProjectCriteriaDTO projectCriteriaDTO) {
+        Pageable page = projectCriteriaDTO.getPageable();
 
-        if (pageable.getPageSize() > maxSize) {
-            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        if (projectCriteriaDTO.getPageable().getPageSize() > maxSize) {
+            page = PageRequest.of(projectCriteriaDTO.getPageable().getPageNumber(), maxSize, projectCriteriaDTO.getPageable().getSort());
         }
 
-        return projectRepository.findProjectsDynamicJPQL(
-                page,
-                identifier,
-                name,
-                creationDateFrom,
-                creationDateTo,
-                createdBy,
-                userPrincipal.getApplicationUser()
-        );
+        projectCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        projectCriteriaDTO.setPageable(page);
+
+        return projectRepository.findProjectsDynamicJPQL(projectCriteriaDTO);
     }
 
     public Optional<Project> getProject(String identifier) {

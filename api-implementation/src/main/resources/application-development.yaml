@@ -3,9 +3,36 @@ spring:
     console:
       enabled: true
   datasource:
-    url: "jdbc:h2:mem:tasksAPIDB"
+    url: "jdbc:h2:mem:tasksAPIDB;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE"
     username: sa
     password: password
+    driverClassName: org.h2.Driver
   jpa:
     database-platform: "org.hibernate.dialect.H2Dialect"
     show-sql: true
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql: trace
+
+applicationConfigurations:
+  addTestData: true
+  deleteTestData: false
+  projectService:
+    pageMaxSize: 25
+  taskService:
+    pageMaxSize: 25
+  groupService:
+    pageMaxSize: 25
+  userService:
+    pageMaxSize: 25
+  Default:
+    pageMaxSize: 25
+

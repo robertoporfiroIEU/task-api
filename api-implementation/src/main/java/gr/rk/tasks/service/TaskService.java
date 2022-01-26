@@ -1,5 +1,6 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.dto.TaskCriteriaDTO;
 import gr.rk.tasks.entity.*;
 import gr.rk.tasks.exception.*;
 import gr.rk.tasks.exception.i18n.*;
@@ -83,53 +84,35 @@ public class TaskService {
         return taskRepository.saveTask(task);
     }
 
-    public Page<Task> getTasks(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String status,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy,
-            String dueDateFrom,
-            String dueDateTo
-    ) {
+    public Page<Task> getTasks(TaskCriteriaDTO taskCriteriaDTO) {
+        Pageable page = taskCriteriaDTO.getPageable();
+
+        if (taskCriteriaDTO.getPageable().getPageSize() > maxSize) {
+            page = PageRequest.of(taskCriteriaDTO.getPageable().getPageNumber(), maxSize, taskCriteriaDTO.getPageable().getSort());
+        }
+
+        taskCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        taskCriteriaDTO.setPageable(page);
+
+        return taskRepository.findTasksDynamicJPQL(taskCriteriaDTO);
+    }
+
+    public Optional<Task> getTask(String taskIdentifier) {
+        return taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+    }
+
+    public Page<Comment> getComments(String taskIdentifier, Pageable pageable) {
         Pageable page = pageable;
 
         if (pageable.getPageSize() > maxSize) {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return taskRepository.findTasksDynamicJPQL(
-                page,
-                identifier,
-                name,
-                status,
-                creationDateFrom,
-                creationDateTo,
-                createdBy,
-                dueDateFrom,
-                dueDateTo,
-                userPrincipal.getApplicationUser()
-        );
-    }
-
-    public Optional<Task> getTask(String identifier) {
-        return taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
-    }
-
-    public Page<Comment> getComments(String identifier, Pageable pageable) {
-        Pageable page = pageable;
-
-        if (pageable.getPageSize() > maxSize) {
-            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
-        }
-
-        return commentRepository.findCommentByTaskIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false, page);
+        return commentRepository.findCommentByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page);
     }
 
     @Transactional
-    public Comment addTaskComment(String identifier, Comment comment, String createdBy) {
+    public Comment addTaskComment(String taskIdentifier, Comment comment, String createdBy) {
         // validations
         Optional<User> oUser = userRepository
                 .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
@@ -138,7 +121,7 @@ public class TaskService {
         }
 
         Optional<Task> oTask = taskRepository
-                .findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+                .findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
         }
@@ -149,7 +132,7 @@ public class TaskService {
         return commentRepository.save(comment);
     }
 
-    public Page<Assign> getAssigns(String identifier, Pageable pageable) {
+    public Page<Assign> getAssigns(String taskIdentifier, Pageable pageable) {
         Pageable page = pageable;
 
         if (pageable.getPageSize() > maxSize) {
@@ -157,7 +140,7 @@ public class TaskService {
         }
 
         List<Assign> assigns = assignRepository
-                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false, page)
+                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page)
                 .stream()
                 // filter the assigns that have at least one non deleted element
                 .filter(a -> {
@@ -192,9 +175,9 @@ public class TaskService {
     }
 
     @Transactional
-    public Assign addAssign(String identifier, Assign assign) {
+    public Assign addAssign(String taskIdentifier, Assign assign) {
         // validations
-        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
 
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
@@ -233,9 +216,9 @@ public class TaskService {
     }
 
     @Transactional
-    public Spectator addSpectator(String identifier, Spectator spectator) {
+    public Spectator addSpectator(String taskIdentifier, Spectator spectator) {
         // validations
-        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
         }
@@ -272,7 +255,7 @@ public class TaskService {
         return spectatorRepository.save(spectator);
     }
 
-    public Page<Spectator> getSpectators(String identifier, Pageable pageable) {
+    public Page<Spectator> getSpectators(String taskIdentifier, Pageable pageable) {
         Pageable page = pageable;
 
         if (pageable.getPageSize() > maxSize) {
@@ -280,44 +263,44 @@ public class TaskService {
         }
 
         List<Spectator> spectators = spectatorRepository
-            .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false, page)
-            .stream()
-            // filter the assigns that have at least one non deleted element
-            .filter(s -> {
-                if (Objects.nonNull(s.getUser()) && !s.getUser().isDeleted()) {
-                    return true;
-                }
-
-                if (Objects.nonNull(s.getGroup()) && !s.getGroup().isDeleted()) {
-                    return true;
-                }
-
-                return false;
-            })
-            // Remove deleted users and deleted groups
-            .map(s -> {
-                if (Objects.nonNull(s.getUser())) {
-                    if (s.getUser().isDeleted()) {
-                        s.setUser(null);
+                .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page)
+                .stream()
+                // filter the assigns that have at least one non deleted element
+                .filter(s -> {
+                    if (Objects.nonNull(s.getUser()) && !s.getUser().isDeleted()) {
+                        return true;
                     }
-                }
 
-                if (Objects.nonNull(s.getGroup())) {
-                    if (s.getGroup().isDeleted()) {
-                        s.setGroup(null);
+                    if (Objects.nonNull(s.getGroup()) && !s.getGroup().isDeleted()) {
+                        return true;
                     }
-                }
-                return s;
-            })
-            .collect(Collectors.toList());
+
+                    return false;
+                })
+                // Remove deleted users and deleted groups
+                .map(s -> {
+                    if (Objects.nonNull(s.getUser())) {
+                        if (s.getUser().isDeleted()) {
+                            s.setUser(null);
+                        }
+                    }
+
+                    if (Objects.nonNull(s.getGroup())) {
+                        if (s.getGroup().isDeleted()) {
+                            s.setGroup(null);
+                        }
+                    }
+                    return s;
+                })
+                .collect(Collectors.toList());
 
         return new PageImpl<>(spectators, pageable, spectators.size());
     }
 
     @Transactional
-    public void deleteTaskLogical(String identifier) {
+    public void deleteTaskLogical(String taskIdentifier) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
 
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);

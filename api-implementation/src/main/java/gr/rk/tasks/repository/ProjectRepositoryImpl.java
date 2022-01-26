@@ -1,11 +1,12 @@
 package gr.rk.tasks.repository;
 
+import gr.rk.tasks.dto.ProjectCriteriaDTO;
+import gr.rk.tasks.dto.RepositoryResultDTO;
 import gr.rk.tasks.entity.Project;
+import gr.rk.tasks.util.Util;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -13,10 +14,19 @@ import javax.persistence.TypedQuery;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Repository
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
+
+    private static final Map<String, String> APPLICABLE_SORT_FIELDS_PATH_VARIABLE_MAP = Map.of(
+            "identifier", "identifier",
+            "name", "name",
+            "createdAt", "createdAt",
+            "createdBy", "createdBy.username"
+    );
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -38,97 +48,86 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     }
 
     @Override
-    public Page<Project> findProjectsDynamicJPQL(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy,
-            String applicationUser
-            ) {
+    public Page<Project> findProjectsDynamicJPQL(ProjectCriteriaDTO projectCriteriaDTO) {
+        List<Consumer<TypedQuery<Project>>> projectsTypedQueryParamBinders = new ArrayList<>();
+        List<Consumer<TypedQuery<Long>>> totalResultsQueryParamBinders = new ArrayList<>();
 
-        String baseJPQL = "SELECT p from Project p where p.deleted = false and p.applicationUser = '"+ applicationUser + "' " ;
-        String countJPQL = "SELECT count(p.id) from Project p where p.deleted = false and p.applicationUser = '" + applicationUser + "'";
-        String whereClause = "";
+        RepositoryResultDTO<Project> repositoryResultDTO = findProjects(projectCriteriaDTO, projectsTypedQueryParamBinders, totalResultsQueryParamBinders);
 
-        // count total results for pagination reason
-        long totalResults = entityManager.createQuery(countJPQL, Long.class).getSingleResult();
+        TypedQuery<Project> projectsTypedQuery = repositoryResultDTO.getResultTypedQuery();
+        TypedQuery<Long> totalResultsQuery = repositoryResultDTO.getTotalResultTypedQuery();
 
-        List<String> filters = getFilters(
-                identifier,
-                name,
-                creationDateFrom,
-                creationDateTo,
-                createdBy
-        );
+        projectsTypedQueryParamBinders.forEach(typedQueryConsumer -> typedQueryConsumer.accept(projectsTypedQuery));
+        totalResultsQueryParamBinders.forEach(typedQueryConsumer -> typedQueryConsumer.accept(totalResultsQuery));
 
-        if (!filters.isEmpty()) {
-            whereClause += "and " + String.join(" AND ", filters);
-        }
-
-        TypedQuery<Project> projectTypedQuery = entityManager.createQuery(baseJPQL + whereClause, Project.class)
-                .setMaxResults(pageable.getPageSize())
-                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-
-        // bind the parameters to avoid sql injections
-        if (!filters.isEmpty()) {
-            if (Objects.nonNull(identifier)) {
-                projectTypedQuery.setParameter("identifier", "%" + identifier + "%");
-            }
-
-            if (Objects.nonNull(name)) {
-                projectTypedQuery.setParameter("name", "%" + name + "%");
-            }
-
-            if (Objects.nonNull(createdBy)) {
-                projectTypedQuery.setParameter("createdBy", "%" + createdBy + "%");
-            }
-
-            if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
-                projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
-                projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
-            } else if (Objects.nonNull(creationDateFrom)) {
-                projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
-            } else if (Objects.nonNull(creationDateTo)) {
-                projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
-            }
-        }
-
-        return new PageImpl<>(projectTypedQuery.getResultList(), pageable, totalResults);
+        return new PageImpl<>(projectsTypedQuery.getResultList(), projectCriteriaDTO.getPageable(), totalResultsQuery.getSingleResult());
 
     }
 
-    private List<String> getFilters(
-            String identifier,
-            String name,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy
-    ) {
+    private RepositoryResultDTO<Project> findProjects(
+            ProjectCriteriaDTO projectCriteriaDTO,
+            List<Consumer<TypedQuery<Project>>> projectsTypedQueryParamBinders,
+            List<Consumer<TypedQuery<Long>>> totalResultsQueryParamBinders
+            ) {
         List<String> filters = new ArrayList<>();
+        String entityVariable = "p";
+        String entityVariableWithDot = entityVariable + ".";
 
         // create where clause
-        if (Objects.nonNull(identifier)) {
-            filters.add("p.identifier like :identifier");
+        if (Objects.nonNull(projectCriteriaDTO.getIdentifier())) {
+            filters.add(entityVariableWithDot + "identifier = :identifier");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("identifier", projectCriteriaDTO.getIdentifier())));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("identifier", projectCriteriaDTO.getIdentifier())));
         }
 
-        if (Objects.nonNull(name)) {
-            filters.add("p.name like :name");
+        if (Objects.nonNull(projectCriteriaDTO.getName())) {
+            filters.add(entityVariableWithDot + "name like :name");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("name", "%" + projectCriteriaDTO.getName() + "%")));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("name", "%" + projectCriteriaDTO.getName() + "%")));
         }
 
-        if (Objects.nonNull(createdBy)) {
-            filters.add("p.createdBy.username like :createdBy");
+        if (Objects.nonNull(projectCriteriaDTO.getCreatedBy())) {
+            filters.add(entityVariableWithDot + "createdBy.username like :createdBy");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("createdBy", "%" + projectCriteriaDTO.getCreatedBy() + "%")));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("createdBy", "%" + projectCriteriaDTO.getCreatedBy() + "%")));
         }
 
-        if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
-            filters.add("p.createdAt >= :creationDateFrom AND p.createdAt <= :creationDateTo");
-        } else if (Objects.nonNull(creationDateFrom)) {
-            filters.add("p.createdAt >= :creationDateFrom");
-        } else if (Objects.nonNull(creationDateTo)) {
-            filters.add("p.createdAt <= :creationDateTo");
+        if (Objects.nonNull(projectCriteriaDTO.getCreationDateFrom()) && Objects.nonNull(projectCriteriaDTO.getCreationDateTo())) {
+            filters.add(entityVariableWithDot + "createdAt >= :creationDateFrom AND " +  entityVariableWithDot + "createdAt <= :creationDateTo");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateFrom()).toLocalDateTime())));
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateTo()).toLocalDateTime())));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateFrom()).toLocalDateTime())));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateTo()).toLocalDateTime())));
+        } else if (Objects.nonNull(projectCriteriaDTO.getCreationDateFrom())) {
+            filters.add(entityVariableWithDot + "createdAt >= :creationDateFrom");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateFrom()).toLocalDateTime())));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateFrom()).toLocalDateTime())));
+        } else if (Objects.nonNull(projectCriteriaDTO.getCreationDateTo())) {
+            filters.add(entityVariableWithDot + "createdAt <= :creationDateTo");
+            projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateTo()).toLocalDateTime())));
+            totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(projectCriteriaDTO.getCreationDateTo()).toLocalDateTime())));
         }
 
-        return filters;
+        String fromPart = "FROM Project " + entityVariable + " ";
+        String wherePart = "WHERE " + entityVariableWithDot + "deleted = false AND " + entityVariableWithDot + "applicationUser = '" + projectCriteriaDTO.getApplicationUser() + "' ";
+
+        if (!filters.isEmpty()) {
+            wherePart += "AND " + String.join(" AND ", filters);
+        }
+
+        String orderByPart = Util.getOrderByStatement(entityVariable, projectCriteriaDTO.getPageable().getSort(), APPLICABLE_SORT_FIELDS_PATH_VARIABLE_MAP);
+
+        if (orderByPart.equals("")) {
+            orderByPart = " ORDER BY " + entityVariableWithDot + "createdAt DESC";
+        }
+
+        // count total results for pagination reason
+        TypedQuery<Long> totalResultsTypedQuery = entityManager.createQuery("SELECT COUNT( " + entityVariable +") " + fromPart + wherePart, Long.class);
+
+        TypedQuery<Project> projectsTypedQuery = entityManager.createQuery("SELECT " + entityVariable + " " + fromPart + wherePart + orderByPart, Project.class)
+                .setMaxResults(projectCriteriaDTO.getPageable().getPageSize())
+                .setFirstResult(projectCriteriaDTO.getPageable().getPageNumber() * projectCriteriaDTO.getPageable().getPageSize());
+
+        return new RepositoryResultDTO<>(totalResultsTypedQuery, projectsTypedQuery);
     }
 }

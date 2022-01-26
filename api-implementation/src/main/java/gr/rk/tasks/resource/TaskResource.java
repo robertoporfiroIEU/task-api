@@ -1,10 +1,8 @@
 package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.TasksApi;
-import gr.rk.tasks.V1.dto.AssignDTO;
-import gr.rk.tasks.V1.dto.CommentDTO;
-import gr.rk.tasks.V1.dto.SpectatorDTO;
-import gr.rk.tasks.V1.dto.TaskDTO;
+import gr.rk.tasks.V1.dto.*;
+import gr.rk.tasks.dto.TaskCriteriaDTO;
 import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.entity.Spectator;
@@ -16,15 +14,12 @@ import gr.rk.tasks.mapper.TaskMapper;
 import gr.rk.tasks.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -53,7 +48,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<TaskDTO>> getTasks(
+    public ResponseEntity<PaginatedTasksDTO> getTasks(
             Pageable pageable,
             String identifier,
             String projectIdentifier,
@@ -65,26 +60,29 @@ public class TaskResource implements TasksApi {
             String dueDateFrom,
             String dueDateTo) {
 
-        List<TaskDTO> tasksDTO = new ArrayList<>();
-        Page<TaskDTO> tasksDTOPage = new PageImpl<>(tasksDTO);
+        TaskCriteriaDTO taskCriteriaDTO = new TaskCriteriaDTO();
+        taskCriteriaDTO.setPageable(pageable);
+        taskCriteriaDTO.setIdentifier(identifier);
+        taskCriteriaDTO.setProjectIdentifier(projectIdentifier);
+        taskCriteriaDTO.setName(name);
+        taskCriteriaDTO.setStatus(status);
+        taskCriteriaDTO.setCreationDateFrom(creationDateFrom);
+        taskCriteriaDTO.setCreationDateTo(creationDateTo);
+        taskCriteriaDTO.setCreatedBy(createdBy);
+        taskCriteriaDTO.setDueDateFrom(dueDateFrom);
+        taskCriteriaDTO.setDueDateTo(dueDateTo);
 
-        Page<Task> tasksEntity = taskService.getTasks(
-                pageable,
-                identifier,
-                name,
-                status,
-                creationDateFrom,
-                creationDateTo,
-                createdBy,
-                dueDateFrom,
-                dueDateTo
-        );
+        Page<Task> tasksEntity = taskService.getTasks(taskCriteriaDTO);
+
+        PaginatedTasksDTO paginatedTasksDTO = new PaginatedTasksDTO()
+                .content(new ArrayList<>())
+                .totalElements(0);
 
         if (!tasksEntity.isEmpty()) {
-            tasksDTOPage = taskMapper.toPageTasksDTO(tasksEntity);
+            paginatedTasksDTO = taskMapper.toPaginatedTasksDTO(tasksEntity);
         }
 
-        return ResponseEntity.ok(tasksDTOPage);
+        return ResponseEntity.ok(paginatedTasksDTO);
     }
 
     @Override
@@ -110,17 +108,19 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<CommentDTO>> getComments(String identifier,  Pageable pageable) {
-        List<CommentDTO> commentsDTO = new ArrayList<>();
-        Page<CommentDTO> commentsDTOPage= new PageImpl<>(commentsDTO);
+    public ResponseEntity<PaginatedCommentsDTO> getComments(String identifier,  Pageable pageable) {
 
         Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
 
+        PaginatedCommentsDTO paginatedCommentsDTO = new PaginatedCommentsDTO()
+                .content(new ArrayList<>())
+                .totalElements(0);
+
         if (!commentsEntity.isEmpty()) {
-            commentsDTOPage = commentMapper.toPageCommentsDTO(commentsEntity);
+            paginatedCommentsDTO = commentMapper.toPaginatedCommentsDTO(commentsEntity);
         }
 
-        return ResponseEntity.ok(commentsDTOPage);
+        return ResponseEntity.ok(paginatedCommentsDTO);
     }
 
     @Override
@@ -135,17 +135,19 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<AssignDTO>> getAssigns(String identifier,  Pageable pageable) {
-        List<AssignDTO> assignsDTO = new ArrayList<>();
-        Page<AssignDTO> assignsDTOPage = new PageImpl<>(assignsDTO);
+    public ResponseEntity<PaginatedAssignsDTO> getAssigns(String identifier,  Pageable pageable) {
 
         Page<Assign> assignsEntity = taskService.getAssigns(identifier, pageable);
 
+        PaginatedAssignsDTO paginatedAssignsDTO = new PaginatedAssignsDTO()
+                .content(new ArrayList<>())
+                .totalElements(0);
+
         if (!assignsEntity.isEmpty()) {
-            assignsDTOPage = assignMapper.toPageAssignsDTO(assignsEntity);
+            paginatedAssignsDTO = assignMapper.toPaginatedAssignsDTO(assignsEntity);
         }
 
-        return ResponseEntity.ok(assignsDTOPage);
+        return ResponseEntity.ok(paginatedAssignsDTO);
     }
 
     @Override
@@ -169,17 +171,18 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<SpectatorDTO>> getSpectators(String identifier, Pageable pageable) {
-        List<SpectatorDTO> spectatorsDTO = new ArrayList<>();
-        Page<SpectatorDTO> spectatorsDTOPage = new PageImpl<>(spectatorsDTO);
-
+    public ResponseEntity<PaginatedSpectatorsDTO> getSpectators(String identifier, Pageable pageable) {
         Page<Spectator> spectatorsEntity = taskService.getSpectators(identifier, pageable);
 
+        PaginatedSpectatorsDTO paginatedSpectatorsDTO = new PaginatedSpectatorsDTO()
+                .content(new ArrayList<>())
+                .totalElements(0);
+
         if (!spectatorsEntity.isEmpty()) {
-            spectatorsDTOPage = spectatorMapper.toPageSpectatorDTO(spectatorsEntity);
+            paginatedSpectatorsDTO = spectatorMapper.toPaginatedSpectatorsDTO(spectatorsEntity);
         }
 
-        return ResponseEntity.ok(spectatorsDTOPage);
+        return ResponseEntity.ok(paginatedSpectatorsDTO);
     }
 
     @Override
@@ -208,7 +211,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Page<TaskDTO>> getHistory(String identifier,  Pageable pageable,  String identifier2, String newHashCode, String changedBy) {
+    public ResponseEntity<PaginatedHistoryDTO> getHistory(String identifier,  Pageable pageable,  String identifier2, String newHashCode, String changedBy) {
         return null;
     }
 }

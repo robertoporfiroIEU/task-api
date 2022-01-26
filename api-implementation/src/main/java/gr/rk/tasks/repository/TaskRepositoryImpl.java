@@ -1,11 +1,12 @@
 package gr.rk.tasks.repository;
 
+import gr.rk.tasks.dto.RepositoryResultDTO;
+import gr.rk.tasks.dto.TaskCriteriaDTO;
 import gr.rk.tasks.entity.Task;
+import gr.rk.tasks.util.Util;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -13,10 +14,21 @@ import javax.persistence.TypedQuery;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepositoryCustom {
+
+    private static final Map<String, String> APPLICABLE_SORT_FIELDS_PATH_VARIABLE_MAP = Map.of(
+            "identifier", "identifier",
+            "name", "name",
+            "status", "status",
+            "createdAt", "createdAt",
+            "dueDate", "dueDate",
+            "createdBy", "createdBy.username"
+    );
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -40,130 +52,143 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
     }
 
     @Override
-    public Page<Task> findTasksDynamicJPQL(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String status,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy,
-            String dueDateFrom,
-            String dueDateTo,
-            String applicationUser
-            ) {
+    public Page<Task> findTasksDynamicJPQL(TaskCriteriaDTO taskCriteriaDTO) {
+        List<Consumer<TypedQuery<Task>>> tasksTypedQueryParamBinders = new ArrayList<>();
+        List<Consumer<TypedQuery<Long>>> totalResultsQueryParamBinders = new ArrayList<>();
 
-        String baseJPQL = "SELECT t from Task t where t.deleted = false and t.applicationUser = '" + applicationUser + "' ";
-        String countJPQL = "SELECT count(t.id) from Task t where t.deleted = false and t.applicationUser = '" + applicationUser + "'";
-        String whereClause = "";
+        RepositoryResultDTO<Task> repositoryResultDTO = findTasks(taskCriteriaDTO, tasksTypedQueryParamBinders, totalResultsQueryParamBinders);
 
-        // count total results for pagination reason
-        long totalResults = entityManager.createQuery(countJPQL, Long.class).getSingleResult();
+        TypedQuery<Task> tasksTypedQuery = repositoryResultDTO.getResultTypedQuery();
+        TypedQuery<Long> totalResultsQuery = repositoryResultDTO.getTotalResultTypedQuery();
 
-        List<String> filters = getFilters(
-                identifier,
-                name,
-                status,
-                creationDateFrom,
-                creationDateTo,
-                createdBy,
-                dueDateFrom,
-                dueDateTo
-        );
+        tasksTypedQueryParamBinders.forEach(typedQueryConsumer -> typedQueryConsumer.accept(tasksTypedQuery));
+        totalResultsQueryParamBinders.forEach(typedQueryConsumer -> typedQueryConsumer.accept(totalResultsQuery));
 
-        if (!filters.isEmpty()) {
-            whereClause = "and " + String.join(" AND ", filters);
-        }
-
-        TypedQuery<Task> taskTypedQuery = entityManager.createQuery(baseJPQL + whereClause, Task.class)
-                .setMaxResults(pageable.getPageSize())
-                .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-
-        // bind the parameters to avoid sql injections
-        if (!filters.isEmpty()) {
-            if (Objects.nonNull(identifier)) {
-                taskTypedQuery.setParameter("identifier", "%" + identifier + "%");
-            }
-
-            if (Objects.nonNull(name)) {
-                taskTypedQuery.setParameter("name", "%" + name + "%");
-            }
-
-            if (Objects.nonNull(status)) {
-                taskTypedQuery.setParameter("status", "%" + status + "%");
-            }
-
-            if (Objects.nonNull(createdBy)) {
-                taskTypedQuery.setParameter("createdBy", "%" + createdBy + "%");
-            }
-
-            if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
-                taskTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
-                taskTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
-            } else if (Objects.nonNull(creationDateFrom)) {
-                taskTypedQuery.setParameter("creationDateFrom", ZonedDateTime.parse(creationDateFrom).toLocalDateTime());
-            } else if (Objects.nonNull(creationDateTo)) {
-                taskTypedQuery.setParameter("creationDateTo", ZonedDateTime.parse(creationDateTo).toLocalDateTime());
-            }
-
-            if (Objects.nonNull(dueDateFrom) && Objects.nonNull(dueDateTo)) {
-                taskTypedQuery.setParameter("dueDateFrom", ZonedDateTime.parse(dueDateFrom).toLocalDateTime());
-                taskTypedQuery.setParameter("dueDateTo", ZonedDateTime.parse(dueDateTo).toLocalDateTime());
-            } else if (Objects.nonNull(dueDateFrom)) {
-                taskTypedQuery.setParameter("dueDateFrom", ZonedDateTime.parse(dueDateFrom).toLocalDateTime());
-            } else if (Objects.nonNull(dueDateTo)) {
-                taskTypedQuery.setParameter("dueDateTo", ZonedDateTime.parse(dueDateTo).toLocalDateTime());
-            }
-        }
-
-        return new PageImpl<>(taskTypedQuery.getResultList(), pageable, totalResults);
+        return new PageImpl<>(tasksTypedQuery.getResultList(), taskCriteriaDTO.getPageable(), totalResultsQuery.getSingleResult());
     }
 
-    private List<String> getFilters(
-            String identifier,
-            String name,
-            String status,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy,
-            String dueDateFrom,
-            String dueDateTo) {
+    private RepositoryResultDTO<Task> findTasks(
+            TaskCriteriaDTO taskCriteriaDTO,
+            List<Consumer<TypedQuery<Task>>> tasksTypedQueryParamBinders,
+            List<Consumer<TypedQuery<Long>>> totalResultsQueryParamBinders
+    ) {
         List<String> filters = new ArrayList<>();
+        String entityVariable = "t";
+        String entityVariableWithDot = entityVariable + ".";
 
-        // create where clause
-        if (Objects.nonNull(identifier)) {
-            filters.add("t.identifier like :identifier");
+        if (Objects.nonNull(taskCriteriaDTO.getIdentifier())) {
+            filters.add(entityVariableWithDot + "identifier = :identifier");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("identifier", taskCriteriaDTO.getIdentifier())));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("identifier", taskCriteriaDTO.getIdentifier())));
         }
 
-        if (Objects.nonNull(name)) {
-            filters.add("t.name like :name");
+        if (Objects.nonNull(taskCriteriaDTO.getProjectIdentifier())) {
+            filters.add(entityVariableWithDot + "project.identifier = :projectIdentifier");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("projectIdentifier", taskCriteriaDTO.getProjectIdentifier())));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("projectIdentifier", taskCriteriaDTO.getProjectIdentifier())));
         }
 
-        if (Objects.nonNull(status)) {
-            filters.add("t.status like :status");
+        if (Objects.nonNull(taskCriteriaDTO.getName())) {
+            filters.add(entityVariableWithDot + "name like :name");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("name", "%" + taskCriteriaDTO.getName() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("name", "%" + taskCriteriaDTO.getName() + "%")));
         }
 
-        if (Objects.nonNull(createdBy)) {
-            filters.add("t.createdBy.username like :createdBy");
+        if (Objects.nonNull(taskCriteriaDTO.getStatus())) {
+            filters.add(entityVariableWithDot + "status like :status");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("status", "%" + taskCriteriaDTO.getStatus() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("status", "%" + taskCriteriaDTO.getStatus() + "%")));
         }
 
-        if (Objects.nonNull(creationDateFrom) && Objects.nonNull(creationDateTo)) {
-            filters.add("t.createdAt >= :creationDateFrom AND t.createdAt <= :creationDateTo");
-        } else if (Objects.nonNull(creationDateFrom)) {
-            filters.add("t.createdAt >= :creationDateFrom");
-        } else if (Objects.nonNull(creationDateTo)) {
-            filters.add("t.createdAt <= :creationDateTo");
+        if (Objects.nonNull(taskCriteriaDTO.getCreatedBy())) {
+            filters.add(entityVariableWithDot + "createdBy.username like :createdBy");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("createdBy", "%" + taskCriteriaDTO.getCreatedBy() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("createdBy", "%" + taskCriteriaDTO.getCreatedBy() + "%")));
         }
 
-
-        if (Objects.nonNull(dueDateFrom) && Objects.nonNull(dueDateTo)) {
-            filters.add("t.dueDate >= :creationDateFrom AND t.createdAt <= :creationDateTo");
-        } else if (Objects.nonNull(dueDateFrom)) {
-            filters.add("t.dueDate >= :dueDateFrom");
-        } else if (Objects.nonNull(dueDateTo)) {
-            filters.add("t.dueDate <= :dueDateTo");
+        if (Objects.nonNull(taskCriteriaDTO.getCreationDateFrom()) && Objects.nonNull(taskCriteriaDTO.getCreationDateTo())) {
+            filters.add(entityVariableWithDot + "createdAt >= :creationDateFrom AND " + entityVariableWithDot + "createdAt <= :creationDateTo");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateFrom()).toLocalDateTime())
+            ));
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateTo", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateTo()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateTo", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateTo()).toLocalDateTime())
+            ));
+        } else if (Objects.nonNull(taskCriteriaDTO.getCreationDateFrom())) {
+            filters.add(entityVariableWithDot + "createdAt >= :creationDateFrom");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateFrom()).toLocalDateTime())
+            ));
+        } else if (Objects.nonNull(taskCriteriaDTO.getCreationDateTo())) {
+            filters.add(entityVariableWithDot + "createdAt <= :creationDateTo");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateTo", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateTo()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "creationDateTo", ZonedDateTime.parse(taskCriteriaDTO.getCreationDateTo()).toLocalDateTime())
+            ));
         }
 
-        return filters;
+        if (Objects.nonNull(taskCriteriaDTO.getDueDateFrom()) && Objects.nonNull(taskCriteriaDTO.getDueDateTo())) {
+            filters.add(entityVariableWithDot + "dueDate >= :creationDateFrom AND " + entityVariableWithDot + "createdAt <= :creationDateTo");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+        } else if (Objects.nonNull(taskCriteriaDTO.getDueDateFrom())) {
+            filters.add(entityVariableWithDot + "dueDate >= :dueDateFrom");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+        } else if (Objects.nonNull(taskCriteriaDTO.getDueDateTo())) {
+            filters.add(entityVariableWithDot + "dueDate <= :dueDateTo");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+            ));
+        }
+
+        String fromPart = "FROM Task " + entityVariable + " ";
+        String wherePart = "WHERE " + entityVariableWithDot + "deleted = false AND " + entityVariableWithDot + "applicationUser = '" + taskCriteriaDTO.getApplicationUser() + "' ";
+
+        if (!filters.isEmpty()) {
+            wherePart += "AND " + String.join(" AND ", filters);
+        }
+
+        String orderByPart = Util.getOrderByStatement(entityVariable, taskCriteriaDTO.getPageable().getSort(), APPLICABLE_SORT_FIELDS_PATH_VARIABLE_MAP);
+
+        if (orderByPart.equals("")) {
+            orderByPart = " ORDER BY " + entityVariableWithDot +"createdAt DESC";
+        }
+
+        // count total results for pagination reason
+        TypedQuery<Long> totalResultsTypedQuery = entityManager.createQuery("SELECT COUNT(" + entityVariable + ") " + fromPart + wherePart, Long.class);
+        TypedQuery<Task> taskTypedQuery = entityManager.createQuery("SELECT " + entityVariable + " " + fromPart + wherePart + orderByPart, Task.class)
+                .setMaxResults(taskCriteriaDTO.getPageable().getPageSize())
+                .setFirstResult(taskCriteriaDTO.getPageable().getPageNumber() * taskCriteriaDTO.getPageable().getPageSize());
+
+        return new RepositoryResultDTO<>(totalResultsTypedQuery, taskTypedQuery);
     }
 }

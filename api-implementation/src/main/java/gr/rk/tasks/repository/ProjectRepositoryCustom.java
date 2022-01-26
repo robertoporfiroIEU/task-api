@@ -1,5 +1,6 @@
 package gr.rk.tasks.repository;
 
+import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +12,5 @@ public interface ProjectRepositoryCustom {
     @Transactional
     Project saveProject(Project project);
 
-    Page<Project> findProjectsDynamicJPQL(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy,
-            String applicationUser
-            );
+    Page<Project> findProjectsDynamicJPQL(ProjectCriteriaDTO projectCriteriaDTO);
 }

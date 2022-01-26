@@ -22,8 +22,6 @@ paths:
       tags:
         - "Projects"
       operationId: getProjects
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.ProjectDTO
       parameters:
         - in: query
           name: pageable
@@ -63,12 +61,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/Project'
+                  $ref: '#/components/schemas/PaginatedProjects'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -140,8 +133,6 @@ paths:
       tags:
         - "Tasks"
       operationId: getTasks
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - in: query
           name: pageable
@@ -203,12 +194,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/PaginatedTasks'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -281,8 +267,6 @@ paths:
       tags:
         - "Tasks"
       operationId: getComments
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.CommentDTO
       parameters:
         - name: identifier
           in: path
@@ -301,12 +285,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/PaginatedComments'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -370,8 +349,6 @@ paths:
       tags:
         - "Tasks"
       operationId: getAssigns
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.AssignDTO
       parameters:
         - name: identifier
           in: path
@@ -390,12 +367,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/Assign'
+                $ref: '#/components/schemas/PaginatedAssigns'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -459,8 +431,6 @@ paths:
       tags:
         - "Tasks"
       operationId: getSpectators
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.SpectatorDTO
       parameters:
         - name: identifier
           in: path
@@ -479,12 +449,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/Spectator'
+                $ref: '#/components/schemas/PaginatedSpectators'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -548,8 +513,6 @@ paths:
       tags:
         - "Tasks"
       operationId: getHistory
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.TaskDTO
       parameters:
         - name: identifier
           in: path
@@ -583,12 +546,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  content:
-                    items:
-                      $ref: '#/components/schemas/History'
+                $ref: '#/components/schemas/PaginatedHistory'
 
 
 
@@ -632,11 +590,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  items:
-                    $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/PaginatedGroups'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -766,8 +720,6 @@ paths:
       tags:
         - Users
       operationId: getUsers
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.UserDTO
       parameters:
         - in: query
           name: pageable
@@ -791,11 +743,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                properties:
-                  items:
-                    $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUsers'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -862,44 +810,82 @@ paths:
 
 components:
   schemas:
+    PaginatedAssigns:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Assign'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedComments:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Comment'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedGroups:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Group'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedHistory:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/History'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedProjects:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Project'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedSpectators:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Spectator'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedTasks:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/Task'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
+    PaginatedUsers:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/User'
+      allOf:
+        - $ref: '#/components/schemas/Page'
+
     Page:
       type: object
       properties:
-        pageable:
-          type: string
-          example: INSTANCE
-        last:
-          type: boolean
-        totalPages:
-          type: integer
-          example: 1
         totalElements:
           type: integer
-          example: 5
-        size:
-          type: integer
-          example: 10
-        number:
-          type: integer
-          example: 0
-        sort:
-          type: object
-          properties:
-            sorted:
-              type: boolean
-              example: false
-            unsorted:
-              type: boolean
-            empty:
-                type: boolean
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          example: 5
-        empty:
-          type: boolean
-          example: false
+          example: 1
 
     Project:
      type: object
@@ -920,7 +906,7 @@ components:
        prefixIdentifier:
          description: The prefix part that every identifier haves. For example, if the prefix is <my-project> then the identifier will be <my-project-number>
          type: string
-       creationDate:
+       createdAt:
          type: string
          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
          description: Creation date and time
@@ -933,7 +919,6 @@ components:
          description: This field is the realm from the IDP
          example: Application1
          readOnly: true
-
 
     Task:
       type: object
@@ -954,7 +939,7 @@ components:
         status:
           description: This is the current status of the task
           type: string
-        creationDate:
+        createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           description: Creation date and time
@@ -1006,7 +991,7 @@ components:
           type: string
         createdBy:
           $ref: '#/components/schemas/User'
-        creationDate:
+        createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           description: Creation date and time
@@ -1044,7 +1029,7 @@ components:
           $ref: '#/components/schemas/Group'
         user:
           $ref: '#/components/schemas/User'
-        creationDate:
+        createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           example: "2021-01-30T08:30:00Z"
@@ -1065,7 +1050,7 @@ components:
           description: This field is the realm from the IDP
           example: Application1
           readOnly: true
-        creationDate:
+        createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           description: Creation date and time
@@ -1075,7 +1060,6 @@ components:
           readOnly: true
           items:
             $ref: '#/components/schemas/User'
-
 
     User:
       description: This is a user object
@@ -1093,9 +1077,9 @@ components:
           items:
             $ref: "#/components/schemas/Group"
 
-
     History:
       description: This is the history object. This object describes the changes that happens to a specific object
+      type: object
       properties:
         hashcode:
           type: string
@@ -1156,7 +1140,6 @@ components:
           example: "2021-01-30T08:30:00Z"
           readOnly: true
 
-
     Pageable:
       description: minimal Pageable query parameters
       type: object
@@ -1169,9 +1152,8 @@ components:
           description: Number of records per page
         sort:
           description: Sorting criteria in the format -> property,asc|desc no space after comma!.
-          example: id,asc
+          example: createdAt,asc
           type: string
-
 
   responses:
     ErrorResponse:
