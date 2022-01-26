@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApplicationMenuItem } from './shell/dock/ApplicationMenuItem';
 import { TranslateService } from '@ngx-translate/core';
 import { ShellService } from './shell/shell.service';
+import { RoutesEnum } from './RoutesEnum';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,6 @@ import { ShellService } from './shell/shell.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
     dockItemsState: ApplicationMenuItem[] = [
         {
             id: 'projects',
@@ -19,7 +19,7 @@ export class AppComponent {
                 positionTop: -40,
                 positionLeft: 15
             },
-            routerLink: 'project',
+            routerLink: RoutesEnum.projects,
             fontAwesomeClass: "fas fa-project-diagram fa-2x text-dark",
             isSelected: true
         },
@@ -49,8 +49,11 @@ export class AppComponent {
         }
     ];
 
-    constructor(private translateService: TranslateService, private shellService: ShellService) {
+    constructor(private translateService: TranslateService, private shellService: ShellService) {}
+
+    ngOnInit(): void {
         this.shellService.setDockItemsState(this.dockItemsState);
+        this.shellService.setLoadingSpinner(false);
     }
 
     logout(): void {

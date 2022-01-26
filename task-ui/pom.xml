@@ -11,7 +11,7 @@
     <groupId>gr.rk</groupId>
     <artifactId>task-ui</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>task-ui</name>
     <description>task-ui</description>
     <properties>

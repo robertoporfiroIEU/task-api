@@ -15,7 +15,7 @@ public class Comment implements AutomaticValuesGeneration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "users_username")
     private User createdBy;
 
@@ -32,9 +32,7 @@ public class Comment implements AutomaticValuesGeneration {
 
     private boolean deleted;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
@@ -79,7 +77,6 @@ public class Comment implements AutomaticValuesGeneration {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
 
     public Task getTask() {
         return task;

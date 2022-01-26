@@ -32,10 +32,6 @@ export class DockComponent implements OnInit, OnDestroy {
         this.dockPresenter.dockItemsStateHasChange$.pipe(
             takeUntil(this.destroy)
         ).subscribe( dockItemsState => this.onDockItemsState.emit(dockItemsState));
-
-        this.dockPresenter.changeDockItem$.pipe(
-            takeUntil(this.destroy)
-        ).subscribe( dockItem => this.onChangeDockItem.emit(dockItem));
     }
 
     changeDockItem(item: ApplicationMenuItem): void {

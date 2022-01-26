@@ -1,5 +1,6 @@
 package gr.rk.tasks.service;
 
+import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 @Service
@@ -42,7 +44,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project createProject(Project project, String createdBy) {
+    public Project createProject(Project project, String createdBy) throws org.springframework.dao.DataIntegrityViolationException {
         // validations
         Optional<User> oUser = userRepository
                 .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
@@ -53,32 +55,25 @@ public class ProjectService {
 
         // happy path
         project.setCreatedBy(oUser.get());
-        return projectRepository.saveProject(project);
+        try {
+            return projectRepository.saveProject(project);
+        }
+        catch(org.springframework.dao.DataIntegrityViolationException e) {
+            throw new ConstraintViolationException("Prefix identification already exist", null);
+        }
     }
 
-    public Page<Project> getProjects(
-            Pageable pageable,
-            String identifier,
-            String name,
-            String creationDateFrom,
-            String creationDateTo,
-            String createdBy
-    ) {
-        Pageable page = pageable;
+    public Page<Project> getProjects(ProjectCriteriaDTO projectCriteriaDTO) {
+        Pageable page = projectCriteriaDTO.getPageable();
 
-        if (pageable.getPageSize() > maxSize) {
-            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
+        if (projectCriteriaDTO.getPageable().getPageSize() > maxSize) {
+            page = PageRequest.of(projectCriteriaDTO.getPageable().getPageNumber(), maxSize, projectCriteriaDTO.getPageable().getSort());
         }
 
-        return projectRepository.findProjectsDynamicJPQL(
-                page,
-                identifier,
-                name,
-                creationDateFrom,
-                creationDateTo,
-                createdBy,
-                userPrincipal.getApplicationUser()
-        );
+        projectCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        projectCriteriaDTO.setPageable(page);
+
+        return projectRepository.findProjectsDynamicJPQL(projectCriteriaDTO);
     }
 
     public Optional<Project> getProject(String identifier) {

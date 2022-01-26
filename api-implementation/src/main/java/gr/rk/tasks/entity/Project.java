@@ -25,9 +25,7 @@ public class Project {
     @Column(unique = true)
     private String prefixIdentifier;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)
@@ -85,16 +83,8 @@ public class Project {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public String getApplicationUser() {

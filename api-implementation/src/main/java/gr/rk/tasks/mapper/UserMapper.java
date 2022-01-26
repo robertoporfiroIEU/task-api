@@ -1,6 +1,7 @@
 package gr.rk.tasks.mapper;
 
 import gr.rk.tasks.V1.dto.GroupDTO;
+import gr.rk.tasks.V1.dto.PaginatedUsersDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
@@ -12,7 +13,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -22,8 +22,9 @@ public abstract class UserMapper {
     @Autowired
     protected UserPrincipal userPrincipal;
 
-    public Page<UserDTO> toPageUsersDTO(Page<User> usersEntity) {
-        return new PageImpl<>(toUsersDTOList(usersEntity), usersEntity.getPageable(), usersEntity.getTotalElements());
+    public PaginatedUsersDTO toPaginatedUsersDTO(Page<User> usersEntity) {
+        return new PaginatedUsersDTO().content(toUsersDTOList(usersEntity))
+                .totalElements((int)usersEntity.getTotalElements());
     }
 
     @Named("toUser")
@@ -45,7 +46,7 @@ public abstract class UserMapper {
     public abstract UserDTO toUserDTO(User user);
 
     @Named("groupDTOFromUser")
-    @Mapping(target = "creationDate", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")
+    @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")
     @Mapping(target = "realm", expression = "java(group.getApplicationUser())")
     @Mapping(ignore = true, target = "users")
     public abstract GroupDTO toGroupDTO(Group group);

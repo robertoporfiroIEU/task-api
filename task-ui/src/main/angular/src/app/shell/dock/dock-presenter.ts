@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ApplicationMenuItem } from './ApplicationMenuItem';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject } from 'rxjs';
 
 
 @Injectable()
 export class DockPresenter {
 
-    private changeDockItemSubject: Subject<ApplicationMenuItem> = new Subject<ApplicationMenuItem>();
     private dockItemsStateSubject: Subject<ApplicationMenuItem[]> = new Subject<ApplicationMenuItem[]>();
-
-    changeDockItem$: Observable<ApplicationMenuItem> = this.changeDockItemSubject.asObservable();
     dockItemsStateHasChange$: Observable<ApplicationMenuItem[]> = this.dockItemsStateSubject.asObservable();
 
     isExpanded: boolean = true;
@@ -60,7 +57,6 @@ export class DockPresenter {
                     isSelected: false
                 }
             ]
-            this.dockItemsStateSubject.next(this.dockItems);
             return;
         }
 
@@ -77,7 +73,6 @@ export class DockPresenter {
         this.dockItemsWithoutMinimise[index].isSelected = true;
 
         this.dockItemsStateSubject.next([...this.dockItemsWithoutMinimise]);
-        this.changeDockItemSubject.next(item);
     }
 
 }

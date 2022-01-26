@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -34,6 +35,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private static final String GROUP_NAME = "SetupDataLoader#test group";
     private static final String USERNAME = "SetupDataLoader#Rafail";
     private static final int NUMBER_OF_COMMENTS = 30;
+    private static final int NUMBER_OF_PROJECTS = 100;
 
     @Autowired
     public SetupDataLoader(
@@ -72,14 +74,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 user.setGroups(Set.of(group));
 
                 // create a Project
-                Project project = new Project();
-                project.setIdentifier(PROJECT_IDENTIFIER);
-                project.setPrefixIdentifier("taskapi");
-                project.setName("Test Project");
-                project.setDescription("This is a project description");
-                project.setCreatedBy(user);
-                project.setApplicationUser(userPrincipal.getApplicationUser());
-                projectRepository.save(project);
+                List<Project> projects = new ArrayList<>();
+                for(int i =0; i < NUMBER_OF_PROJECTS; i++) {
+                    Project project = new Project();
+                    project.setIdentifier(PROJECT_IDENTIFIER + i);
+                    project.setPrefixIdentifier("taskapi" + i);
+                    project.setName("Test Project" + i);
+                    project.setDescription("This is a project description" + i);
+                    project.setCreatedBy(user);
+                    project.setApplicationUser(userPrincipal.getApplicationUser());
+                    projects.add(project);
+                    projectRepository.save(project);
+                }
+
 
                 // Create a task
                 Task task = new Task();
@@ -88,7 +95,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 task.setStatus("created");
                 task.setCreatedBy(user);
                 task.setApplicationUser(userPrincipal.getApplicationUser());
-                task.setProject(project);
+                task.setProject(projects.get(0));
                 taskRepository.save(task);
 
                 // Create an assign
@@ -124,7 +131,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Set<Comment> comments = new HashSet<>();
         for (int i = 0; i < NUMBER_OF_COMMENTS; i++) {
             Comment comment = new Comment();
-            comment.setIdentifier(COMMENT_IDENTIFIER + i);
+            comment.setIdentifier(UUID.randomUUID().toString());
             comment.setText("This is a test text");
             comment.setCreatedBy(user);
             comment.setTask(task);
