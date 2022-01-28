@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup, Validators} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import {Project, User} from '../api';
+import { Project, User } from '../api';
 
 @Injectable()
 export class CreateProjectPresenter {
