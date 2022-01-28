@@ -34,7 +34,7 @@ public class Project {
     @Column(nullable = false)
     private String applicationUser;
 
-    @OneToOne
+    @ManyToOne()
     @JoinColumn(name = "users_username", nullable = false)
     private User createdBy;
 

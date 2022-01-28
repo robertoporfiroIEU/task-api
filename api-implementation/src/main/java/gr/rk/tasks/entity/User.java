@@ -39,12 +39,16 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Spectator> spectators;
 
+    @OneToMany(mappedBy = "createdBy")
+    private List<Project> projects;
+
     private boolean deleted;
 
     public User() {
         this.groups = new HashSet<>();
         this.assigns = new HashSet<>();
         this.spectators = new HashSet<>();
+        this.projects = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -110,6 +114,14 @@ public class User {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
     @Override

@@ -44,18 +44,9 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project createProject(Project project, String createdBy) throws org.springframework.dao.DataIntegrityViolationException {
-        // validations
-        Optional<User> oUser = userRepository
-                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
-
-        if (oUser.isEmpty()) {
-            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
-        }
-
-        // happy path
-        project.setCreatedBy(oUser.get());
+    public Project createProject(Project project) throws org.springframework.dao.DataIntegrityViolationException {
         try {
+            project.setCreatedBy(userRepository.save(project.getCreatedBy()));
             return projectRepository.saveProject(project);
         }
         catch(org.springframework.dao.DataIntegrityViolationException e) {

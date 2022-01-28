@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateProjectPresenter } from './create-project.presenter';
 import { FormGroup } from '@angular/forms';
-import {Project, User} from '../api';
+import { Project, User } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({

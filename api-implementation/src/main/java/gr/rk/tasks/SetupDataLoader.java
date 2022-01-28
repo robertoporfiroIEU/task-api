@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -31,7 +30,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private static final String PROJECT_IDENTIFIER = "SetupDataLoader#Project";
     private static final String TASK_IDENTIFIER = "SetupDataLoader#Task";
-    private static final String COMMENT_IDENTIFIER = "SetupDataLoader#Comment";
     private static final String GROUP_NAME = "SetupDataLoader#test group";
     private static final String USERNAME = "SetupDataLoader#Rafail";
     private static final int NUMBER_OF_COMMENTS = 30;
@@ -62,7 +60,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 user.setUsername(USERNAME);
                 user.setEmail("rafail@gmail.gr");
                 user.setApplicationUser(userPrincipal.getApplicationUser());
-                userRepository.save(user);
 
                 // Create a group
                 Group group = new Group();
@@ -77,6 +74,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 List<Project> projects = new ArrayList<>();
                 for(int i =0; i < NUMBER_OF_PROJECTS; i++) {
                     Project project = new Project();
+                    project.setCreatedBy(user);
                     project.setIdentifier(PROJECT_IDENTIFIER + i);
                     project.setPrefixIdentifier("taskapi" + i);
                     project.setName("Test Project" + i);
