@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Project, ProjectsService, User } from '../api';
 import { ShellService } from '../shell/shell.service';
 import { UserProfileService } from '../user-profile.service';
-import { Observable, Subject } from 'rxjs';
+import { catchError, Observable, Subject } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -32,9 +32,14 @@ export class CreateProjectContainerComponent implements OnInit {
         this.shellService.setFullScreenMode(false);
     }
 
-    onCreateProjectSubmitted(project: Project): void {
+    createProject(project: Project): void {
         this.shellService.setLoadingSpinner(true);
-        this.projectsService.createProject(project).subscribe( () => {
+        this.projectsService.createProject(project)
+            .pipe(catchError(error => {
+                this.errorService.showErrorMessage(error);
+                return [];
+            }))
+            .subscribe( () => {
             this.shellService.setLoadingSpinner(false);
             this.messageService.add(
                 {
@@ -44,8 +49,6 @@ export class CreateProjectContainerComponent implements OnInit {
                 }
             );
             this.router.navigate([RoutesEnum.projects])
-        }, error => {
-            this.errorService.showErrorMessage(error);
         });
     }
 

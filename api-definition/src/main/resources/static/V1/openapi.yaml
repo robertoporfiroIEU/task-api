@@ -108,6 +108,33 @@ paths:
                 $ref: '#/components/schemas/Project'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    put:
+      description: Update specific project
+      tags:
+        - "Projects"
+      operationId: updateProject
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Project
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        "200":
+          description: A Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
     delete:
       description: Delete the project logical
       tags:

@@ -61,6 +61,14 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
+    public ResponseEntity<ProjectDTO> updateProject(String identifier, ProjectDTO projectDTO) {
+        Project project = this.projectMapper.toProject(projectDTO);
+        Project projectEntity = projectService.updateProject(identifier, project);
+        projectDTO = this.projectMapper.toProjectDTO(projectEntity);
+        return ResponseEntity.ok(projectDTO);
+    }
+
+    @Override
     public ResponseEntity<ProjectDTO> getProject(String identifier) {
         ProjectDTO projectDTO = new ProjectDTO();
         Optional<Project> oProjectEntity = projectService.getProject(identifier);

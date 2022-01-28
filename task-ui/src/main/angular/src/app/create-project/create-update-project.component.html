@@ -1,9 +1,12 @@
 <div class="container">
 
-    <h5 class="mt-2 grey-color">{{'taskUI.create-project-title' | translate}}</h5>
+    <h5 class="mt-2 grey-color">
+        <span *ngIf="!project">{{'taskUI.create-project-title' | translate}}</span>
+        <span *ngIf="project">{{'taskUI.update-project-title' | translate}}</span>
+    </h5>
     <form
-        (submit)="createProjectSubmit()"
-        [formGroup]="createProjectForm"
+        (submit)="submit()"
+        [formGroup]="projectForm"
         class="mt-4">
         <div class="mb-3">
             <span class="p-float-label">
@@ -17,7 +20,7 @@
                 >
                 <label for="projectName"><span class="red">*</span> {{'taskUI.create-project-project-name' | translate }}</label>
             </span>
-            <small *ngIf="createProjectForm?.get('name')?.invalid && createProjectForm?.get('name')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
+            <small *ngIf="projectForm?.get('name')?.invalid && projectForm?.get('name')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
         </div>
         <div class="mb-3 mt-4">
             <span class="p-float-label">
@@ -25,7 +28,7 @@
                 <label for="prefixIdentifier"><span class="red">*</span> {{'taskUI.create-project-project-prefix' | translate}}</label>
             </span>
             <div class="form-text">{{'taskUI.create-project-project-prefix-help' | translate}}</div>
-            <small *ngIf="createProjectForm?.get('prefixIdentifier')?.invalid && createProjectForm?.get('prefixIdentifier')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
+            <small *ngIf="projectForm?.get('prefixIdentifier')?.invalid && projectForm?.get('prefixIdentifier')?.dirty" class="p-error block">{{'taskUI.field-required' | translate}}</small>
         </div>
         <div class="mb-3 mt-4">
            <span class="p-float-label">
@@ -42,9 +45,11 @@
             </span>
         </div>
         <button
-            [disabled]="createProjectForm.invalid"
-            type="submit" class="btn btn-primary">
-            {{'taskUI.create-project-create-button' | translate}}
+            [disabled]="projectForm.invalid"
+            type="submit"
+            [ngClass]="project? 'btn btn-warning' : 'btn btn-primary'">
+            <span *ngIf="!project">{{'taskUI.create-project-create-button' | translate}}</span>
+            <span *ngIf="project">{{'taskUI.create-project-update-button' | translate}}</span>
         </button>
     </form>
 </div>
