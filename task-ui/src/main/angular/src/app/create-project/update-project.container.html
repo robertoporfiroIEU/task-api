@@ -1,0 +1,6 @@
+<app-create-project-ui
+    *ngIf="project && userProfile"
+    [userProfile]="userProfile"
+    [project]="project"
+    (onSubmit)="updateProject($event)">
+</app-create-project-ui>

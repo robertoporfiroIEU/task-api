@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -86,5 +87,29 @@ public class ProjectService {
 
         Project project = oProject.get();
         project.setDeleted(true);
+    }
+
+    public Project updateProject(String projectIdentifier, Project projectWithUpdatedValues) {
+        Optional<Project> oProject = projectRepository.
+                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getApplicationUser(), false);
+
+        if (oProject.isEmpty()) {
+            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+        }
+
+        Project project = oProject.get();
+        if (Objects.nonNull(projectWithUpdatedValues.getName())) {
+            project.setName(projectWithUpdatedValues.getName());
+        }
+
+        if (Objects.nonNull(projectWithUpdatedValues.getPrefixIdentifier())) {
+            project.setPrefixIdentifier(projectWithUpdatedValues.getPrefixIdentifier());
+        }
+
+        if (Objects.nonNull(projectWithUpdatedValues.getDescription())) {
+            project.setDescription(projectWithUpdatedValues.getDescription());
+        }
+
+        return projectRepository.save(project);
     }
 }
