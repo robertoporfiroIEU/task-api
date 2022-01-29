@@ -2,10 +2,8 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.exception.ProjectNotFoundException;
-import gr.rk.tasks.exception.UserNotFoundException;
 import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
@@ -51,7 +49,7 @@ public class ProjectService {
             return projectRepository.saveProject(project);
         }
         catch(org.springframework.dao.DataIntegrityViolationException e) {
-            throw new ConstraintViolationException("Prefix identification already exist", null);
+            throw new ConstraintViolationException("This project already exists.", null);
         }
     }
 

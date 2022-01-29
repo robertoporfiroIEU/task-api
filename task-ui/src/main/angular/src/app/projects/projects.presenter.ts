@@ -18,7 +18,7 @@ export class ProjectsPresenter {
         {
             field: 'identifier',
             header: 'taskUI.projects-header-identifier',
-            placeholder: 'taskUI.filter-identifier-placeholder'
+            placeholder: 'taskUI.filter-project-identifier-placeholder'
         },
         {
             field: 'name',

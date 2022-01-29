@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { Project, User } from '../api';
 
 @Injectable()
-export class CreateUpdateProjectPresenter {
+export class CreateUpdateViewProjectPresenter {
 
     private submittedSubject = new Subject<Project>();
     submitted$ = this.submittedSubject.asObservable();

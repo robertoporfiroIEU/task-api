@@ -18,8 +18,6 @@ export class DockPresenter {
     constructor(private translateService: TranslateService) {}
 
     init(dockItemsState: ApplicationMenuItem[]): void {
-
-
         if (dockItemsState.find( i => i.id === 'expandDock')) {
             this.dockItems = [...dockItemsState];
         } else {

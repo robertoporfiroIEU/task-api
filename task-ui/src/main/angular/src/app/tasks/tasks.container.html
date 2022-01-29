@@ -1,0 +1,5 @@
+<app-tasks-ui
+    [paginatedTasks]="paginatedTasks$ | async"
+    [projectIdentifier]="projectIdentifier$ | async"
+    (lazyLoadPaginatedTasks)="lazyLoadPaginatedTasks($event)"
+></app-tasks-ui>

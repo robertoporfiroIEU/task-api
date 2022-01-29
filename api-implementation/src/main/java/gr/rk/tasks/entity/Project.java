@@ -17,7 +17,7 @@ public class Project {
     @Column(unique = true)
     private String identifier;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     private String description;

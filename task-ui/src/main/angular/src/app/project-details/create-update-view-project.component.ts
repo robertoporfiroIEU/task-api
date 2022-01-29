@@ -1,27 +1,34 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { CreateUpdateProjectPresenter } from './create-update-project.presenter';
+import { CreateUpdateViewProjectPresenter } from './create-update-view-project.presenter';
 import { FormGroup } from '@angular/forms';
 import { Project, User } from '../api';
 import { Subject, takeUntil } from 'rxjs';
+import { Actions } from './Actions';
+import { Utils } from '../shared/Utils';
 
 @Component({
     selector: 'app-create-project-ui',
-    templateUrl: './create-update-project.component.html',
+    templateUrl: './create-update-view-project.component.html',
     styleUrls: ['./create-update-project.component.css'],
-    providers: [CreateUpdateProjectPresenter]
+    providers: [CreateUpdateViewProjectPresenter]
 })
-export class CreateUpdateProjectComponent implements OnInit, OnDestroy {
+export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
 
     private destroy: Subject<void>  = new Subject();
+    @Input() action: Actions = Actions.VIEW;
     @Input() userProfile: User | null = null;
     @Input() project: Project | null = null;
     @Output() onSubmit = new EventEmitter<Project>();
+
+    datePipeDateFormat = Utils.datePipeDateFormat;
+    actions = Actions;
+    updateProjectURL: string = '/projects/update-project/';
 
     get projectForm(): FormGroup {
         return this.createProjectPresenter.projectForm;
     }
 
-    constructor(private createProjectPresenter: CreateUpdateProjectPresenter) {}
+    constructor(private createProjectPresenter: CreateUpdateViewProjectPresenter) {}
 
     ngOnInit(): void {
         this.createProjectPresenter.init(this.project);

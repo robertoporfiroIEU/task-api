@@ -1,0 +1,16 @@
+.glow-effect:hover {
+    color: rgba(255, 255, 255, 1);
+    box-shadow: 0 5px 15px rgb(34, 215, 90);
+}
+
+.green-button {
+    background-color: #29dc29;
+    color: white;
+    border-radius: 10px;
+    font-size: 0.8em;
+}
+
+.title-area {
+    background-color: #6366F1;
+    color: white;
+}

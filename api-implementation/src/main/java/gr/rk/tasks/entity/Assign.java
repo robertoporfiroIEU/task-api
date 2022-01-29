@@ -41,6 +41,10 @@ public class Assign implements AutomaticValuesGeneration {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getIdentifier() {
         return identifier;
     }

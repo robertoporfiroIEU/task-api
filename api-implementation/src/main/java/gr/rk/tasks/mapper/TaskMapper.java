@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = { Util.class }, uses = { UserMapper.class })
+@Mapper(componentModel = "spring", imports = { Util.class }, uses = { UserMapper.class, AssignMapper.class, SpectatorMapper.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -28,8 +28,6 @@ public abstract class TaskMapper {
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "comments")
-    @Mapping(ignore = true, target = "assigns")
-    @Mapping(ignore = true, target = "spectators")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(ignore = true, target = "createdBy")
@@ -40,10 +38,8 @@ public abstract class TaskMapper {
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
     @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
     @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
-    @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getPrefixIdentifier())")
+    @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getIdentifier())")
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
-    @Mapping(target = "assignsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/assigns\"))")
-    @Mapping(target = "spectatorsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/spectators\"))")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
     public abstract TaskDTO toTaskDTO(Task task);
 

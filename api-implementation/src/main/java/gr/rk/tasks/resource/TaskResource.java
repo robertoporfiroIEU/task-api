@@ -57,6 +57,8 @@ public class TaskResource implements TasksApi {
             String creationDateFrom,
             String creationDateTo,
             String createdBy,
+            String assignedTo,
+            String spectator,
             String dueDateFrom,
             String dueDateTo) {
 
@@ -69,6 +71,8 @@ public class TaskResource implements TasksApi {
         taskCriteriaDTO.setCreationDateFrom(creationDateFrom);
         taskCriteriaDTO.setCreationDateTo(creationDateTo);
         taskCriteriaDTO.setCreatedBy(createdBy);
+        taskCriteriaDTO.setAssignedTo(assignedTo);
+        taskCriteriaDTO.setSpectator(spectator);
         taskCriteriaDTO.setDueDateFrom(dueDateFrom);
         taskCriteriaDTO.setDueDateTo(dueDateTo);
 

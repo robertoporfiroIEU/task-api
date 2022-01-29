@@ -25,6 +25,7 @@ export class ProjectsComponent implements OnInit {
     @Output() onFullScreenMode: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     createProjectURL: string = '/' + RoutesEnum.createProject.toString();
+    viewProjectURL: string = '/projects/view-project/';
     updateProjectURL: string = '/projects/update-project/';
     creationDate: Date = new Date();
     pCalendarDateFormat = Utils.pCalendarDateFormat;

@@ -1,0 +1,254 @@
+<div class="row title-area m-0">
+    <div class="col-12">
+        <h4>{{'taskUI.tasks' | translate}}</h4>
+    </div>
+    <div class="col-12">
+        <div *ngIf="projectIdentifier"><h6 class="d-inline">{{'taskUI.project-task' | translate }}</h6> >
+            <small>{{projectIdentifier}}</small></div>
+    </div>
+</div>
+
+<p-dataView
+    #dv
+    filterBy="identifier"
+    [value]="paginatedTasks?.content"
+    [paginator]="true"
+    [rows]="10"
+    [lazy]="true"
+    (onLazyLoad)="loadPaginatedTasks($event)"
+    [totalRecords]="paginatedTasks?.totalElements">
+    <ng-template pTemplate="header">
+        <div class="row">
+            <div class="col-12">
+                <p-accordion>
+                    <p-accordionTab header="{{'taskUI.tasks-filters' | translate}}">
+                        <form class="row" [formGroup]="tasksFormCriteria">
+                            <div class="col-12 col-sm-4">
+                           <span class="p-float-label">
+                                <input
+                                    formControlName="identifier"
+                                    id="taskIdentifier"
+                                    type="text"
+                                    maxlength="250"
+                                    pInputText
+                                >
+                                <label for="taskIdentifier">
+                                    {{'taskUI.filter-task-identifier-placeholder' | translate }}
+                                </label>
+                            </span>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                            <span class="p-float-label">
+                                <input
+                                    formControlName="name"
+                                    id="taskName"
+                                    type="text"
+                                    maxlength="250"
+                                    pInputText
+                                >
+                                <label for="taskName">
+                                    {{'taskUI.filter-name-placeholder' | translate }}
+                                </label>
+                            </span>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="mt-2">
+                                    <p-calendar
+                                        formControlName="creationDateFromTo"
+                                        [dateFormat]=pCalendarDateFormat
+                                        [showIcon]="true"
+                                        placeholder="{{'taskUI.filter-creation-date-from-to-placeholder' | translate}}"
+                                        showTime="true"
+                                        appendTo="body"
+                                        [hourFormat]="24"
+                                        [readonlyInput]="true"
+                                        showButtonBar="true"
+                                        selectionMode="range">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4 mt-2">
+                                 <span class="p-float-label">
+                                    <input
+                                        formControlName="createdBy"
+                                        id="createdBy"
+                                        type="text"
+                                        maxlength="100"
+                                        pInputText
+                                    >
+                                    <label for="status">
+                                        {{'taskUI.filter-created-by-placeholder' | translate }}
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="col-12 col-sm-4 mt-2">
+                                <span class="p-float-label">
+                                    <input
+                                        formControlName="status"
+                                        id="status"
+                                        type="text"
+                                        maxlength="250"
+                                        pInputText
+                                    >
+                                    <label for="status">
+                                        {{'taskUI.filter-status-placeholder' | translate }}
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="mt-2">
+                                    <p-calendar
+                                        class="mt-2"
+                                        formControlName="dueDateFromTo"
+                                        [dateFormat]=pCalendarDateFormat
+                                        [showIcon]="true"
+                                        placeholder="{{'taskUI.filter-due-date-from-to-placeholder' | translate}}"
+                                        showTime="true"
+                                        appendTo="body"
+                                        [hourFormat]="24"
+                                        [readonlyInput]="true"
+                                        showButtonBar="true"
+                                        selectionMode="range">
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4 mt-4">
+                            <span class="p-float-label">
+                                <input
+                                    formControlName="assignedTo"
+                                    id="assignedTo"
+                                    type="text"
+                                    maxlength="250"
+                                    pInputText
+                                >
+                                <label for="assignedTo">
+                                    {{'taskUI.filter-assignTo-placeholder' | translate }}
+                                </label>
+                            </span>
+                            </div>
+                            <div class="col-12 col-sm-4 mt-4">
+                                <span class="p-float-label">
+                                    <input
+                                        formControlName="spectator"
+                                        id="spectator"
+                                        type="text"
+                                        maxlength="250"
+                                        pInputText
+                                    >
+                                    <label for="spectator">
+                                        {{'taskUI.filter-spectator-placeholder' | translate }}
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="col-12 col-sm-2">
+                            <span class="p-float-label mt-4">
+                                <p-dropdown id="orderField" [options]="orderField"
+                                            formControlName="orderField"></p-dropdown>
+                                <label for="orderField">
+                                    {{'taskUI.filter-order-field-placeholder' | translate }}
+                                </label>
+                            </span>
+                            </div>
+                            <div class="col-12 col-sm-2">
+                                <span class="p-float-label mt-4">
+                                    <p-dropdown id="orderDirection" [options]="orderDirection"
+                                                formControlName="orderDirection"></p-dropdown>
+                                    <label for="orderField">
+                                        {{'taskUI.filter-order-direction-placeholder' | translate }}
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <button
+                                    (click)="dv.paginate({first: 0, rows: 10})"
+                                    type="button"
+                                    class="btn btn-success"> {{'taskUI.tasks-apply-filters' | translate}}
+                                </button>
+
+                                <button
+                                    (click)="clearFilters(); dv.paginate({first: 0, rows: 10})"
+                                    type="button"
+                                    class="btn btn-danger ms-2"> {{'taskUI.tasks-clear-filters' | translate}}
+                                </button>
+                            </div>
+
+                        </form>
+                    </p-accordionTab>
+                </p-accordion>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button"
+                        class="btn green-button float-end glow-effect mt-2"
+                >
+                    {{'taskUI.create-new-task' | translate}}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template let-task pTemplate="listItem" let-rowIndex="rowIndex">
+        <div class="row p-3">
+            <div class="col-12">
+                <span>#{{rowIndex + 1}}</span>
+                <div class="float-end">
+                    <button pButton pRipple type="button" label="{{'taskUI.tasks-button-details' | translate}}"
+                            class="p-button-outlined p-button-rounded"></button>
+                </div>
+            </div>
+            <div class="col-3 col-sm-2">
+                <p-avatar
+                    [style]="{'background-color': avatarColors[rowIndex % avatarColors.length], 'color': '#ffffff'}"
+                    size="xlarge">
+                    {{task.name.substring(0, 2)}}
+                </p-avatar>
+                <div><strong>{{'taskUI.tasks-header-name' | translate}} </strong></div>
+                <div>{{task.name}}</div>
+            </div>
+            <div class="col-4 col-sm-3 wordBreak">
+                <div>
+                    <div><strong>{{'taskUI.tasks-header-identifier' | translate}} </strong></div>
+                    <div>{{task.identifier}}</div>
+                    <div class="mt-4"><strong>{{'taskUI.tasks-header-username' | translate}} </strong></div>
+                    <div>{{task.createdBy.name}}</div>
+                    <div class="mt-4"><strong>{{'taskUI.tasks-header-project-identifier' | translate}} </strong></div>
+                    <div>{{task.projectIdentifier}}</div>
+                </div>
+            </div>
+            <div class="col-4 col-sm-3 wordBreak">
+                <div>
+                    <div><strong>{{'taskUI.tasks-header-creation-date' | translate}} </strong></div>
+                    <div>{{task.createdAt | date: datePipeDateFormat}}</div>
+                    <div class="mt-2"><strong>{{'taskUI.tasks-header-due-date' | translate}} </strong></div>
+                    <div>{{task.dueDate | date: datePipeDateFormat}}</div>
+                    <div class="mt-2"><strong>{{'taskUI.tasks-header-status' | translate}} </strong></div>
+                    <p-tag severity="success" value="{{task.status}}"></p-tag>
+                </div>
+            </div>
+            <div class="col-12 col-sm-3">
+                <div class="float-start float-sm-none me-3">
+                    <div><strong>{{'taskUI.tasks-header-assigns' | translate }}</strong></div>
+                    <p-avatarGroup>
+                        <ng-container *ngFor="let assign of flatAssigns(task).slice(0, 2); let i=index;">
+                            <p-avatar [pTooltip]="assign" label="{{assign.substring(0, 3)}}" size="large" shape="circle">
+                            </p-avatar>
+                            <p-avatar *ngIf="i === flatAssigns(task).length -1" label="..." size="large" shape="circle"></p-avatar>
+                        </ng-container>
+                    </p-avatarGroup>
+                </div>
+                <div class="float-start float-sm-none me-3">
+                    <div><strong>{{'taskUI.tasks-header-spectators' | translate }}</strong></div>
+                    <p-avatarGroup>
+                        <ng-container *ngFor="let spectator of flatSpectators(task).slice(0, 2); let i=index;">
+                            <p-avatar [pTooltip]="spectator" label="{{spectator.substring(0, 3)}}" size="large" shape="circle">
+                            </p-avatar>
+                            <p-avatar *ngIf="i === flatSpectators(task).length -1" label="..." size="large" shape="circle"></p-avatar>
+                        </ng-container>
+                    </p-avatarGroup>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-dataView>
+
+

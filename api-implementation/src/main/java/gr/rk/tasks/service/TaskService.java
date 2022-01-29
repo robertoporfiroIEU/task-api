@@ -190,6 +190,14 @@ public class TaskService {
         Task task = oTask.get();
 
         if (Objects.nonNull(assign.getUser())) {
+            boolean sameAssign = task.getAssigns()
+                    .stream()
+                    .anyMatch(a -> a.getUser().getUsername().equals(assign.getUser().getUsername()) && !a.isDeleted());
+
+            if (sameAssign) {
+                throw new AssignAlreadyExistException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
+            }
+
             Optional<User> oUser = userRepository.findById(assign.getUser().getUsername());
 
             if (oUser.isEmpty()) {
@@ -200,6 +208,14 @@ public class TaskService {
         }
 
         if (Objects.nonNull(assign.getGroup())) {
+            boolean sameAssign = task.getAssigns()
+                    .stream()
+                    .anyMatch(a -> a.getGroup().getName().equals(assign.getGroup().getName()) && !a.isDeleted());
+
+            if (sameAssign) {
+                throw new AssignAlreadyExistException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
+            }
+
             Optional<Group> oGroup = groupRepository.findById(assign.getGroup().getName());
 
             if (oGroup.isEmpty()) {
@@ -230,16 +246,35 @@ public class TaskService {
         Task task = oTask.get();
 
         if (Objects.nonNull(spectator.getUser())) {
-            Optional<User> oUser = userRepository.findById(spectator.getUser().getUsername());
+            boolean sameSpectator = task.getAssigns()
+                    .stream()
+                    .anyMatch(s -> s.getUser().getUsername().equals(spectator.getUser().getUsername()) && !s.isDeleted());
 
-            if (oUser.isEmpty()) {
-                throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            if (sameSpectator) {
+                throw new SpectatorAlreadyExistException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
             }
 
-            spectator.setUser(oUser.get());
+            if (Objects.nonNull(spectator.getUser())) {
+                Optional<User> oUser = userRepository.findById(spectator.getUser().getUsername());
+
+                if (oUser.isEmpty()) {
+                    throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+                }
+
+                spectator.setUser(oUser.get());
+            }
         }
 
         if (Objects.nonNull(spectator.getGroup())) {
+
+            boolean sameSpectator = task.getAssigns()
+                    .stream()
+                    .anyMatch(s -> s.getGroup().getName().equals(spectator.getGroup().getName()) && !s.isDeleted());
+
+            if (sameSpectator) {
+                throw new SpectatorAlreadyExistException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
+            }
+
             Optional<Group> oGroup = groupRepository.findById(spectator.getGroup().getName());
 
             if (oGroup.isEmpty()) {

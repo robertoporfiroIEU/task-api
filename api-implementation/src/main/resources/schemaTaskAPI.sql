@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS `tasksapidb`.`projects` (
   `deleted` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `identifier_UNIQUE` (`identifier` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   INDEX `fk_tasks_users1_idx` (`users_username` ASC),
   UNIQUE INDEX `prefixIdentifier_UNIQUE` (`prefixIdentifier` ASC),
   INDEX `deleted_idx` (`deleted` ASC),

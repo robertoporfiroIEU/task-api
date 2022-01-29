@@ -26,7 +26,7 @@ public class Task {
 
     private String status;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Generated(GenerationTime.ALWAYS)
     @Column(insertable = false, updatable = false)

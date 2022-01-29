@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PaginatedProjects, ProjectsService } from '../api';
 import { catchError, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ProjectsParams } from './ProjectsParams';
@@ -9,7 +9,7 @@ import { ErrorService } from '../error.service';
     selector: 'app-project',
     templateUrl: './projects.container.html'
 })
-export class ProjectContainerComponent implements OnInit {
+export class ProjectContainerComponent implements OnInit, OnDestroy {
 
     private onLazyLoadPaginatedProjectsSubject = new Subject<ProjectsParams>();
     private destroy: Subject<void> = new Subject();
@@ -57,6 +57,8 @@ export class ProjectContainerComponent implements OnInit {
         this.shellService.setFullScreenMode(state);
     }
 
-
-
+    ngOnDestroy(): void {
+        this.destroy.next();
+        this.destroy.complete();
+    }
 }

@@ -75,6 +75,21 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         List<String> filters = new ArrayList<>();
         String entityVariable = "t";
         String entityVariableWithDot = entityVariable + ".";
+        String joinPart = "";
+
+        if (Objects.nonNull(taskCriteriaDTO.getAssignedTo())) {
+            joinPart = " join " + entityVariableWithDot + "assigns a ";
+            filters.add("(a.user.username = :assignedTo OR a.group.name = :assignedTo)");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo",   taskCriteriaDTO.getAssignedTo())));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo", taskCriteriaDTO.getAssignedTo())));
+        }
+
+        if (Objects.nonNull(taskCriteriaDTO.getSpectator())) {
+            joinPart = " join " + entityVariableWithDot + "spectators s ";
+            filters.add("s.user.username = :spectator OR s.group.name = :spectator");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator",   taskCriteriaDTO.getSpectator())));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator", taskCriteriaDTO.getSpectator())));
+        }
 
         if (Objects.nonNull(taskCriteriaDTO.getIdentifier())) {
             filters.add(entityVariableWithDot + "identifier = :identifier");
@@ -170,7 +185,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
             ));
         }
 
-        String fromPart = "FROM Task " + entityVariable + " ";
+        String fromPart = "FROM Task " + entityVariable + " " + joinPart;
         String wherePart = "WHERE " + entityVariableWithDot + "deleted = false AND " + entityVariableWithDot + "applicationUser = '" + taskCriteriaDTO.getApplicationUser() + "' ";
 
         if (!filters.isEmpty()) {
