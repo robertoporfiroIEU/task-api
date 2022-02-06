@@ -84,7 +84,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         String orderByPart = Util.getOrderByStatement(entityVariable, pageable.getSort(), APPLICABLE_SORT_FIELDS_PATH_VARIABLE_MAP);
 
         if (orderByPart.equals("")) {
-            orderByPart = " ORDER BY " + entityVariableWithDot + "name DESC";
+            orderByPart = " ORDER BY " + entityVariableWithDot + "username DESC";
         }
 
         // count total results for pagination reason

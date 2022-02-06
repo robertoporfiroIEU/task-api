@@ -11,19 +11,25 @@ import { ShellModule } from './shell/shell.module';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectContainerComponent } from './projects/projects.container';
 import { TooltipModule } from 'primeng/tooltip';
-import { CreateUpdateProjectComponent } from './create-project/create-update-project.component';
-import { CreateProjectContainerComponent } from './create-project/create-project.container';
+import { CreateUpdateViewProjectComponent } from './project-details/create-update-view-project.component';
+import { CreateProjectContainerComponent } from './project-details/create-project.container';
 import { MessageService } from 'primeng/api';
-import { UpdateProjectContainerComponent } from './create-project/update-project.container';
+import { UpdateProjectContainerComponent } from './project-details/update-project.container';
+import { TasksComponent } from './tasks/tasks.component';
+import { TasksContainerComponent } from './tasks/tasks.container';
+import { ViewProjectContainerComponent } from './project-details/view-project.container';
 
 @NgModule({
     declarations: [
         AppComponent,
         ProjectsComponent,
         ProjectContainerComponent,
-        CreateUpdateProjectComponent,
+        CreateUpdateViewProjectComponent,
         CreateProjectContainerComponent,
-        UpdateProjectContainerComponent
+        UpdateProjectContainerComponent,
+        TasksComponent,
+        TasksContainerComponent,
+        ViewProjectContainerComponent
     ],
     imports: [
         BrowserModule,

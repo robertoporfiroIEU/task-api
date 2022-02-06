@@ -7,18 +7,18 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorService } from '../error.service';
-import { RoutesEnum } from '../RoutesEnum';
+import { Actions } from './Actions';
 
 @Component({
-    selector: 'app-create-project',
-    templateUrl: './update-project.container.html',
+    selector: 'app-view-project',
+    templateUrl: './view-project.container.html',
 })
-export class UpdateProjectContainerComponent implements OnInit {
+export class ViewProjectContainerComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
+    action: Actions = Actions.VIEW;
     userProfile: User | null = null;
     project: Project | null = null;
-    projectIdentifier: string = '';
 
     constructor(
         private projectsService: ProjectsService,
@@ -36,8 +36,8 @@ export class UpdateProjectContainerComponent implements OnInit {
 
         this.activatedRoute.paramMap.pipe(
             switchMap(params => {
-                this.projectIdentifier = params.get('project-identifier') as string
-                return this.projectsService.getProject(this.projectIdentifier);
+                let projectIdentifier = params.get('project-identifier') as string
+                return this.projectsService.getProject(projectIdentifier);
             }),
             take(1),
             catchError(err => {
@@ -51,27 +51,6 @@ export class UpdateProjectContainerComponent implements OnInit {
         this.userProfileService.userProfile$.pipe(
             take(1)
         ).subscribe(user => this.userProfile = user)
-    }
-
-
-    updateProject(project: Project): void {
-        this.shellService.setLoadingSpinner(true);
-        this.projectsService.updateProject(this.projectIdentifier as string, project)
-            .pipe(catchError(error => {
-                this.errorService.showErrorMessage(error);
-                return [];
-            }))
-            .subscribe( () => {
-                this.shellService.setLoadingSpinner(false);
-                this.messageService.add(
-                    {
-                        severity:'success',
-                        summary: this.translateService.instant('taskUI.success'),
-                        detail: this.translateService.instant('taskUI.update-project-success-message')
-                    }
-                );
-                this.router.navigate([RoutesEnum.projects])
-            });
     }
 
     ngOnDestroy(): void {

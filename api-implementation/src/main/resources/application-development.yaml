@@ -23,7 +23,7 @@ logging:
             sql: trace
 
 applicationConfigurations:
-  addTestData: false
+  addTestData: true
   deleteTestData: false
   projectService:
     pageMaxSize: 25

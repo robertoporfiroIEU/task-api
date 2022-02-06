@@ -60,6 +60,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                 user.setUsername(USERNAME);
                 user.setEmail("rafail@gmail.gr");
                 user.setApplicationUser(userPrincipal.getApplicationUser());
+                userRepository.save(user);
 
                 // Create a group
                 Group group = new Group();
@@ -85,36 +86,36 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                     projectRepository.save(project);
                 }
 
+                for (int i =0; i < NUMBER_OF_PROJECTS; i++) {
+                    Task task = new Task();
+                    task.setIdentifier(TASK_IDENTIFIER + i);
+                    task.setName("test task");
+                    task.setStatus("created");
+                    task.setCreatedBy(user);
+                    task.setApplicationUser(userPrincipal.getApplicationUser());
+                    task.setProject(projects.get(0));
+                    taskRepository.save(task);
 
-                // Create a task
-                Task task = new Task();
-                task.setIdentifier(TASK_IDENTIFIER);
-                task.setName("test task");
-                task.setStatus("created");
-                task.setCreatedBy(user);
-                task.setApplicationUser(userPrincipal.getApplicationUser());
-                task.setProject(projects.get(0));
-                taskRepository.save(task);
+                    // Create an assign
+                    Assign assign = new Assign();
+                    assign.setUser(user);
+                    assign.setGroup(group);
+                    assign.setApplicationUser(userPrincipal.getApplicationUser());
+                    assign.setTask(task);
 
-                // Create an assign
-                Assign assign = new Assign();
-                assign.setUser(user);
-                assign.setGroup(group);
-                assign.setApplicationUser(userPrincipal.getApplicationUser());
-                assign.setTask(task);
+                    // Create a spectator
+                    Spectator spectator = new Spectator();
+                    spectator.setUser(user);
+                    spectator.setGroup(group);
+                    spectator.setTask(task);
+                    spectator.setApplicationUser(userPrincipal.getApplicationUser());
 
-                // Create a spectator
-                Spectator spectator = new Spectator();
-                spectator.setUser(user);
-                spectator.setGroup(group);
-                spectator.setTask(task);
-                spectator.setApplicationUser(userPrincipal.getApplicationUser());
-
-                Set<Comment> comments = createComments(task, user);
-                task.setComments(comments);
-                task.setAssigns(Set.of(assign));
-                task.setSpectators(Set.of(spectator));
-                task.setApplicationUser(userPrincipal.getApplicationUser());
+                    Set<Comment> comments = createComments(task, user);
+                    task.setComments(comments);
+                    task.setAssigns(Set.of(assign));
+                    task.setSpectators(Set.of(spectator));
+                    task.setApplicationUser(userPrincipal.getApplicationUser());
+                }
             } else if (deleteTestData) {
                 userRepository.deleteByUsername(USERNAME);
                 groupRepository.deleteByName(GROUP_NAME);

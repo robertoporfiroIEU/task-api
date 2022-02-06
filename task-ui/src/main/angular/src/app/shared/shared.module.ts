@@ -11,7 +11,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
-import {MessageService} from 'primeng/api';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { AccordionModule } from 'primeng/accordion';
+import { DropdownModule } from 'primeng/dropdown';
 
 
 @NgModule({
@@ -29,7 +34,13 @@ import {MessageService} from 'primeng/api';
         ReactiveFormsModule,
         ProgressSpinnerModule,
         InputTextareaModule,
-        ToastModule
+        ToastModule,
+        TagModule,
+        DataViewModule,
+        AvatarModule,
+        AvatarGroupModule,
+        AccordionModule,
+        DropdownModule
     ],
     exports: [
         BrowserModule,
@@ -43,7 +54,13 @@ import {MessageService} from 'primeng/api';
         ReactiveFormsModule,
         ProgressSpinnerModule,
         InputTextareaModule,
-        ToastModule
+        ToastModule,
+        TagModule,
+        DataViewModule,
+        AvatarModule,
+        AvatarGroupModule,
+        AccordionModule,
+        DropdownModule
     ]
 })
 export class SharedModule {

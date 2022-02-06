@@ -65,3 +65,8 @@ body {
 .grey-color {
     color: #7c7c7c;
 }
+
+.wordBreak {
+    word-break: break-all;
+}
+

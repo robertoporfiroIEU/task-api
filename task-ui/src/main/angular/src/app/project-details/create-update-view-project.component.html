@@ -1,0 +1,94 @@
+<div class="container">
+    <button
+        class="btn btn-link btn-sm float-end mb-2"
+        *ngIf="action === actions.VIEW"
+        type="submit"
+        routerLink="{{updateProjectURL}}{{project.identifier}}"
+    >
+        <span>{{'taskUI.create-project-update-link' | translate}}</span>
+    </button>
+    <h5 class="mt-2 grey-color">
+        <span *ngIf="action === actions.CREATE">{{'taskUI.create-project-title' | translate}}</span>
+        <span *ngIf="action === actions.UPDATE">{{'taskUI.update-project-title' | translate}}</span>
+        <span *ngIf="action === actions.VIEW">{{'taskUI.view-project-title' | translate}}</span>
+    </h5>
+    <form
+        (submit)="submit()"
+        [formGroup]="projectForm"
+        class="mt-4">
+        <div class="mb-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="name"
+                    [readonly]="action === actions.VIEW"
+                    id="projectName"
+                    type="text"
+                    maxlength="250"
+                    pInputText
+                    [ngClass]="'form-control ng-invalid ng-dirty'"
+                >
+                <label for="projectName"><span class="red">*</span> {{'taskUI.create-project-project-name' | translate }}</label>
+            </span>
+            <small *ngIf="action !== actions.VIEW && projectForm?.get('name')?.invalid && projectForm?.get('name')?.dirty"
+                   class="p-error block">{{'taskUI.field-required' | translate}}
+            </small>
+        </div>
+        <div class="mb-3 mt-4">
+            <span class="p-float-label">
+                <input id="createdBy"
+                       [readonly]="true"
+                       type="text"
+                       [value]="project?.createdBy.name"
+                       pInputText class="form-control">
+                <label for="createdBy">{{'taskUI.create-project-created-by' | translate}}</label>
+            </span>
+        </div>
+        <div class="mb-3 mt-4">
+            <span class="p-float-label">
+                <input id="creationDate"
+                       [readonly]="true"
+                       type="text"
+                       value="{{project?.createdAt | date: datePipeDateFormat}}"
+                       pInputText class="form-control">
+                <label for="createdBy">{{'taskUI.create-project-creation-date' | translate}}</label>
+            </span>
+        </div>
+        <div class="mb-3 mt-4">
+            <span class="p-float-label">
+                <input formControlName="prefixIdentifier"
+                       id="prefixIdentifier"
+                       [readonly]="action === actions.VIEW"
+                       type="text" maxlength="45"
+                       pInputText class="form-control">
+                <label for="prefixIdentifier"><span class="red">*</span> {{'taskUI.create-project-project-prefix' | translate}}</label>
+            </span>
+            <div class="form-text">{{'taskUI.create-project-project-prefix-help' | translate}}</div>
+            <small *ngIf=" action !== actions.VIEW && projectForm?.get('prefixIdentifier')?.invalid && projectForm?.get('prefixIdentifier')?.dirty"
+                   class="p-error block">{{'taskUI.field-required' | translate}}
+            </small>
+        </div>
+        <div class="mb-3 mt-4">
+           <span class="p-float-label">
+               <textarea
+                   [readonly]="action === actions.VIEW"
+                   formControlName="description"
+                   maxlength="500"
+                   class="form-control"
+                   id="descriptionTextArea"
+                   rows="5"
+                   cols="30"
+                   pInputTextarea
+                   autoResize="autoResize"></textarea>
+               <label for="descriptionTextArea">{{'taskUI.create-project-project-description' | translate}}</label>
+            </span>
+        </div>
+        <button
+            *ngIf="action !== actions.VIEW"
+            [disabled]="projectForm.invalid"
+            type="submit"
+            [ngClass]="project? 'btn btn-warning' : 'btn btn-primary'">
+            <span *ngIf="!project">{{'taskUI.create-project-create-button' | translate}}</span>
+            <span *ngIf="project">{{'taskUI.create-project-update-button' | translate}}</span>
+        </button>
+    </form>
+</div>

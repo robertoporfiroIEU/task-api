@@ -14,6 +14,8 @@ public class TaskCriteriaDTO {
     private String dueDateFrom;
     private String dueDateTo;
     private String applicationUser;
+    private String assignedTo;
+    private String spectator;
 
     public Pageable getPageable() {
         return pageable;
@@ -101,5 +103,21 @@ public class TaskCriteriaDTO {
 
     public void setApplicationUser(String applicationUser) {
         this.applicationUser = applicationUser;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public String getSpectator() {
+        return spectator;
+    }
+
+    public void setSpectator(String spectator) {
+        this.spectator = spectator;
     }
 }

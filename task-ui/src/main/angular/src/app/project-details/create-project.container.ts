@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { RoutesEnum } from '../RoutesEnum';
 import { ErrorService } from '../error.service';
+import { Actions } from './Actions';
 
 @Component({
     selector: 'app-create-project',
@@ -17,6 +18,7 @@ export class CreateProjectContainerComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
     userProfile$: Observable<User> = this.userProfileService.userProfile$;
+    action: Actions = Actions.CREATE;
 
     constructor(
         private projectsService: ProjectsService,

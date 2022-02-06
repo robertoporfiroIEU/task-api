@@ -204,6 +204,16 @@ paths:
           schema:
             type: string
         - in: query
+          name: assignedTo
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: spectator
+          required: false
+          schema:
+            type: string
+        - in: query
           name: dueDateFrom
           required: false
           schema:
@@ -991,16 +1001,12 @@ components:
           type: string
           format: url
           example: "{protocol}//{server-base-url}/tasks/{identifier}/comments"
-        assigns_url:
-          readOnly: true
-          type: string
-          format: url
-          example: "{protocol}//{server-base-url}/tasks/{identifier}/assigns"
-        spectators_url:
-          readOnly: true
-          type: string
-          format: url
-          example: "{protocol}//{server-base-url}/tasks/{identifier}/spectators"
+        assigns:
+          items:
+            $ref: '#/components/schemas/Assign'
+        spectators:
+          items:
+            $ref: '#/components/schemas/Spectator'
 
     Comment:
       description: This is a comment object that belongs to a Task

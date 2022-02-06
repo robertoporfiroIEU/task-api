@@ -8,7 +8,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +17,12 @@ public class Util {
     private Util() {}
 
     public static String getEndPointRelationURL(String endpointName) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().toUriString().split("[?]")[0] + "/" + endpointName;
+        String serverPath = ServletUriComponentsBuilder.fromCurrentRequest().toUriString().split("[?]")[0] + "/";
+        String[] endpoint = endpointName.split("/");
+        if (serverPath.contains(endpoint[0].toString())) {
+            return serverPath + endpoint[1].toString();
+        }
+        return serverPath + endpointName;
     }
 
     public static String toDateISO8601WithTimeZone(LocalDateTime localDateTime) {
