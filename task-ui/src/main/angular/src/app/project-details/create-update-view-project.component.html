@@ -33,7 +33,7 @@
                    class="p-error block">{{'taskUI.field-required' | translate}}
             </small>
         </div>
-        <div class="mb-3 mt-4">
+        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-4">
             <span class="p-float-label">
                 <input id="createdBy"
                        [readonly]="true"
@@ -43,7 +43,7 @@
                 <label for="createdBy">{{'taskUI.create-project-created-by' | translate}}</label>
             </span>
         </div>
-        <div class="mb-3 mt-4">
+        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-4">
             <span class="p-float-label">
                 <input id="creationDate"
                        [readonly]="true"
@@ -86,6 +86,7 @@
             *ngIf="action !== actions.VIEW"
             [disabled]="projectForm.invalid"
             type="submit"
+            class="mb-2"
             [ngClass]="project? 'btn btn-warning' : 'btn btn-primary'">
             <span *ngIf="!project">{{'taskUI.create-project-create-button' | translate}}</span>
             <span *ngIf="project">{{'taskUI.create-project-update-button' | translate}}</span>

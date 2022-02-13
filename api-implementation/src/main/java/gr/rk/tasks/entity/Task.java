@@ -4,9 +4,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tasks")
@@ -45,10 +43,10 @@ public class Task {
     private Set<Comment> comments;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private Set<Assign> assigns;
+    private List<Assign> assigns;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private Set<Spectator> spectators;
+    private List<Spectator> spectators;
 
     private boolean deleted;
 
@@ -58,8 +56,8 @@ public class Task {
 
     public Task() {
         this.comments = new HashSet<>();
-        this.assigns = new HashSet<>();
-        this.spectators = new HashSet<>();
+        this.assigns = new ArrayList<>();
+        this.spectators = new ArrayList<>();
     }
 
     public void setIdentifier(String identifier) {
@@ -99,13 +97,17 @@ public class Task {
         this.comments = comments;
     }
 
-    public void setAssigns(Set<Assign> assigns) {
-        assigns.forEach(a -> a.setTask(this));
+    public void setAssigns(List<Assign> assigns) {
+        if (Objects.nonNull(assigns)) {
+            assigns.forEach(a -> a.setTask(this));
+        }
         this.assigns = assigns;
     }
 
-    public void setSpectators(Set<Spectator> spectators) {
-        spectators.forEach(s -> s.setTask(this));
+    public void setSpectators(List<Spectator> spectators) {
+        if (Objects.nonNull(spectators)) {
+            spectators.forEach(s -> s.setTask(this));
+        }
         this.spectators = spectators;
     }
 
@@ -157,11 +159,11 @@ public class Task {
         return comments;
     }
 
-    public Set<Assign> getAssigns() {
+    public List<Assign> getAssigns() {
         return assigns;
     }
 
-    public Set<Spectator> getSpectators() {
+    public List<Spectator> getSpectators() {
         return spectators;
     }
 

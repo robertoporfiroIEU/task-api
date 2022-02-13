@@ -31,7 +31,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private static final String PROJECT_IDENTIFIER = "SetupDataLoader#Project";
     private static final String TASK_IDENTIFIER = "SetupDataLoader#Task";
     private static final String GROUP_NAME = "SetupDataLoader#test group";
-    private static final String USERNAME = "SetupDataLoader#Rafail";
+    private static final String USERNAME = "rafail";
     private static final int NUMBER_OF_COMMENTS = 30;
     private static final int NUMBER_OF_PROJECTS = 100;
 
@@ -112,8 +112,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
                     Set<Comment> comments = createComments(task, user);
                     task.setComments(comments);
-                    task.setAssigns(Set.of(assign));
-                    task.setSpectators(Set.of(spectator));
+                    task.setAssigns(List.of(assign));
+                    task.setSpectators(List.of(spectator));
                     task.setApplicationUser(userPrincipal.getApplicationUser());
                 }
             } else if (deleteTestData) {

@@ -36,9 +36,11 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
             tasksParams.status,
             tasksParams.creationDateFrom,
             tasksParams.creationDateTo,
+            tasksParams.createdBy,
+            tasksParams.assignedTo,
+            tasksParams.spectator,
             tasksParams.dueDateFrom,
             tasksParams.dueDateTo,
-            tasksParams.createdBy
         )),
         tap( (t) => {
             this.shellService.setLoadingSpinner(false);

@@ -101,7 +101,7 @@
                             <span *ngIf="col.field === 'createdAt'">{{project[col.field] | date: datePipeDateFormat}}</span>
                             <span *ngIf="col.field !== 'createdAt' && col.field !== 'createdBy'">{{project[col.field]}}</span>
                             <span *ngIf="col.field === 'createdBy'">{{project.createdBy.name}}</span>
-                       </td>
+                        </td>
                     </ng-container>
                     <td>
                         <i class="fas fa-eye hover"

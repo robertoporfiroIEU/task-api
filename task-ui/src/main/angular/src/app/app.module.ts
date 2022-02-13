@@ -18,6 +18,8 @@ import { UpdateProjectContainerComponent } from './project-details/update-projec
 import { TasksComponent } from './tasks/tasks.component';
 import { TasksContainerComponent } from './tasks/tasks.container';
 import { ViewProjectContainerComponent } from './project-details/view-project.container';
+import { CreateTaskComponent } from './create-task/create-task.component';
+import { CreateTaskContainerComponent } from './create-task/create-task.container';
 
 @NgModule({
     declarations: [
@@ -29,7 +31,9 @@ import { ViewProjectContainerComponent } from './project-details/view-project.co
         UpdateProjectContainerComponent,
         TasksComponent,
         TasksContainerComponent,
-        ViewProjectContainerComponent
+        ViewProjectContainerComponent,
+        CreateTaskComponent,
+        CreateTaskContainerComponent
     ],
     imports: [
         BrowserModule,

@@ -4,7 +4,10 @@
     </div>
     <div class="col-12">
         <div *ngIf="projectIdentifier"><h6 class="d-inline">{{'taskUI.project-task' | translate }}</h6> >
-            <small>{{projectIdentifier}}</small></div>
+            <small>{{projectIdentifier}}</small>
+        </div>
+        <div *ngIf="!projectIdentifier"><h6 class="d-inline">{{'taskUI.tasks-all-tasks' | translate }}</h6>
+        </div>
     </div>
 </div>
 
@@ -52,7 +55,7 @@
                             </span>
                             </div>
                             <div class="col-12 col-sm-4">
-                                <div class="mt-2">
+                                <div class="mt-2 mt-sm-0">
                                     <p-calendar
                                         formControlName="creationDateFromTo"
                                         [dateFormat]=pCalendarDateFormat
@@ -168,7 +171,7 @@
                                 <button
                                     (click)="clearFilters(); dv.paginate({first: 0, rows: 10})"
                                     type="button"
-                                    class="btn btn-danger ms-2"> {{'taskUI.tasks-clear-filters' | translate}}
+                                    class="btn btn-danger ms-sm-2 mt-2 mt-sm-0"> {{'taskUI.tasks-clear-filters' | translate}}
                                 </button>
                             </div>
 
@@ -180,6 +183,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="button"
+                        (click)="createTaskOpenPage()"
                         class="btn green-button float-end glow-effect mt-2"
                 >
                     {{'taskUI.create-new-task' | translate}}
@@ -222,7 +226,7 @@
                     <div class="mt-2"><strong>{{'taskUI.tasks-header-due-date' | translate}} </strong></div>
                     <div>{{task.dueDate | date: datePipeDateFormat}}</div>
                     <div class="mt-2"><strong>{{'taskUI.tasks-header-status' | translate}} </strong></div>
-                    <p-tag severity="success" value="{{task.status}}"></p-tag>
+                    <p-tag severity="success" value="{{task.status | translate}}"></p-tag>
                 </div>
             </div>
             <div class="col-12 col-sm-3">
@@ -235,6 +239,7 @@
                             <p-avatar *ngIf="i === flatAssigns(task).length -1" label="..." size="large" shape="circle"></p-avatar>
                         </ng-container>
                     </p-avatarGroup>
+                    <div *ngIf="flatAssigns(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
                 </div>
                 <div class="float-start float-sm-none me-3">
                     <div><strong>{{'taskUI.tasks-header-spectators' | translate }}</strong></div>
@@ -245,6 +250,7 @@
                             <p-avatar *ngIf="i === flatSpectators(task).length -1" label="..." size="large" shape="circle"></p-avatar>
                         </ng-container>
                     </p-avatarGroup>
+                    <div *ngIf="flatSpectators(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
                 </div>
             </div>
         </div>
