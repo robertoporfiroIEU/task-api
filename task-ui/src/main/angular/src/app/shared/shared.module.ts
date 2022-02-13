@@ -17,7 +17,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { AccordionModule } from 'primeng/accordion';
 import { DropdownModule } from 'primeng/dropdown';
-
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @NgModule({
     declarations: [],
@@ -40,7 +40,8 @@ import { DropdownModule } from 'primeng/dropdown';
         AvatarModule,
         AvatarGroupModule,
         AccordionModule,
-        DropdownModule
+        DropdownModule,
+        AutoCompleteModule
     ],
     exports: [
         BrowserModule,
@@ -60,7 +61,8 @@ import { DropdownModule } from 'primeng/dropdown';
         AvatarModule,
         AvatarGroupModule,
         AccordionModule,
-        DropdownModule
+        DropdownModule,
+        AutoCompleteModule
     ]
 })
 export class SharedModule {

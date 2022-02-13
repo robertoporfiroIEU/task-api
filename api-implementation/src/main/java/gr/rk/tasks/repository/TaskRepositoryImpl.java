@@ -154,18 +154,18 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getDueDateFrom()) && Objects.nonNull(taskCriteriaDTO.getDueDateTo())) {
-            filters.add(entityVariableWithDot + "dueDate >= :creationDateFrom AND " + entityVariableWithDot + "createdAt <= :creationDateTo");
+            filters.add(entityVariableWithDot + "dueDate >= :dueDateFrom AND " + entityVariableWithDot + "dueDate <= :dueDateTo");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
                     "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
             ));
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
-                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateTo()).toLocalDateTime())
             ));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
                     "dueDateFrom", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
             ));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
-                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateTo()).toLocalDateTime())
             ));
         } else if (Objects.nonNull(taskCriteriaDTO.getDueDateFrom())) {
             filters.add(entityVariableWithDot + "dueDate >= :dueDateFrom");
@@ -178,10 +178,10 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         } else if (Objects.nonNull(taskCriteriaDTO.getDueDateTo())) {
             filters.add(entityVariableWithDot + "dueDate <= :dueDateTo");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
-                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateTo()).toLocalDateTime())
             ));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter(
-                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateFrom()).toLocalDateTime())
+                    "dueDateTo", ZonedDateTime.parse(taskCriteriaDTO.getDueDateTo()).toLocalDateTime())
             ));
         }
 

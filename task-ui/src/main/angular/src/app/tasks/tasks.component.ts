@@ -6,6 +6,8 @@ import { TasksPresenter } from './tasks.presenter';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
 import { FormGroup } from '@angular/forms';
 import { Utils } from '../shared/Utils';
+import { RoutesEnum } from '../RoutesEnum';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
     selector: 'app-tasks-ui',
@@ -22,6 +24,7 @@ export class TasksComponent implements OnInit {
     @Output() lazyLoadPaginatedTasks: EventEmitter<TasksParams> = new EventEmitter<TasksParams>();
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
+    createTaskUrl: string = '';
 
     get orderField(): SelectItem[]  {
         return this.tasksPresenter.orderField;
@@ -39,10 +42,12 @@ export class TasksComponent implements OnInit {
         return this.tasksPresenter.avatarColors;
     }
 
-    constructor(private tasksPresenter: TasksPresenter) {
+    constructor(private tasksPresenter: TasksPresenter, private router: Router) {
     }
 
     ngOnInit(): void {
+        this.createTaskUrl = '/' + RoutesEnum.createTask;
+
         this.tasksPresenter.onLoadPaginatedTasks$.pipe(
             takeUntil(this.destroy)
         ).subscribe( taskParams => {
@@ -65,6 +70,17 @@ export class TasksComponent implements OnInit {
 
     flatSpectators(task: Task): string[] {
         return this.tasksPresenter.flatSpectators(task);
+    }
+
+    createTaskOpenPage(): void {
+        let navigationExtras: NavigationExtras = {};
+
+        if (this.projectIdentifier) {
+            navigationExtras = {
+                queryParams: { 'project-identifier': this.projectIdentifier }
+            };
+        }
+        this.router.navigate([this.createTaskUrl], navigationExtras);
     }
 
 }

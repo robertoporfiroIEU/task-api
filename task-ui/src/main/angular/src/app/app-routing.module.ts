@@ -6,6 +6,7 @@ import { CreateProjectContainerComponent } from './project-details/create-projec
 import { UpdateProjectContainerComponent } from './project-details/update-project.container';
 import { TasksContainerComponent } from './tasks/tasks.container';
 import { ViewProjectContainerComponent } from './project-details/view-project.container';
+import {CreateTaskContainerComponent} from './create-task/create-task.container';
 
 const routes: Routes = [
     { path: RoutesEnum.projects, component: ProjectContainerComponent },
@@ -13,7 +14,8 @@ const routes: Routes = [
     { path: RoutesEnum.createProject, component: CreateProjectContainerComponent },
     { path: RoutesEnum.updateProject, component: UpdateProjectContainerComponent },
     { path: RoutesEnum.viewProject, component: ViewProjectContainerComponent },
-    { path: RoutesEnum.tasks, component: TasksContainerComponent }
+    { path: RoutesEnum.tasks, component: TasksContainerComponent },
+    { path: RoutesEnum.createTask, component: CreateTaskContainerComponent }
 ];
 
 @NgModule({

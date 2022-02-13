@@ -1,0 +1,134 @@
+<div class="container">
+    <h5 class="mt-2 grey-color">
+        <span>{{'taskUI.create-task-title' | translate}}</span>
+    </h5>
+    <form
+        [formGroup]="taskForm"
+        class="mt-4">
+        <div class="mb-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="name"
+                    id="projectName"
+                    type="text"
+                    maxlength="250"
+                    pInputText
+                    [ngClass]="'form-control ng-invalid ng-dirty'"
+                >
+                <label for="projectName"><span
+                    class="red">*</span> {{'taskUI.create-task-task-name' | translate }}</label>
+            </span>
+            <small *ngIf="taskForm?.get('name')?.invalid && taskForm?.get('name')?.dirty"
+                   class="p-error block">{{'taskUI.field-required' | translate}}
+            </small>
+        </div>
+        <div class="mb-3">
+            <p-dropdown [options]="statuses" formControlName="status"></p-dropdown>
+        </div>
+        <div class="mb-3 mt-4">
+            <span class="p-float-label">
+                <input
+                    formControlName="projectIdentifier"
+                    id="projectIdentifier"
+                    type="text"
+                    maxlength="250"
+                    pInputText
+                    [ngClass]="'form-control ng-invalid ng-dirty'"
+                >
+                <label for="projectIdentifier"><span
+                    class="red">*</span> {{'taskUI.create-task-task-project-identifier' | translate }}</label>
+            </span>
+            <small *ngIf="taskForm?.get('name')?.invalid && taskForm?.get('name')?.dirty"
+                   class="p-error block">{{'taskUI.field-required' | translate}}
+            </small>
+        </div>
+        <div class="mb-3 mt-4">
+            <p-calendar
+                class="mt-2"
+                formControlName="dueDateFromTo"
+                [dateFormat]=pCalendarDateFormat
+                [showIcon]="true"
+                placeholder="{{'taskUI.create-task-task-due-date' | translate}}"
+                showTime="true"
+                appendTo="body"
+                [hourFormat]="24"
+                [readonlyInput]="true"
+                showButtonBar="true"
+                selectionMode="range">
+            </p-calendar>
+        </div>
+        <div class="p-fluid">
+            <label class="ms-2">{{'taskUI.create-task-task-users-assigns-title' | translate}}</label>
+            <p-autoComplete
+                id="usersAssign"
+                formControlName="usersAssign"
+                [suggestions]="autoCompleteUsersData"
+                (completeMethod)="autocompleteUsersAssign($event)"
+                [multiple]="true"
+                [delay]="1000"
+                placeholder="{{'taskUI.create-task-task-users-assigns' | translate}}"
+            >
+            </p-autoComplete>
+        </div>
+        <div class="p-fluid">
+            <label class="mt-2 ms-2">{{'taskUI.create-task-task-groups-assigns-title' | translate}}</label>
+            <p-autoComplete
+                id="groupsAssign"
+                formControlName="groupsAssign"
+                [suggestions]="autoCompleteGroupsData"
+                (completeMethod)="autocompleteGroupsAssign($event)"
+                [multiple]="true"
+                [delay]="1000"
+                placeholder="{{'taskUI.create-task-task-groups-assigns' | translate}}"
+            >
+            </p-autoComplete>
+        </div>
+        <div class="p-fluid">
+            <label class="ms-2">{{'taskUI.create-task-task-users-spectators-title' | translate}}</label>
+            <p-autoComplete
+                id="usersSpectators"
+                formControlName="usersSpectators"
+                [suggestions]="autoCompleteUsersData"
+                (completeMethod)="autocompleteUsersAssign($event)"
+                [multiple]="true"
+                [delay]="1000"
+                placeholder="{{'taskUI.create-task-task-users-spectators' | translate}}"
+            >
+            </p-autoComplete>
+        </div>
+        <div class="p-fluid">
+            <label class="mt-2 ms-2">{{'taskUI.create-task-task-groups-spectators-title' | translate}}</label>
+            <p-autoComplete
+                id="groupsSpectators"
+                formControlName="groupsSpectators"
+                [suggestions]="autoCompleteGroupsData"
+                (completeMethod)="autocompleteGroupsAssign($event)"
+                [multiple]="true"
+                [delay]="1000"
+                placeholder="{{'taskUI.create-task-task-groups-spectators' | translate}}"
+            >
+            </p-autoComplete>
+        </div>
+        <div class="mb-3 mt-4">
+           <span class="p-float-label">
+               <textarea
+                   formControlName="description"
+                   maxlength="500"
+                   class="form-control"
+                   id="descriptionTextArea"
+                   rows="5"
+                   cols="30"
+                   pInputTextarea
+                   autoResize="autoResize"></textarea>
+               <label for="descriptionTextArea">{{'taskUI.create-project-project-description' | translate}}</label>
+            </span>
+        </div>
+        <button
+            [disabled]="taskForm.invalid"
+            type="submit"
+            (click)="submit()"
+            class="btn btn-primary mb-2">
+            <span>{{'taskUI.create-task-create-button' | translate}}</span>
+        </button>
+    </form>
+</div>
