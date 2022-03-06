@@ -19,3 +19,8 @@ export enum TaskStatuses {
     WAITING_FOR_TEST = 'taskUI.create-task-task-status-waiting-for-test',
     TEST = 'taskUI.create-task-task-status-test'
 }
+
+export enum Type {
+    ASSIGNS,
+    SPECTATORS
+}

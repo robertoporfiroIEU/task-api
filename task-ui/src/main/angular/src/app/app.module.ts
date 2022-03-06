@@ -20,6 +20,8 @@ import { TasksContainerComponent } from './tasks/tasks.container';
 import { ViewProjectContainerComponent } from './project-details/view-project.container';
 import { CreateTaskComponent } from './create-task/create-task.component';
 import { CreateTaskContainerComponent } from './create-task/create-task.container';
+import { TaskDetailsComponent } from './task-details/task-details.component';
+import { TaskDetailsContainerComponent } from './task-details/task-details.container';
 
 @NgModule({
     declarations: [
@@ -33,7 +35,9 @@ import { CreateTaskContainerComponent } from './create-task/create-task.containe
         TasksContainerComponent,
         ViewProjectContainerComponent,
         CreateTaskComponent,
-        CreateTaskContainerComponent
+        CreateTaskContainerComponent,
+        TaskDetailsComponent,
+        TaskDetailsContainerComponent,
     ],
     imports: [
         BrowserModule,

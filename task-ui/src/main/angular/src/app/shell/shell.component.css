@@ -1,14 +1,10 @@
-.corinthiaFont {
-    font-family: 'Corinthia', cursive;
-}
-
 .shadowBottom {
     box-shadow: 0px 15px 10px -15px #111;
 }
 
 .nonFullScreenMode {
     box-shadow: 0px 15px 10px -15px #111;
-    top: 45px;
+    top: 2.7em;
     left: 0;
     bottom: 92px;
     position: fixed;
@@ -18,4 +14,8 @@
 
 .fullScreenModeMain {
     position: relative;
+}
+
+.logo {
+    height: 2.5em;
 }

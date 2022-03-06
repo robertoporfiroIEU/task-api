@@ -1,0 +1,6 @@
+<app-task-details-ui *ngIf="task && userProfile"
+    [userProfile]="userProfile"
+    [task]="task"
+    (onUpdateTask)="updateTask($event)"
+>
+</app-task-details-ui>

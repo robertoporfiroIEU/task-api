@@ -1,0 +1,55 @@
+<div *ngIf="formControlNameForUsers && !readOnly">
+    <div *ngIf="type === TYPE.ASSIGNS" class="ms-2">{{'taskUI.create-task-task-users-assigns-title' | translate}}</div>
+    <div *ngIf="type === TYPE.SPECTATORS" class="ms-2">{{'taskUI.create-task-task-users-spectators-title' | translate}}</div>
+        <p-autoComplete
+            id="users"
+            [formControl]="usersControl"
+            [suggestions]="autoCompleteUsersData"
+            (completeMethod)="autocompleteUsers($event)"
+            [multiple]="true"
+            [delay]="500"
+            class="float-start w-100"
+            placeholder="{{usersAutoCompletePlaceHolder | translate}}">
+        </p-autoComplete>
+</div>
+
+<div *ngIf="formControlNameForGroups && !readOnly">
+    <div *ngIf="type === TYPE.ASSIGNS" class="mt-2 ms-2">{{'taskUI.create-task-task-groups-assigns-title' | translate}}</div>
+    <div *ngIf="type === TYPE.SPECTATORS" class="mt-2 ms-2">{{'taskUI.create-task-task-groups-spectators-title' | translate}}</div>
+        <p-autoComplete
+            id="groupsAssign"
+            [formControl]="groupsControl"
+            [suggestions]="autoCompleteGroupsData"
+            (completeMethod)="autocompleteGroups($event)"
+            [multiple]="true"
+            [delay]="500"
+            class="float-start w-100"
+            placeholder="{{groupsAutoCompletePlaceHolder | translate}}">
+        </p-autoComplete>
+</div>
+
+<button *ngIf="withSaveButton && (formControlNameForGroups || formControlNameForUsers) && !readOnly"
+        (click)="save()"
+        type="button"
+        class="ms-1 mt-1 btn btn-outline-success">{{'taskUI.save' | translate}} <i class="pi pi-check"></i>
+</button>
+
+
+<div *ngIf="readOnly">
+    <div *ngIf="type === TYPE.ASSIGNS" class="h6 d-inline">{{'taskUI.tasks-header-assigns' | translate }}</div>
+    <div *ngIf="type === TYPE.SPECTATORS" class="h6 d-inline">{{'taskUI.tasks-header-spectators' | translate }}</div>
+    <button *ngIf="editable"
+            class="btn btn-outline-secondary d-inline ms-2"
+            type="button"
+            (click)="editClick()"><i class="pi pi-pencil"></i>
+    </button>
+    <div *ngFor="let assign of flatAssignsOrSpectators(task!); let i=index;" class="mt-1">
+        <p-avatar label="{{assign.substring(0, 3)}}"
+                  shape="circle">
+        </p-avatar>
+        <span class="ms-1">{{assign}}</span>
+    </div>
+    <div *ngIf="flatAssignsOrSpectators(task!)?.length == 0"><span
+        class="ms-2">{{'taskUI.n_a' | translate}}</span>
+    </div>
+</div>

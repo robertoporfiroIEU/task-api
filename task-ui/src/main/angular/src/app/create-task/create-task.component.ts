@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CreateTaskPresenter } from './create-task.presenter';
 import { FormGroup } from '@angular/forms';
-import { DropDown } from '../shared/ModelsForUI';
+import { DropDown, Type } from '../shared/ModelsForUI';
 import { Utils } from '../shared/Utils';
 import { User, Task } from '../api';
 import { Subject, takeUntil } from 'rxjs';
@@ -32,6 +32,7 @@ export class CreateTaskComponent implements OnInit {
 
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
+    TYPE = Type;
 
     constructor(private createTaskPresenter: CreateTaskPresenter) {}
 

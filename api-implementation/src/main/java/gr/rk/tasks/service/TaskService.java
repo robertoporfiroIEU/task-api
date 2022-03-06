@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -403,5 +404,41 @@ public class TaskService {
 
         Spectator spectator = oSpectator.get();
         spectator.setDeleted(true);
+    }
+
+    public Task updateTask(String identifier, Task task) {
+        Optional<Task> oTask = taskRepository.
+                findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+
+        if (oTask.isEmpty()) {
+            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+        }
+
+        Task taskEntity = oTask.get();
+        if (Objects.nonNull(task.getName())) {
+            taskEntity.setName(task.getName());
+        }
+
+        if (Objects.nonNull(task.getStatus())) {
+            taskEntity.setStatus(task.getStatus());
+        }
+
+        if (Objects.nonNull(task.getDescription())) {
+            taskEntity.setDescription(task.getDescription());
+        }
+
+        if (Objects.nonNull(task.getAssigns())) {
+            taskEntity.setAssigns(task.getAssigns());
+        }
+
+        if (Objects.nonNull(task.getSpectators())) {
+            taskEntity.setSpectators(task.getSpectators());
+        }
+
+        if (Objects.nonNull(task.getDueDate())) {
+            taskEntity.setDueDate(task.getDueDate());
+        }
+
+        return taskRepository.save(taskEntity);
     }
 }

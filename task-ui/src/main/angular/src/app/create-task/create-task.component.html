@@ -23,7 +23,11 @@
             </small>
         </div>
         <div class="mb-3">
-            <p-dropdown [options]="statuses" formControlName="status"></p-dropdown>
+            <app-task-status-dropdown
+                [editable]="false"
+                [readOnly]="false"
+                formControlName="status">
+            </app-task-status-dropdown>
         </div>
         <div class="mb-3 mt-4">
             <span class="p-float-label">
@@ -45,7 +49,7 @@
         <div class="mb-3 mt-4">
             <p-calendar
                 class="mt-2"
-                formControlName="dueDateFromTo"
+                formControlName="dueDate"
                 [dateFormat]=pCalendarDateFormat
                 [showIcon]="true"
                 placeholder="{{'taskUI.create-task-task-due-date' | translate}}"
@@ -53,48 +57,24 @@
                 appendTo="body"
                 [hourFormat]="24"
                 [readonlyInput]="true"
-                showButtonBar="true"
-                selectionMode="range">
+                showButtonBar="true">
             </p-calendar>
         </div>
         <div class="p-fluid">
-            <label class="ms-2">{{'taskUI.create-task-task-users-assigns-title' | translate}}</label>
-            <p-autoComplete
-                id="usersAssign"
-                formControlName="usersAssign"
-                [suggestions]="autoCompleteUsersData"
-                (completeMethod)="autocompleteUsersAssign($event)"
-                [multiple]="true"
-                [delay]="1000"
-                placeholder="{{'taskUI.create-task-task-users-assigns' | translate}}"
-            >
-            </p-autoComplete>
+            <app-auto-complete-users-groups
+                formControlNameForUsers="usersAssigns"
+                formControlNameForGroups="groupsAssigns"
+                [readOnly]="false"
+                [type]="TYPE.ASSIGNS"
+            ></app-auto-complete-users-groups>
         </div>
         <div class="p-fluid">
-            <label class="mt-2 ms-2">{{'taskUI.create-task-task-groups-assigns-title' | translate}}</label>
-            <p-autoComplete
-                id="groupsAssign"
-                formControlName="groupsAssign"
-                [suggestions]="autoCompleteGroupsData"
-                (completeMethod)="autocompleteGroupsAssign($event)"
-                [multiple]="true"
-                [delay]="1000"
-                placeholder="{{'taskUI.create-task-task-groups-assigns' | translate}}"
-            >
-            </p-autoComplete>
-        </div>
-        <div class="p-fluid">
-            <label class="ms-2">{{'taskUI.create-task-task-users-spectators-title' | translate}}</label>
-            <p-autoComplete
-                id="usersSpectators"
-                formControlName="usersSpectators"
-                [suggestions]="autoCompleteUsersData"
-                (completeMethod)="autocompleteUsersAssign($event)"
-                [multiple]="true"
-                [delay]="1000"
-                placeholder="{{'taskUI.create-task-task-users-spectators' | translate}}"
-            >
-            </p-autoComplete>
+            <app-auto-complete-users-groups
+                formControlNameForUsers="usersSpectators"
+                formControlNameForGroups="groupsSpectators"
+                [readOnly]="false"
+                [type]="TYPE.SPECTATORS"
+            ></app-auto-complete-users-groups>
         </div>
         <div class="p-fluid">
             <label class="mt-2 ms-2">{{'taskUI.create-task-task-groups-spectators-title' | translate}}</label>
