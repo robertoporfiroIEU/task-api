@@ -90,6 +90,14 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    public ResponseEntity<TaskDTO> updateTask(String identifier, TaskDTO taskDTO) {
+        Task task = this.taskMapper.toTask(taskDTO);
+        Task taskEntity = this.taskService.updateTask(identifier, task);
+        taskDTO = this.taskMapper.toTaskDTO(taskEntity);
+        return ResponseEntity.ok(taskDTO);
+    }
+
+    @Override
     public ResponseEntity<TaskDTO> getTask(String identifier) {
         TaskDTO taskDTO = new TaskDTO();
         Optional<Task> oTaskEntity = taskService.getTask(identifier);

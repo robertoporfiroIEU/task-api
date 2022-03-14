@@ -25,6 +25,7 @@ export class TasksComponent implements OnInit {
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
     createTaskUrl: string = '';
+    viewTask: string = '';
 
     get orderField(): SelectItem[]  {
         return this.tasksPresenter.orderField;
@@ -38,15 +39,12 @@ export class TasksComponent implements OnInit {
         return this.tasksPresenter.tasksFormCriteria;
     }
 
-    get avatarColors(): string[] {
-        return this.tasksPresenter.avatarColors;
-    }
-
     constructor(private tasksPresenter: TasksPresenter, private router: Router) {
     }
 
     ngOnInit(): void {
         this.createTaskUrl = '/' + RoutesEnum.createTask;
+        this.viewTask = '/' + RoutesEnum.tasks;
 
         this.tasksPresenter.onLoadPaginatedTasks$.pipe(
             takeUntil(this.destroy)
@@ -65,11 +63,11 @@ export class TasksComponent implements OnInit {
     }
 
     flatAssigns(task: Task): string[] {
-       return this.tasksPresenter.flatAssigns(task);
+        return Utils.flatAssignsOrSpectators(task?.assigns!);
     }
 
     flatSpectators(task: Task): string[] {
-        return this.tasksPresenter.flatSpectators(task);
+        return Utils.flatAssignsOrSpectators(task?.spectators!);
     }
 
     createTaskOpenPage(): void {
@@ -81,6 +79,10 @@ export class TasksComponent implements OnInit {
             };
         }
         this.router.navigate([this.createTaskUrl], navigationExtras);
+    }
+
+    getTaskColor(taskName: string): string {
+        return this.tasksPresenter.getTaskColor(taskName);
     }
 
 }

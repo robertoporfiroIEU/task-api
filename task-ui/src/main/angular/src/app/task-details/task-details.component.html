@@ -1,0 +1,163 @@
+<form [formGroup]="taskForm" class="container-fluid mt-1">
+    <div class="row">
+        <!-- left -->
+        <div class="col-12 col-sm-1 mt-1">
+            <div class="row">
+                <div class="col-12">
+                    <p-avatar
+                        class="ms-1"
+                        [style]="{
+                            'background-color': getTaskColor(task?.name),
+                            'font-size': '2rem',
+                            'color': '#ffffff',
+                            'height': '64px',
+                            'maxWidth': '64px',
+                            'width': '100%'}
+                        ">
+                        {{task?.name.substring(0, 2)}}
+                    </p-avatar>
+                </div>
+            </div>
+        </div>
+
+        <!--center-->
+        <div class="col-12 col-sm-8">
+            <div class="row">
+                <div class="col-12">
+                    <div>{{'taskUI.task-details-task-name' | translate}}</div>
+                    <div class="input-group input-group mt-2">
+                        <input #nameInput
+                               formControlName="name"
+                               type="text"
+                               (keyup.enter)="updateTask()"
+                               (focusout)="updateTask()"
+                               class="form-control"
+                               pInputText
+                               [ngClass]="'form-control ng-invalid ng-dirty'">
+                    </div>
+                    <small *ngIf="taskForm?.get('name')?.invalid && taskForm?.get('name')?.dirty"
+                           class="p-error block">{{'taskUI.field-required' | translate}}
+                    </small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <span>{{'taskUI.task-details-description' | translate}}</span>
+                    <textarea
+                        (focusout)="updateTask()"
+                        formControlName="description"
+                        maxlength="500"
+                        class="form-control"
+                        id="descriptionTextArea"
+                        rows="5"
+                        cols="30"
+                        pInputTextarea
+                        autoResize="autoResize"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- right -->
+        <div class="col-12 col-sm-3 mt-2 mt-sm-0 wordBreak">
+            <p-panel [expandIcon]="true" header="{{'taskUI.task-details-details' | translate}}">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <div class="h6">{{'taskUI.task-details-project-identifier' | translate}}</div>
+                            <a class="h7 text-primary link-primary"
+                               routerLink="{{viewProjectURL}}{{task?.projectIdentifier}}">
+                                {{task?.projectIdentifier}}
+                            </a>
+                        </div>
+                        <hr>
+                        <div class="col-12 mt-1">
+                            <div class="h6">{{'taskUI.task-details-identifier' | translate}}</div>
+                            <span class="h7 text-primary">{{task?.identifier}}</span>
+                        </div>
+                        <hr>
+                        <div class="col-12 mt-4">
+                            <div>
+                                <app-task-status-dropdown
+                                    formControlName="status"
+                                    [readOnly]="isStatusReadOnly"
+                                    [editable]="isStatusEditable"
+                                    [taskStatusValue]="task?.status"
+                                    (onStatusChanged)="updateTask(); changeStatusState()"
+                                    (onEditClick)="changeStatusState()"
+                                >
+                                </app-task-status-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div class="p-fluid">
+                                <app-auto-complete-users-groups
+                                    [type]="TYPE.ASSIGNS"
+                                    (onSave)="updateTask(); changeAssignState()"
+                                    [task]="task"
+                                    [withSaveButton]="true"
+                                    [readOnly]="isAssignReadOnly"
+                                    [editable]="isAssignEditable"
+                                    (onEditClick)="changeAssignState()"
+                                    formControlNameForUsers="usersAssigns"
+                                    formControlNameForGroups="groupsAssigns"
+                                ></app-auto-complete-users-groups>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <div class="p-fluid">
+                                <app-auto-complete-users-groups
+                                    [type]="TYPE.SPECTATORS"
+                                    (onSave)="updateTask(); changeSpectatorState()"
+                                    [task]="task"
+                                    [withSaveButton]="true"
+                                    [readOnly]="isSpectatorReadOnly"
+                                    [editable]="isSpectatorEditable"
+                                    (onEditClick)="changeSpectatorState()"
+                                    formControlNameForUsers="usersSpectators"
+                                    formControlNameForGroups="groupsSpectators"
+                                ></app-auto-complete-users-groups>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <div class="h6">{{'taskUI.tasks-header-creation-date' | translate}}</div>
+                            <span>{{task?.createdAt | date: datePipeDateFormat}}</span>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <div class="h6">
+                                {{'taskUI.tasks-header-due-date' | translate}}
+                                <button *ngIf="isDueDateEditable"
+                                        class="btn btn-outline-secondary ms-3 mb-1 d-inline"
+                                        type="button"
+                                        (click)="changeDueDateState()"><i class="pi pi-pencil"></i>
+                                </button>
+                            </div>
+                            <div *ngIf="isDueDateEditable">
+                                <span *ngIf="task?.dueDate">{{task.dueDate | date: datePipeDateFormat}}</span>
+                                <span *ngIf="!task?.dueDate" class="ms-2">{{'taskUI.n_a' | translate}}</span>
+                            </div>
+                            <div *ngIf="!isDueDateEditable">
+                                <p-calendar
+                                    class="mt-2"
+                                    formControlName="dueDate"
+                                    [dateFormat]=pCalendarDateFormat
+                                    [showIcon]="true"
+                                    placeholder="{{'taskUI.create-task-task-due-date' | translate}}"
+                                    showTime="true"
+                                    appendTo="body"
+                                    [hourFormat]="24"
+                                    [readonlyInput]="true"
+                                    (onSelect)="changeDueDateState(); updateTask()"
+                                    showButtonBar="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <div class="h6">{{'taskUI.tasks-header-username' | translate}}</div>
+                            <span>{{task?.createdBy.name}}</span>
+                        </div>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+    </div>
+</form>

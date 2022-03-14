@@ -1,0 +1,17 @@
+<div *ngIf="formControlName && !readOnly" class="d-inline">
+    <div class="h7 me-1">{{'taskUI.tasks-header-status' | translate}}</div>
+    <p-dropdown [options]="statuses" [formControl]="control" (onChange)="statusChanged($event)"></p-dropdown>
+</div>
+
+<div *ngIf="readOnly" class="d-inline">
+    <div class="h7 me-1 d-inline">{{'taskUI.tasks-header-status' | translate}}</div>
+    <button *ngIf="editable && readOnly"
+            class="btn btn-outline-secondary ms-3 mb-1 d-inline"
+            type="button"
+            (click)="editClick()"><i class="pi pi-pencil"></i>
+    </button>
+    <div>
+        <p-tag severity="success" value="{{taskStatusValue | translate}}"></p-tag>
+    </div>
+</div>
+

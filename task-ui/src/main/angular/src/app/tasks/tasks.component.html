@@ -40,7 +40,7 @@
                                 </label>
                             </span>
                             </div>
-                            <div class="col-12 col-sm-4">
+                            <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                             <span class="p-float-label">
                                 <input
                                     formControlName="name"
@@ -79,24 +79,17 @@
                                         maxlength="100"
                                         pInputText
                                     >
-                                    <label for="status">
+                                    <label for="createdBy">
                                         {{'taskUI.filter-created-by-placeholder' | translate }}
                                     </label>
                                 </span>
                             </div>
                             <div class="col-12 col-sm-4 mt-2">
-                                <span class="p-float-label">
-                                    <input
-                                        formControlName="status"
-                                        id="status"
-                                        type="text"
-                                        maxlength="250"
-                                        pInputText
-                                    >
-                                    <label for="status">
-                                        {{'taskUI.filter-status-placeholder' | translate }}
-                                    </label>
-                                </span>
+                                <app-task-status-dropdown
+                                    [editable]="false"
+                                    [readOnly]="false"
+                                    formControlName="status">
+                                </app-task-status-dropdown>
                             </div>
                             <div class="col-12 col-sm-4">
                                 <div class="mt-2">
@@ -197,19 +190,21 @@
                 <span>#{{rowIndex + 1}}</span>
                 <div class="float-end">
                     <button pButton pRipple type="button" label="{{'taskUI.tasks-button-details' | translate}}"
-                            class="p-button-outlined p-button-rounded"></button>
+                            class="p-button-outlined p-button-rounded"
+                            [routerLink]="[viewTask, task.identifier]"
+                    ></button>
                 </div>
             </div>
-            <div class="col-3 col-sm-2">
+            <div class="col-12 col-sm-2 mb-2 mb-sm-0 text-center text-sm-start">
                 <p-avatar
-                    [style]="{'background-color': avatarColors[rowIndex % avatarColors.length], 'color': '#ffffff'}"
+                    [style]="{'background-color': getTaskColor(task.name), 'color': '#ffffff'}"
                     size="xlarge">
                     {{task.name.substring(0, 2)}}
                 </p-avatar>
                 <div><strong>{{'taskUI.tasks-header-name' | translate}} </strong></div>
                 <div>{{task.name}}</div>
             </div>
-            <div class="col-4 col-sm-3 wordBreak">
+            <div class="col-6 col-sm-3 wordBreak text-center text-sm-start">
                 <div>
                     <div><strong>{{'taskUI.tasks-header-identifier' | translate}} </strong></div>
                     <div>{{task.identifier}}</div>
@@ -219,29 +214,31 @@
                     <div>{{task.projectIdentifier}}</div>
                 </div>
             </div>
-            <div class="col-4 col-sm-3 wordBreak">
+            <div class="col-6 col-sm-3 wordBreak text-center text-sm-start">
                 <div>
                     <div><strong>{{'taskUI.tasks-header-creation-date' | translate}} </strong></div>
                     <div>{{task.createdAt | date: datePipeDateFormat}}</div>
-                    <div class="mt-2"><strong>{{'taskUI.tasks-header-due-date' | translate}} </strong></div>
+                    <div class="mt-4"><strong>{{'taskUI.tasks-header-due-date' | translate}} </strong></div>
                     <div>{{task.dueDate | date: datePipeDateFormat}}</div>
-                    <div class="mt-2"><strong>{{'taskUI.tasks-header-status' | translate}} </strong></div>
+                    <div class="mt-4"><strong>{{'taskUI.tasks-header-status' | translate}} </strong></div>
                     <p-tag severity="success" value="{{task.status | translate}}"></p-tag>
                 </div>
             </div>
-            <div class="col-12 col-sm-3">
-                <div class="float-start float-sm-none me-3">
+            <div class="col-4 offset-4 offset-sm-0">
+                <div class="me-3">
                     <div><strong>{{'taskUI.tasks-header-assigns' | translate }}</strong></div>
-                    <p-avatarGroup>
-                        <ng-container *ngFor="let assign of flatAssigns(task).slice(0, 2); let i=index;">
-                            <p-avatar [pTooltip]="assign" label="{{assign.substring(0, 3)}}" size="large" shape="circle">
-                            </p-avatar>
-                            <p-avatar *ngIf="i === flatAssigns(task).length -1" label="..." size="large" shape="circle"></p-avatar>
-                        </ng-container>
-                    </p-avatarGroup>
-                    <div *ngIf="flatAssigns(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
+                    <div>
+                        <p-avatarGroup>
+                            <ng-container *ngFor="let assign of flatAssigns(task).slice(0, 2); let i=index;">
+                                <p-avatar [pTooltip]="assign" label="{{assign.substring(0, 3)}}" size="large" shape="circle">
+                                </p-avatar>
+                                <p-avatar *ngIf="i === flatAssigns(task).length -1" label="..." size="large" shape="circle"></p-avatar>
+                            </ng-container>
+                        </p-avatarGroup>
+                        <div *ngIf="flatAssigns(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
+                    </div>
                 </div>
-                <div class="float-start float-sm-none me-3">
+                <div class="me-3">
                     <div><strong>{{'taskUI.tasks-header-spectators' | translate }}</strong></div>
                     <p-avatarGroup>
                         <ng-container *ngFor="let spectator of flatSpectators(task).slice(0, 2); let i=index;">

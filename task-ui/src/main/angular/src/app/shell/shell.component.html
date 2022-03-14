@@ -2,7 +2,7 @@
     <div class="row m-0">
         <div class="col-6">
             <div routerLink="{{homeUrl}}">
-                <img src="{{logoImage}}" height="40">
+                <img src="{{logoImage}}" class="logo">
                 <span class="corinthiaFont">{{applicationTitle}}</span>
             </div>
         </div>
@@ -20,7 +20,6 @@
 
 <p-toast></p-toast>
 <main [ngClass]="fullScreenMode ? 'fullScreenModeMain': 'nonFullScreenMode'">
-
     <div class="container-fluid">
         <router-outlet></router-outlet>
     </div>

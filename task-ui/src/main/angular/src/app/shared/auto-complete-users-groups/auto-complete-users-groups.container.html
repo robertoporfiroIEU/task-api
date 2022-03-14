@@ -1,0 +1,16 @@
+<app-auto-complete-users-groups-ui
+    [type]="type"
+    [task]="task"
+    [formControlNameForUsers]="formControlNameForUsers"
+    [formControlNameForGroups]="formControlNameForGroups"
+    [readOnly]="readOnly"
+    [editable]="editable"
+    [withSaveButton]="withSaveButton"
+    [userProfile]="userProfile"
+    [autoCompleteUsersData]="autoCompleteUsersData"
+    [autoCompleteGroupsData]="autoCompleteGroupsData"
+    (onAutocompleteUsers)="getAutoCompleteUsers($event)"
+    (onAutocompleteGroups)="getAutoCompleteGroups($event)"
+    (onEditClick)="editClick()"
+    (onSave)="save()"
+></app-auto-complete-users-groups-ui>

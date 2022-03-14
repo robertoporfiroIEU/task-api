@@ -34,18 +34,29 @@ export class ErrorService {
             this.messageService.add(
                 {
                     severity:'warn',
-                    summary: this.translateService.instant(httpErrorResponse.error.translateKey as string),
-                    detail: httpErrorResponse.error.message as string
+                    summary: this.translateService.instant(httpErrorResponse.error.translateKey!),
+                    detail: httpErrorResponse.error.message!
                 }
             );
         } else {
             this.messageService.add(
                 {
                     severity:'error',
-                    summary: this.translateService.instant(httpErrorResponse.error.message as string),
-                    detail: httpErrorResponse.error.message as string
+                    summary: this.translateService.instant(httpErrorResponse.error.message!),
+                    detail: httpErrorResponse.error.message!
                 }
             );
         }
+    }
+
+    showCustomErrorMessage(summaryTranslateKey: string, messageTranslateKey: string): void {
+        this.shellService.setLoadingSpinner(false);
+        this.messageService.add(
+            {
+                severity:'error',
+                summary: this.translateService.instant(summaryTranslateKey),
+                detail: this.translateService.instant(messageTranslateKey),
+            }
+        );
     }
 }

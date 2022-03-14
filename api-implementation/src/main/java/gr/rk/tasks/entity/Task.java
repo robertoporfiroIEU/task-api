@@ -42,10 +42,10 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private Set<Comment> comments;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Assign> assigns;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Spectator> spectators;
 
     private boolean deleted;
@@ -101,14 +101,16 @@ public class Task {
         if (Objects.nonNull(assigns)) {
             assigns.forEach(a -> a.setTask(this));
         }
-        this.assigns = assigns;
+        this.assigns.clear();
+        this.assigns.addAll(assigns);
     }
 
     public void setSpectators(List<Spectator> spectators) {
         if (Objects.nonNull(spectators)) {
             spectators.forEach(s -> s.setTask(this));
         }
-        this.spectators = spectators;
+        this.spectators.clear();
+        this.spectators.addAll(spectators);
     }
 
     public Long getId() {

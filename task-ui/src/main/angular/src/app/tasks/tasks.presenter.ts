@@ -4,15 +4,13 @@ import { ProjectsParams } from '../projects/ProjectsParams';
 import { Observable, Subject } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Task } from '../api';
+import { Utils } from '../shared/Utils';
 
 @Injectable()
 export class TasksPresenter {
 
     private loadPaginatedTasksSubject: Subject<ProjectsParams> = new Subject<TasksParams>();
     onLoadPaginatedTasks$: Observable<ProjectsParams> = this.loadPaginatedTasksSubject.asObservable();
-
-    avatarColors: string[] = ['#2196F3', '#40CB3BFF', '#8A3BCBFF'];
 
     orderField: SelectItem[] = [
         {
@@ -138,32 +136,8 @@ export class TasksPresenter {
         this.tasksFormCriteria.reset();
     }
 
-    flatAssigns(task: Task): string[] {
-        let flatAssigns: string[] = [];
-        task.assigns?.forEach( a => {
-            if (a?.user) {
-                flatAssigns.push(a.user?.name)
-            }
-
-            if (a?.group) {
-                flatAssigns.push(a.group?.name)
-            }
-        })
-        return flatAssigns;
-    }
-
-    flatSpectators(task: Task): string[] {
-        let flatSpectators: string[] = [];
-        task.spectators?.forEach( s => {
-            if (s?.user) {
-                flatSpectators.push(s.user?.name)
-            }
-
-            if (s?.group) {
-                flatSpectators.push(s.group?.name)
-            }
-        })
-        return flatSpectators;
+    getTaskColor(taskName: string): string {
+        return Utils.getColorFromStringValue(taskName, Utils.taskColors);
     }
 
 }

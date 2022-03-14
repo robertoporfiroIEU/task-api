@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DropDown, TaskStatuses } from '../shared/ModelsForUI';
 import { TranslateService } from '@ngx-translate/core';
-import { Assign, Spectator, Task, User } from '../api';
-import { catchError, Observable, Subject, take } from 'rxjs';
+import { Task, User } from '../api';
+import { catchError, Observable, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { Utils } from '../shared/Utils';
 
 @Injectable()
 export class CreateTaskPresenter {
@@ -57,9 +58,9 @@ export class CreateTaskPresenter {
             description: new FormControl(null),
             status: new FormControl(TaskStatuses.CREATE, [Validators.required]),
             projectIdentifier: new FormControl(null, [Validators.required]),
-            dueDateFromTo: new FormControl(null),
-            usersAssign: new FormControl([this.userProfile?.name]),
-            groupsAssign: new FormControl(null),
+            dueDate: new FormControl(null),
+            usersAssigns: new FormControl([this.userProfile?.name]),
+            groupsAssigns: new FormControl(null),
             usersSpectators: new FormControl([this.userProfile?.name]),
             groupsSpectators: new FormControl(null)
         });
@@ -76,58 +77,15 @@ export class CreateTaskPresenter {
     }
 
     createTask(): void {
-        let assigns: Assign[] = [];
-        let usersAssigns: string[] = this.taskForm.value.usersAssign;
-        let groupsAssigns: string[] = this.taskForm.value.groupsAssign;
+        let usersAssigns: string[] = this.taskForm.value.usersAssigns;
+        let groupsAssigns: string[] = this.taskForm.value.groupsAssigns;
+        let assigns = Utils.getAssignsFromArray(usersAssigns, groupsAssigns);
 
-        if (usersAssigns) {
-            usersAssigns.forEach((name: string) => {
-                let assign: Assign = {
-                    user: {
-                        name: name
-                    }
-                }
-                assigns.push(assign);
-            });
-        }
-
-        if (groupsAssigns) {
-            groupsAssigns.forEach((name: string) => {
-                let assign: Assign = {
-                    group: {
-                        name: name
-                    }
-                }
-                assigns.push(assign);
-            });
-        }
-        let spectators: Spectator[] = [];
         let usersSpectators: string[] = this.taskForm.value.usersSpectators;
         let groupsSpectators: string[] = this.taskForm.value.groupsSpectators;
+        let spectators = Utils.getSpectatorsFromArray(usersSpectators, groupsSpectators);
 
-        if (usersSpectators) {
-            usersSpectators.forEach((name: string) => {
-                let spectator: Spectator = {
-                    user: {
-                        name: name
-                    }
-                }
-                spectators.push(spectator);
-            });
-        }
-
-        if (groupsSpectators) {
-            groupsSpectators.forEach((name: string) => {
-                let spectator: Spectator = {
-                    group: {
-                        name: name
-                    }
-                }
-                spectators.push(spectator);
-            });
-        }
-
-        let dueDateValue: string | null = this.taskForm.value.dueDateFromTo;
+        let dueDateValue: string | null = this.taskForm.value.dueDate;
         if (dueDateValue) {
             dueDateValue = new Date(dueDateValue).toISOString();
         }

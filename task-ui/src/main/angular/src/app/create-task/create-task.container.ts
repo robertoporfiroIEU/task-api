@@ -16,9 +16,9 @@ import { MessageService } from 'primeng/api';
 export class CreateTaskContainerComponent implements OnInit, OnDestroy {
 
     private destroy: Subject<void> = new Subject();
+    private autocompleteUsersSubject = new Subject<string>();
+    private autocompleteGroupsSubject = new Subject<string>();
     userProfile: User | null = null
-    autocompleteUsersSubject = new Subject<string>();
-    autocompleteGroupsSubject = new Subject<string>();
     autoCompleteUsersData: string[] = [];
     autoCompleteGroupsData: string[] = [];
 

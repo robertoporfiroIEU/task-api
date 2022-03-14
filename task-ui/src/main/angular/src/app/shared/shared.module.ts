@@ -18,9 +18,17 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { AccordionModule } from 'primeng/accordion';
 import { DropdownModule } from 'primeng/dropdown';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TaskStatusDropdownComponent } from './task-status-dropdown/task-status-dropdown.component';
+import { PanelModule } from 'primeng/panel';
+import { AutoCompleteUsersGroupsComponent } from './auto-complete-users-groups/auto-complete-users-groups.component';
+import { AutoCompleteUsersGroupsContainerComponent } from './auto-complete-users-groups/auto-complete-users-groups.container';
 
 @NgModule({
-    declarations: [],
+    declarations: [
+        TaskStatusDropdownComponent,
+        AutoCompleteUsersGroupsComponent,
+        AutoCompleteUsersGroupsContainerComponent
+    ],
     imports: [
         CommonModule,
         BrowserModule,
@@ -41,7 +49,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
         AvatarGroupModule,
         AccordionModule,
         DropdownModule,
-        AutoCompleteModule
+        AutoCompleteModule,
+        PanelModule
     ],
     exports: [
         BrowserModule,
@@ -62,7 +71,10 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
         AvatarGroupModule,
         AccordionModule,
         DropdownModule,
-        AutoCompleteModule
+        AutoCompleteModule,
+        TaskStatusDropdownComponent,
+        PanelModule,
+        AutoCompleteUsersGroupsContainerComponent
     ]
 })
 export class SharedModule {

@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { ShellService } from './shell.service';
 import { DOCUMENT } from '@angular/common';
-import { RoutesEnum } from '../RoutesEnum';
 
 @Component({
   selector: 'app-shell',
@@ -18,7 +17,6 @@ export class ShellComponent implements OnInit {
     elem: any;
 
     loadingSpinner: boolean =  false;
-    homePageURL: string =  '/' + RoutesEnum.projects.toString();
 
     constructor(
         private shellService: ShellService,
