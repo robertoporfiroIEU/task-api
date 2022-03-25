@@ -8,7 +8,7 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { Task, User } from '../api';
+import { ApplicationConfiguration, Task, User } from '../api';
 import { TaskDetailsPresenter } from './task-details.presenter';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
@@ -26,11 +26,13 @@ export class TaskDetailsComponent implements OnInit {
     private destroy: Subject<void> = new Subject();
     @Input() task: Task | null = null;
     @Input() userProfile: User | null = null
+    @Input() applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
     @Output() onUpdateTask = new EventEmitter<Task>();
     @ViewChild('nameInput', {static: false}) nameInput: ElementRef<any> | null = null;
 
     viewProjectURL: string = '/projects/view-project/';
     datePipeDateFormat = Utils.datePipeDateFormat;
+    datePipeDateTimeFormat = Utils.datePipeDateTimeFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
 
     get taskForm(): FormGroup {
@@ -43,6 +45,14 @@ export class TaskDetailsComponent implements OnInit {
 
     get isStatusReadOnly(): boolean {
         return this.taskDetailsPresenter.isStatusReadOnly;
+    }
+
+    get isPriorityEditable(): boolean {
+        return this.taskDetailsPresenter.isPriorityEditable;
+    }
+
+    get isPriorityReadOnly(): boolean {
+        return this.taskDetailsPresenter.isPriorityReadOnly;
     }
 
     get isAssignEditable(): boolean {
@@ -60,6 +70,7 @@ export class TaskDetailsComponent implements OnInit {
     get isSpectatorReadOnly(): boolean {
         return this.taskDetailsPresenter.isSpectatorReadOnly;
     }
+
 
     get isDueDateEditable(): boolean {
         return this.taskDetailsPresenter.isDueDateEditable;
@@ -91,6 +102,10 @@ export class TaskDetailsComponent implements OnInit {
 
     changeStatusState(): void {
         this.taskDetailsPresenter.changeStatusState();
+    }
+
+    changePriorityState(): void {
+        this.taskDetailsPresenter.changePriorityState();
     }
 
     changeDueDateState(): void {

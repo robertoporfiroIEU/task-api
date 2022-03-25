@@ -24,6 +24,10 @@ public class Task {
 
     private String status;
 
+    private String label;
+
+    private String priority;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Generated(GenerationTime.ALWAYS)
@@ -51,7 +55,7 @@ public class Task {
     private boolean deleted;
 
     @ManyToOne
-    @JoinColumn(name = "projects_id")
+    @JoinColumn(name = "projects_id", nullable = false)
     private Project project;
 
     public Task() {
@@ -175,6 +179,22 @@ public class Task {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 
     @Override

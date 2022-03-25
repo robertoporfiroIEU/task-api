@@ -25,6 +25,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
             "identifier", "identifier",
             "name", "name",
             "status", "status",
+            "priority", "priority",
             "createdAt", "createdAt",
             "dueDate", "dueDate",
             "createdBy", "createdBy.username"
@@ -79,16 +80,16 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
         if (Objects.nonNull(taskCriteriaDTO.getAssignedTo())) {
             joinPart = " join " + entityVariableWithDot + "assigns a ";
-            filters.add("(a.user.username = :assignedTo OR a.group.name = :assignedTo)");
-            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo",   taskCriteriaDTO.getAssignedTo())));
-            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo", taskCriteriaDTO.getAssignedTo())));
+            filters.add("(a.user.username like :assignedTo OR a.group.name like :assignedTo)");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo","%" + taskCriteriaDTO.getAssignedTo() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo", "%" + taskCriteriaDTO.getAssignedTo() + "%")));
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getSpectator())) {
             joinPart = " join " + entityVariableWithDot + "spectators s ";
-            filters.add("s.user.username = :spectator OR s.group.name = :spectator");
-            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator",   taskCriteriaDTO.getSpectator())));
-            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator", taskCriteriaDTO.getSpectator())));
+            filters.add("s.user.username like :spectator OR s.group.name like :spectator");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator","%" + taskCriteriaDTO.getSpectator() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator", "%" + taskCriteriaDTO.getSpectator() + "%")));
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getIdentifier())) {
@@ -113,6 +114,12 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
             filters.add(entityVariableWithDot + "status like :status");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("status", "%" + taskCriteriaDTO.getStatus() + "%")));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("status", "%" + taskCriteriaDTO.getStatus() + "%")));
+        }
+
+        if (Objects.nonNull(taskCriteriaDTO.getPriority())) {
+            filters.add(entityVariableWithDot + "priority like :priority");
+            tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("priority", "%" + taskCriteriaDTO.getPriority() + "%")));
+            totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("priority", "%" + taskCriteriaDTO.getPriority() + "%")));
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getCreatedBy())) {

@@ -1,5 +1,6 @@
-<app-tasks-ui
+<app-tasks-ui *ngIf="configurations$"
+    [projectIdentifier]="projectIdentifier"
+    [configurations$]="configurations$"
     [paginatedTasks]="paginatedTasks$ | async"
-    [projectIdentifier]="projectIdentifier$ | async"
     (lazyLoadPaginatedTasks)="lazyLoadPaginatedTasks($event)"
 ></app-tasks-ui>

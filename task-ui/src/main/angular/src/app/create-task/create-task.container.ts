@@ -1,10 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { GroupsService, TasksService, User, UsersService, Task } from '../api';
+import {
+    GroupsService,
+    TasksService,
+    User,
+    UsersService,
+    Task,
+    ApplicationConfiguration,
+    ProjectsService, ApplicationConfigurationsService
+} from '../api';
 import { catchError, Subject, switchMap, takeUntil } from 'rxjs';
 import { UserProfileService } from '../user-profile.service';
 import { ShellService } from '../shell/shell.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { ErrorService } from '../error.service';
 import { RoutesEnum } from '../RoutesEnum';
 import { MessageService } from 'primeng/api';
@@ -21,16 +29,18 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
     userProfile: User | null = null
     autoCompleteUsersData: string[] = [];
     autoCompleteGroupsData: string[] = [];
+    configurations: ApplicationConfiguration[] | undefined = undefined;
 
     constructor(
         private tasksService: TasksService,
+        private projectsService: ProjectsService,
+        private applicationConfigurationsService: ApplicationConfigurationsService,
         private usersService: UsersService,
         private groupsService: GroupsService,
         private userProfileService: UserProfileService,
         private shellService: ShellService,
         private translateService: TranslateService,
         private messageService: MessageService,
-        private activatedRoute: ActivatedRoute,
         private router: Router,
         private errorService: ErrorService
         ) {}
@@ -100,6 +110,18 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
                 };
                 this.router.navigate([RoutesEnum.tasks], navigationExtras);
             });
+    }
+
+    getConfigurations(projectIdentifier: string): void {
+        if (projectIdentifier) {
+            this.projectsService.getProject(projectIdentifier).pipe(
+                takeUntil(this.destroy)
+            ).subscribe(project => this.configurations = project.configurations);
+        } else {
+            this.applicationConfigurationsService.getApplicationConfigurations().pipe(
+                takeUntil(this.destroy)
+            ).subscribe(configurations => this.configurations = configurations);
+        }
     }
 
     ngOnDestroy(): void {

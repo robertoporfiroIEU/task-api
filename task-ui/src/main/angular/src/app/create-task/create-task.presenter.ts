@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { DropDown, TaskStatuses } from '../shared/ModelsForUI';
 import { TranslateService } from '@ngx-translate/core';
 import { Task, User } from '../api';
-import { catchError, Observable, Subject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Utils } from '../shared/Utils';
 
@@ -12,40 +11,13 @@ export class CreateTaskPresenter {
 
     private createTaskSubject = new Subject<Task>();
     onCreateTask$: Observable<Task> = this.createTaskSubject.asObservable();
+
+    private configurationsSubject = new Subject<string>();
+    onConfigurations$ = this.configurationsSubject.asObservable();
+
     userProfile: User | null = null;
 
     taskForm: FormGroup = new FormGroup({});
-
-    statuses: DropDown[] = [
-        {
-            label: this.translateService.instant(TaskStatuses.CREATE.valueOf()),
-            value: TaskStatuses.CREATE
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.TODO.valueOf()),
-            value: TaskStatuses.TODO
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.IN_PROGRESS.valueOf()),
-            value: TaskStatuses.IN_PROGRESS
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.WAITING_FOR_REVIEW.valueOf()),
-            value: TaskStatuses.WAITING_FOR_REVIEW
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.IN_REVIEW.valueOf()),
-            value: TaskStatuses.IN_REVIEW
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.WAITING_FOR_TEST.valueOf()),
-            value: TaskStatuses.WAITING_FOR_TEST
-        },
-        {
-            label: this.translateService.instant(TaskStatuses.TEST.valueOf()),
-            value: TaskStatuses.TEST
-        }
-    ];
 
     constructor(private translateService: TranslateService, private activatedRoute: ActivatedRoute) {
     }
@@ -56,7 +28,8 @@ export class CreateTaskPresenter {
         this.taskForm = new FormGroup({
             name: new FormControl(null, [Validators.required]),
             description: new FormControl(null),
-            status: new FormControl(TaskStatuses.CREATE, [Validators.required]),
+            status: new FormControl(null, [Validators.required]),
+            priority: new FormControl(null, [Validators.required]),
             projectIdentifier: new FormControl(null, [Validators.required]),
             dueDate: new FormControl(null),
             usersAssigns: new FormControl([this.userProfile?.name]),
@@ -65,13 +38,19 @@ export class CreateTaskPresenter {
             groupsSpectators: new FormControl(null)
         });
 
+        let projectIdentifierFormControl = this.taskForm.get('projectIdentifier') as FormControl;
+
+        projectIdentifierFormControl.valueChanges.pipe(
+            debounceTime(100),
+            distinctUntilChanged()
+        ).subscribe( value => this.configurationsSubject.next(value));
+
         this.activatedRoute.queryParams.pipe(
             catchError(err => {
                 return [];
             })
         ).subscribe(params => {
             let projectIdentifier = params['project-identifier'] as string;
-            let projectIdentifierFormControl = this.taskForm.get('projectIdentifier') as FormControl;
             projectIdentifierFormControl.setValue(projectIdentifier);
         });
     }
@@ -94,6 +73,7 @@ export class CreateTaskPresenter {
             name: this.taskForm.value.name,
             description: this.taskForm.value.description,
             status: this.taskForm.value.status,
+            priority: this.taskForm.value.priority,
             createdBy: this.userProfile!,
             projectIdentifier: this.taskForm.value.projectIdentifier,
             dueDate: dueDateValue!,

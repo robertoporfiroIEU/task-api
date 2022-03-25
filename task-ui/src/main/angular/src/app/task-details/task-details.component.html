@@ -77,7 +77,8 @@
                         <hr>
                         <div class="col-12 mt-4">
                             <div>
-                                <app-task-status-dropdown
+                                <app-task-status-dropdown *ngIf="applicationConfigurations"
+                                    [applicationConfigurations]="applicationConfigurations"
                                     formControlName="status"
                                     [readOnly]="isStatusReadOnly"
                                     [editable]="isStatusEditable"
@@ -86,6 +87,19 @@
                                     (onEditClick)="changeStatusState()"
                                 >
                                 </app-task-status-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <div>
+                                <app-task-priority-dropdown *ngIf="applicationConfigurations"
+                                    [applicationConfigurations]="applicationConfigurations"
+                                    formControlName="priority"
+                                    [readOnly]="isPriorityReadOnly"
+                                    [editable]="isPriorityEditable"
+                                    [priorityValue]="task?.priority"
+                                    (onPriorityChanged)="updateTask(); changePriorityState()"
+                                    (onEditClick)="changePriorityState()">
+                                </app-task-priority-dropdown>
                             </div>
                         </div>
                         <div class="col-12 mt-2">
@@ -132,7 +146,7 @@
                                 </button>
                             </div>
                             <div *ngIf="isDueDateEditable">
-                                <span *ngIf="task?.dueDate">{{task.dueDate | date: datePipeDateFormat}}</span>
+                                <span *ngIf="task?.dueDate">{{task.dueDate | date: datePipeDateTimeFormat}}</span>
                                 <span *ngIf="!task?.dueDate" class="ms-2">{{'taskUI.n_a' | translate}}</span>
                             </div>
                             <div *ngIf="!isDueDateEditable">
@@ -146,7 +160,7 @@
                                     appendTo="body"
                                     [hourFormat]="24"
                                     [readonlyInput]="true"
-                                    (onSelect)="changeDueDateState(); updateTask()"
+                                    (onClose)="changeDueDateState(); updateTask()"
                                     showButtonBar="true">
                                 </p-calendar>
                             </div>

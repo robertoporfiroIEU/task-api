@@ -6,6 +6,7 @@ export interface TasksParams {
     projectIdentifier?: string,
     name?: string,
     status?: string,
+    priority?: string,
     creationDateFrom?: string,
     creationDateTo?: string,
     dueDateFrom?: string,

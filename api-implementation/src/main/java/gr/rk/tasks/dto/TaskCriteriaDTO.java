@@ -8,6 +8,7 @@ public class TaskCriteriaDTO {
     private String projectIdentifier;
     private String name;
     private String status;
+    private String priority;
     private String creationDateFrom;
     private String creationDateTo;
     private String createdBy;
@@ -119,5 +120,13 @@ public class TaskCriteriaDTO {
 
     public void setSpectator(String spectator) {
         this.spectator = spectator;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }

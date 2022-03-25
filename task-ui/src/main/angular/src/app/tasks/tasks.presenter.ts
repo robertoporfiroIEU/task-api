@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Utils } from '../shared/Utils';
+import { Project } from '../api';
 
 @Injectable()
 export class TasksPresenter {
@@ -24,6 +25,10 @@ export class TasksPresenter {
         {
             label: 'status',
             value: 'status'
+        },
+        {
+            label: 'priority',
+            value: 'priority'
         },
         {
             label: 'createdAt',
@@ -53,7 +58,9 @@ export class TasksPresenter {
     tasksFormCriteria: FormGroup = new FormGroup({
         identifier: new FormControl(null),
         name: new FormControl(null),
+        projectIdentifier: new FormControl(null),
         status: new FormControl(null),
+        priority: new FormControl(null),
         creationDateFromTo: new FormControl(null),
         dueDateFromTo: new FormControl(null),
         createdBy: new FormControl(null),
@@ -63,7 +70,7 @@ export class TasksPresenter {
         orderDirection: new FormControl('desc')
     })
 
-    loadPaginatedTasks(event: LazyLoadEvent | null, projectIdentifier: string | null): void {
+    loadPaginatedTasks(event: LazyLoadEvent | null, projectIdentifier: string | null = null): void {
         let page: number = 0;
         let size: number = 10;
         let sortField: string = 'createdAt';
@@ -74,9 +81,10 @@ export class TasksPresenter {
                 page = event?.first / event?.rows;
                 size = event?.rows;
             }
+
             // Sorting criteria in the format -> property,asc|desc no space after comma!.
-            sortField = event?.sortField ? event.sortField : 'createdAt';
-            sortOrder = event?.sortOrder === -1 ? 'asc' : 'desc'
+            sortField = this.tasksFormCriteria.value.orderField;
+            sortOrder = this.tasksFormCriteria.value.orderDirection;
         }
 
         let tasksParams: TasksParams = {
@@ -89,6 +97,8 @@ export class TasksPresenter {
 
         if (projectIdentifier) {
             tasksParams.projectIdentifier = projectIdentifier;
+        } else if (this.tasksFormCriteria.value.projectIdentifier) {
+            tasksParams.projectIdentifier = this.tasksFormCriteria.value.projectIdentifier.trim();
         }
 
         if (this.tasksFormCriteria.value.identifier) {
@@ -101,6 +111,10 @@ export class TasksPresenter {
 
         if (this.tasksFormCriteria.value.status) {
             tasksParams.status = this.tasksFormCriteria.value.status;
+        }
+
+        if (this.tasksFormCriteria.value.priority) {
+            tasksParams.priority = this.tasksFormCriteria.value.priority;
         }
 
         if (this.tasksFormCriteria.value.creationDateFromTo?.length > 1) {

@@ -423,6 +423,10 @@ public class TaskService {
             taskEntity.setStatus(task.getStatus());
         }
 
+        if (Objects.nonNull(task.getPriority())) {
+            taskEntity.setPriority(task.getPriority());
+        }
+
         if (Objects.nonNull(task.getDescription())) {
             taskEntity.setDescription(task.getDescription());
         }
@@ -436,6 +440,8 @@ public class TaskService {
         }
 
         if (Objects.nonNull(task.getDueDate())) {
+            taskEntity.setDueDate(task.getDueDate());
+        } else if (Objects.isNull(task.getDueDate()) && Objects.nonNull(taskEntity.getDueDate())) {
             taskEntity.setDueDate(task.getDueDate());
         }
 

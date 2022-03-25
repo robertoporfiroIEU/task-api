@@ -36,7 +36,7 @@ public abstract class GroupMapper {
     public abstract Group toGroup(GroupDTO groupDTO);
 
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(group.getCreatedAt()))")
-    @Mapping(target = "realm", expression = "java(group.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(group.getApplicationUser())")
     @Mapping(target = "users", source = "users")
     public abstract GroupDTO toGroupDTO(Group group);
 

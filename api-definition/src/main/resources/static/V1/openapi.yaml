@@ -14,6 +14,7 @@ tags:
   - name: Tasks
   - name: Groups
   - name: Users
+  - name: applicationConfigurations
 
 paths:
   /projects:
@@ -65,7 +66,9 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Create a new Project
+      description: "Creates a new Project. If the configurations field is an empty array
+                    then the system will provide the default configurations. If the configuration is null
+                    then the system will save the project with an empty configurations."
       tags:
         - "Projects"
       operationId: createProject
@@ -88,7 +91,7 @@ paths:
 
   /projects/{identifier}:
     get:
-      description: Return specific project
+      description: Returns specific project
       tags:
         - "Projects"
       operationId: getProject
@@ -109,7 +112,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     put:
-      description: Update specific project
+      description: Updates specific project
       tags:
         - "Projects"
       operationId: updateProject
@@ -136,7 +139,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      description: Delete the project logical
+      description: Deletes the project logical
       tags:
         - "Projects"
       operationId: deleteProject
@@ -183,6 +186,11 @@ paths:
             type: string
         - in: query
           name: status
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: priority
           required: false
           schema:
             type: string
@@ -235,7 +243,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Create a new Task
+      description: Creates a new Task
       tags:
         - "Tasks"
       operationId: createTask
@@ -259,7 +267,7 @@ paths:
 
   /tasks/{identifier}:
     get:
-      description: Return specific Task
+      description: Returns a specific Task
       tags:
         - "Tasks"
       operationId: getTask
@@ -280,7 +288,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     put:
-      description: Update specific task
+      description: Updates specific task
       tags:
         - "Tasks"
       operationId: updateTask
@@ -307,7 +315,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      description: Delete the task logical
+      description: Deletes the task logical
       tags:
         - "Tasks"
       operationId: deleteTask
@@ -353,7 +361,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Add a new comment to the Task
+      description: Adds a new comment to the Task
       tags:
         - "Tasks"
       operationId: addTaskComment
@@ -382,7 +390,7 @@ paths:
 
   /tasks/{taskIdentifier}/comments/{commentIdentifier}:
     delete:
-      description: Delete the comment logical
+      description: Deletes the comment logical
       tags:
         - "Tasks"
       operationId: deleteComment
@@ -464,7 +472,7 @@ paths:
 
   /tasks/{taskIdentifier}/assigns/{assignIdentifier}:
     delete:
-      description: Delete the assign logical
+      description: Deletes the assign logical
       tags:
         - "Tasks"
       operationId: deleteAssign
@@ -517,7 +525,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Adding user and/or group as the spectator of the task
+      description: Adds a user and/or group as the spectator of the task
       tags:
         - "Tasks"
       operationId: addSpectator
@@ -546,7 +554,7 @@ paths:
 
   /tasks/{taskIdentifier}/spectators/{spectatorIdentifier}:
     delete:
-      description: Delete the spectator logical
+      description: Deletes the spectator logical
       tags:
         - "Tasks"
       operationId: deleteSpectator
@@ -658,7 +666,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      description: Create a group
+      description: Creates a group
       tags:
         - Groups
       operationId: createGroup
@@ -680,7 +688,7 @@ paths:
 
   /groups/{name}:
     get:
-      description: Return specific group
+      description: Returns specific group
       tags:
         - Groups
       operationId: getGroup
@@ -701,7 +709,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      description: Delete the group logical
+      description: Deletes the group logical
       tags:
         - "Groups"
       operationId: deleteGroup
@@ -723,7 +731,7 @@ paths:
 
   /groups/{name}/users:
     post:
-      description: Return the specific group with the new user inside
+      description: Returns the specific group with the new user inside
       tags:
         - Groups
       operationId: addUserToGroup
@@ -854,7 +862,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      description: Delete the user logical
+      description: Deletes the user logical
       tags:
         - "Users"
       operationId: deleteUser
@@ -868,6 +876,25 @@ paths:
       responses:
         "200":
           description: Successfully logical delete.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+
+
+  /applicationConfigurations:
+    get:
+      description: Returns the application configurations that are not for a specific Project.
+      tags:
+        - applicationConfigurations
+      operationId: getApplicationConfigurations
+      responses:
+        "200":
+          description: Application Configurations
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ApplicationConfiguration'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -978,11 +1005,55 @@ components:
          readOnly: true
        createdBy:
          $ref: '#/components/schemas/User'
-       realm:
+       applicationUser:
          type: string
-         description: This field is the realm from the IDP
+         description: This field is the applicationUser from the IDP
          example: Application1
          readOnly: true
+       configurations:
+         description: These are the configurations of the project
+         items:
+           $ref: '#/components/schemas/ApplicationConfiguration'
+
+    ApplicationConfiguration:
+        type: object
+        required:
+          - configurationName
+          - configurationValue
+        properties:
+          configurationName:
+            description: This is the name of the configuration
+            type: string
+          configurationLabel:
+            description: This is the label of the configuration
+            type: string
+          configurationValue:
+            description: This is the value of the configuration
+            type: string
+          description:
+            description: This is the description of the configuration
+            type: string
+          color:
+            description: The UI may need to show the color of the configuration. The values that we can provide are in this format #40CB3BFF.
+            type: string
+          icon:
+            description: The UI may need to show an icon for the configuration. The value can be a URI of the icon.
+            type: string
+          weight:
+            description: This field is used for sorting
+            type: integer
+          createdAt:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+            description: Creation date and time
+            example: "2021-01-30T08:30:00Z"
+            readOnly: true
+          updatedAt:
+            type: string
+            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
+            description: Creation date and time
+            example: "2021-01-30T08:30:00Z"
+            readOnly: true
 
     Task:
       type: object
@@ -1003,6 +1074,12 @@ components:
         status:
           description: This is the current status of the task
           type: string
+        label:
+          description: This is the label of the task
+          type: string
+        priority:
+          description: This is the priority of the task
+          type: string
         createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
@@ -1013,9 +1090,9 @@ components:
           $ref: '#/components/schemas/User'
         projectIdentifier:
           type: string
-        realm:
+        applicationUser:
           type: string
-          description: This field is the realm from the IDP
+          description: This field is the applicationUser from the IDP
           example: Application1
           readOnly: true
         dueDate:
@@ -1105,9 +1182,9 @@ components:
           type: string
         description:
           type: string
-        realm:
+        applicationUser:
           type: string
-          description: This field is the realm from the IDP
+          description: This field is the applicationUser from the IDP
           example: Application1
           readOnly: true
         createdAt:

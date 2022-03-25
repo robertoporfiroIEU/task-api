@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { PaginatedTasks, Task } from '../api';
+import { Observable, of, Subject, takeUntil } from 'rxjs';
+import { ApplicationConfiguration, PaginatedTasks, Project, Task } from '../api';
 import { TasksParams } from './TasksParams';
 import { TasksPresenter } from './tasks.presenter';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
@@ -17,21 +17,24 @@ import { NavigationExtras, Router } from '@angular/router';
 })
 export class TasksComponent implements OnInit {
 
-    private destroy: Subject<void>  = new Subject();
+    private destroy: Subject<void> = new Subject();
 
     @Input() paginatedTasks: PaginatedTasks = {};
     @Input() projectIdentifier: string | null = null;
+    @Input() configurations$: Observable<ApplicationConfiguration[] | undefined> = of(undefined);
     @Output() lazyLoadPaginatedTasks: EventEmitter<TasksParams> = new EventEmitter<TasksParams>();
+
+    configurations: ApplicationConfiguration[] | undefined = undefined;
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
     createTaskUrl: string = '';
     viewTask: string = '';
 
-    get orderField(): SelectItem[]  {
+    get orderField(): SelectItem[] {
         return this.tasksPresenter.orderField;
     }
 
-    get orderDirection(): SelectItem[]  {
+    get orderDirection(): SelectItem[] {
         return this.tasksPresenter.orderDirection;
     }
 
@@ -39,8 +42,7 @@ export class TasksComponent implements OnInit {
         return this.tasksPresenter.tasksFormCriteria;
     }
 
-    constructor(private tasksPresenter: TasksPresenter, private router: Router) {
-    }
+    constructor(private tasksPresenter: TasksPresenter, private router: Router) {}
 
     ngOnInit(): void {
         this.createTaskUrl = '/' + RoutesEnum.createTask;
@@ -48,14 +50,17 @@ export class TasksComponent implements OnInit {
 
         this.tasksPresenter.onLoadPaginatedTasks$.pipe(
             takeUntil(this.destroy)
-        ).subscribe( taskParams => {
+        ).subscribe(taskParams => {
             this.lazyLoadPaginatedTasks.emit(taskParams);
         });
     }
 
 
     loadPaginatedTasks(event: LazyLoadEvent | null): void {
-        this.tasksPresenter.loadPaginatedTasks(event, this.projectIdentifier);
+        this.configurations$.subscribe(c => {
+            this.configurations = c;
+            this.tasksPresenter.loadPaginatedTasks(event, this.projectIdentifier);
+        });
     }
 
     clearFilters(): void {
@@ -75,7 +80,7 @@ export class TasksComponent implements OnInit {
 
         if (this.projectIdentifier) {
             navigationExtras = {
-                queryParams: { 'project-identifier': this.projectIdentifier }
+                queryParams: {'project-identifier': this.projectIdentifier}
             };
         }
         this.router.navigate([this.createTaskUrl], navigationExtras);
@@ -84,5 +89,4 @@ export class TasksComponent implements OnInit {
     getTaskColor(taskName: string): string {
         return this.tasksPresenter.getTaskColor(taskName);
     }
-
 }

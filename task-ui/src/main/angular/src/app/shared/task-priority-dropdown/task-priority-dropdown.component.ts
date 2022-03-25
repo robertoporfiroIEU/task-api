@@ -1,34 +1,35 @@
 import { Component, EventEmitter, forwardRef, Input, OnInit, Optional, Output } from '@angular/core';
-import { DropDown } from '../ModelsForUI';
-import { TranslateService } from '@ngx-translate/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { DropDown } from '../ModelsForUI';
 import { ApplicationConfiguration } from '../../api';
+import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../Utils';
 
 @Component({
-    selector: 'app-task-status-dropdown',
-    templateUrl: './task-status-dropdown.component.html',
-    styleUrls: ['./task-status-dropdown.component.css'],
+    selector: 'app-task-priority-dropdown',
+    templateUrl: './task-priority-dropdown.component.html',
+    styleUrls: ['./task-priority-dropdown.component.css'],
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => TaskStatusDropdownComponent),
+            useExisting: forwardRef(() => TaskPriorityDropdownComponent),
             multi: true
         }
     ],
 })
-export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor {
+export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccessor {
+
     @Input() formControlName: string | null = null;
-    @Input() onlyPlaceHolder: boolean = false;
     @Input() isMandatory: boolean = false;
+    @Input() onlyPlaceHolder: boolean = false;
     @Input() readOnly: boolean = false;
     @Input() editable: boolean = false
-    @Input() taskStatusValue: string | null = null;
+    @Input() priorityValue: string | null = null;
     @Input() applicationConfigurations: ApplicationConfiguration[] = [];
-    @Output() onStatusChanged = new EventEmitter<string>();
+    @Output() onPriorityChanged = new EventEmitter<string>();
     @Output() onEditClick = new EventEmitter<void>();
 
-    statuses: DropDown[] = [];
+    priorities: DropDown[] = [];
 
     control: AbstractControl | null = null;
 
@@ -38,10 +39,10 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
 
     ngOnInit(): void {
         let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations.filter(
-            c => c.configurationName === 'status'
+            c => c.configurationName === 'priority'
         );
 
-        statusesFromConfigurations.forEach(a => this.statuses.push(
+        statusesFromConfigurations.forEach(a => this.priorities.push(
             {
                 label: this.translateService.instant(a.configurationLabel!),
                 value: a.configurationValue
@@ -54,7 +55,7 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     }
 
     statusChanged(status: any): void {
-        this.onStatusChanged.next(status.value);
+        this.onPriorityChanged.next(status.value);
     }
 
     editClick(): void {
@@ -72,9 +73,10 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     registerOnTouched(fn: any): void {
     }
 
-    getStatusColor(taskStatusValue: string): string {
+    getPriorityColor(priorityValue: string): string {
         return this.applicationConfigurations.find(
-            c => c.configurationValue === taskStatusValue && c.configurationName === 'status'
+            c => c.configurationValue === priorityValue && c.configurationName === 'priority'
         )?.color!;
     }
+
 }

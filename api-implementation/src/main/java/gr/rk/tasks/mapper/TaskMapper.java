@@ -26,6 +26,8 @@ public abstract class TaskMapper {
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
+    @Mapping(source = "label", target = "label")
+    @Mapping(source = "priority", target = "priority")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "comments")
     @Mapping(ignore = true, target = "createdAt")
@@ -37,7 +39,7 @@ public abstract class TaskMapper {
 
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(task.getCreatedAt()))")
     @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
-    @Mapping(target = "realm", expression = "java(task.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(task.getApplicationUser())")
     @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getIdentifier())")
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")

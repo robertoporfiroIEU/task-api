@@ -54,6 +54,7 @@ public class TaskResource implements TasksApi {
             String projectIdentifier,
             String name,
             String status,
+            String priority,
             String creationDateFrom,
             String creationDateTo,
             String createdBy,
@@ -68,6 +69,7 @@ public class TaskResource implements TasksApi {
         taskCriteriaDTO.setProjectIdentifier(projectIdentifier);
         taskCriteriaDTO.setName(name);
         taskCriteriaDTO.setStatus(status);
+        taskCriteriaDTO.setPriority(priority);
         taskCriteriaDTO.setCreationDateFrom(creationDateFrom);
         taskCriteriaDTO.setCreationDateTo(creationDateTo);
         taskCriteriaDTO.setCreatedBy(createdBy);
