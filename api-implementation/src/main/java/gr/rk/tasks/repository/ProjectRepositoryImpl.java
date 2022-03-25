@@ -109,7 +109,8 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         }
 
         String fromPart = "FROM Project " + entityVariable + " ";
-        String wherePart = "WHERE " + entityVariableWithDot + "deleted = false AND " + entityVariableWithDot + "applicationUser = '" + projectCriteriaDTO.getApplicationUser() + "' ";
+        String wherePart = "WHERE " + entityVariableWithDot + "deleted = false AND "
+                + entityVariableWithDot + "applicationUser = '" + projectCriteriaDTO.getApplicationUser() + "' ";
 
         if (!filters.isEmpty()) {
             wherePart += "AND " + String.join(" AND ", filters);

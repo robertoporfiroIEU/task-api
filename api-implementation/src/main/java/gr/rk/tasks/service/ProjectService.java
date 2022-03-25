@@ -4,6 +4,7 @@ import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.exception.ProjectNotFoundException;
+import gr.rk.tasks.repository.ApplicationConfigurationRepository;
 import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
@@ -24,6 +25,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
+    private final ApplicationConfigurationRepository applicationConfigurationRepository;
+
     private final UserRepository userRepository;
 
     private final UserPrincipal userPrincipal;
@@ -34,10 +37,12 @@ public class ProjectService {
     @Autowired
     public ProjectService(
             ProjectRepository projectRepository,
+            ApplicationConfigurationRepository applicationConfigurationRepository,
             UserRepository userRepository,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
+        this.applicationConfigurationRepository = applicationConfigurationRepository;
         this.userRepository = userRepository;
         this.userPrincipal = userPrincipal;
     }
@@ -46,7 +51,18 @@ public class ProjectService {
     public Project createProject(Project project) throws org.springframework.dao.DataIntegrityViolationException {
         try {
             project.setCreatedBy(userRepository.save(project.getCreatedBy()));
-            return projectRepository.saveProject(project);
+            project = projectRepository.saveProject(project);
+
+           /*
+           If the configurations field is an empty array
+                    then the system will provide the default configurations. If the configuration is null
+                    then the system will save the project with an empty configurations
+            */
+            if (Objects.nonNull(project.getConfigurations()) && project.getConfigurations().isEmpty()) {
+                project.setConfigurations(applicationConfigurationRepository.findDefaultApplicationConfigurations());
+            }
+
+            return project;
         }
         catch(org.springframework.dao.DataIntegrityViolationException e) {
             throw new ConstraintViolationException("This project already exists.", null);

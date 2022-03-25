@@ -26,6 +26,8 @@ export class CreateUpdateViewProjectPresenter {
     submit(userProfile: User | null = null): void {
         let project: Project = this.projectForm.value as Project
         project.createdBy = userProfile as User;
+        // when we set an empty array, then the system will provide the default configurations
+        project.configurations = [];
         this.submittedSubject.next(this.projectForm.value as Project);
     }
 

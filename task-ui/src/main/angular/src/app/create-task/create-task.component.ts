@@ -3,7 +3,7 @@ import { CreateTaskPresenter } from './create-task.presenter';
 import { FormGroup } from '@angular/forms';
 import { DropDown, Type } from '../shared/ModelsForUI';
 import { Utils } from '../shared/Utils';
-import { User, Task } from '../api';
+import { User, Task, ApplicationConfiguration } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -18,16 +18,14 @@ export class CreateTaskComponent implements OnInit {
     @Input() userProfile: User | null = null
     @Input() autoCompleteUsersData: string[] = [];
     @Input() autoCompleteGroupsData: string[] = [];
+    @Input() configurations: ApplicationConfiguration[] | undefined = undefined;
     @Output() onAutocompleteUsersAssign = new EventEmitter<string>();
     @Output() onAutocompleteGroupsAssign = new EventEmitter<string>();
     @Output() onCreateTask = new EventEmitter<Task>();
+    @Output() onConfigurations = new EventEmitter<string>();
 
     get taskForm(): FormGroup {
         return this.createTaskPresenter.taskForm;
-    }
-
-    get statuses(): DropDown[] {
-        return this.createTaskPresenter.statuses
     }
 
     datePipeDateFormat = Utils.datePipeDateFormat;
@@ -42,6 +40,10 @@ export class CreateTaskComponent implements OnInit {
         this.createTaskPresenter.onCreateTask$.pipe(
             takeUntil(this.destroy)
         ).subscribe(task => this.onCreateTask.emit(task))
+
+        this.createTaskPresenter.onConfigurations$.pipe(
+            takeUntil(this.destroy)
+        ).subscribe(projectIdentifier => this.onConfigurations.emit(projectIdentifier));
     }
 
     autocompleteUsersAssign(event: any): void {

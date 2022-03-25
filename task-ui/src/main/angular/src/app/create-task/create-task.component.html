@@ -23,11 +23,22 @@
             </small>
         </div>
         <div class="mb-3">
-            <app-task-status-dropdown
+            <app-task-status-dropdown *ngIf="configurations"
+                [applicationConfigurations]="configurations"
+                [isMandatory]="true"
                 [editable]="false"
                 [readOnly]="false"
                 formControlName="status">
             </app-task-status-dropdown>
+        </div>
+        <div class="mb-3">
+            <app-task-priority-dropdown *ngIf="configurations"
+                [applicationConfigurations]="configurations"
+                [isMandatory]="true"
+                [editable]="false"
+                [readOnly]="false"
+                formControlName="priority">
+            </app-task-priority-dropdown>
         </div>
         <div class="mb-3 mt-4">
             <span class="p-float-label">

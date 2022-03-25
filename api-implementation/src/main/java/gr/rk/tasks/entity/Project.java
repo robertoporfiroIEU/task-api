@@ -41,10 +41,14 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private Set<Task> tasks;
 
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    private Set<Configuration> configurations;
+
     private boolean deleted;
 
     public Project() {
         tasks = new HashSet<>();
+        configurations = new HashSet<>();
     }
 
     public Long getId() {
@@ -120,16 +124,28 @@ public class Project {
         this.deleted = deleted;
     }
 
+    public void setConfigurations(Set<Configuration> configurations) {
+        if (Objects.nonNull(configurations)) {
+            configurations.forEach(c -> c.getProjects().add(this));
+        }
+
+        this.configurations = configurations;
+    }
+
+    public Set<Configuration> getConfigurations() {
+        return configurations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(identifier, project.identifier);
+        return Objects.equals(id, project.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier);
+        return Objects.hash(id);
     }
 }

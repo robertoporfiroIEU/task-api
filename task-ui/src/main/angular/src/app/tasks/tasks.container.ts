@@ -1,7 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { PaginatedTasks, TasksService } from '../api';
+import {
+    ApplicationConfiguration, ApplicationConfigurationsService,
+    PaginatedTasks,
+    ProjectsService,
+    TasksService
+} from '../api';
 import { ShellService } from '../shell/shell.service';
-import { catchError, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { ErrorService } from '../error.service';
 import { ActivatedRoute,  Router } from '@angular/router';
@@ -15,17 +20,20 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
     private onLazyLoadPaginatedTasksSubject = new Subject<TasksParams>();
     private destroy: Subject<void> = new Subject();
 
-    projectIdentifier$: Observable<string> = this.activatedRoute.queryParams.pipe(
-        takeUntil(this.destroy),
-        map( params => {
-            if (params['projectIdentifier']) {
-                return params['projectIdentifier'];
-            }
-            return null;
-        })
-    )
+    projectIdentifier: string | null = null;
 
-    projectName: string | null  = '';
+    configurations$: Observable<ApplicationConfiguration[] | undefined> = this.activatedRoute.queryParams.pipe(
+        takeUntil(this.destroy),
+        switchMap( params => {
+            if (params['projectIdentifier']) {
+                this.projectIdentifier = params['projectIdentifier'];
+                return this.projectsService.getProject(this.projectIdentifier!).pipe(
+                    map( p => p.configurations)
+                );
+            }
+            return this.applicationConfigurationsService.getApplicationConfigurations();
+        }),
+    );
 
     paginatedTasks$: Observable<PaginatedTasks> = this.onLazyLoadPaginatedTasksSubject.pipe(
         switchMap(tasksParams => this.tasksService.getTasks(
@@ -34,6 +42,7 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
             tasksParams.projectIdentifier,
             tasksParams.name,
             tasksParams.status,
+            tasksParams.priority,
             tasksParams.creationDateFrom,
             tasksParams.creationDateTo,
             tasksParams.createdBy,
@@ -53,6 +62,8 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
 
     constructor(
         private tasksService: TasksService,
+        private applicationConfigurationsService: ApplicationConfigurationsService,
+        private projectsService: ProjectsService,
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private errorService: ErrorService,

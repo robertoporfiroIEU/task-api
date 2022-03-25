@@ -128,6 +128,12 @@
                     <td colspan="4">{{'taskUI.no-projects-found' | translate}}</td>
                 </tr>
             </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="text-end">
+                    {{'taskUI.total-results' | translate}}
+                    <p-badge [value]="paginatedProjects?.totalElements"  severity="info"></p-badge>
+                </div>
+            </ng-template>
         </p-table>
     </form>
 </div>

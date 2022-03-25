@@ -1,0 +1,18 @@
+<div *ngIf="formControlName && !readOnly" class="d-inline">
+    <div *ngIf="!onlyPlaceHolder" class="h7 me-1"><span *ngIf="isMandatory" class="red me-2">*</span>{{'taskUI.tasks-header-priority' | translate}}</div>
+    <p-dropdown placeholder="{{ 'taskUI.filter-priority-placeholder'| translate }}" [options]="priorities" [formControl]="control" (onChange)="statusChanged($event)"></p-dropdown>
+</div>
+
+<div *ngIf="readOnly" class="d-inline">
+    <strong class="me-1 d-inline">{{'taskUI.tasks-header-priority' | translate}}</strong>
+    <button *ngIf="editable && readOnly"
+            class="btn btn-outline-secondary ms-3 mb-1 d-inline"
+            type="button"
+            (click)="editClick()"><i class="pi pi-pencil"></i>
+    </button>
+
+    <div>
+        <p-tag [style]="{'background-color': getPriorityColor(priorityValue)}" value="{{priorityValue | translate}}"></p-tag>
+    </div>
+</div>
+

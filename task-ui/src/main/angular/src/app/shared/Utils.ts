@@ -3,6 +3,7 @@ import { Assign, Spectator, Task } from '../api';
 export class Utils {
     static pCalendarDateFormat: string = 'dd/mm/yy';
     static datePipeDateFormat: string = 'dd/MM/yyyy';
+    static datePipeDateTimeFormat: string = 'dd/MM/yyyy HH:mm';
     static taskColors: string[] = ['#4b4b4b','#2196F3', '#40CB3BFF', '#8A3BCBFF', '#9416a6'];
 
     static getEnumFromStringValue(value: string, enumWithStringValues: any): any {
@@ -119,6 +120,11 @@ export class Utils {
 
     static getColorFromStringValue(value: string, colors: string[]): string {
         let hashNumber = Utils.generateHash(value);
+
+        if (hashNumber < 0 ) {
+            hashNumber = hashNumber * -1;
+        }
+
         return colors[hashNumber % colors.length];
     }
 

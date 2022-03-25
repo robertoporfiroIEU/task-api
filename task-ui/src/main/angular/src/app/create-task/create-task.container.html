@@ -1,9 +1,11 @@
 <app-create-task-ui *ngIf="userProfile"
+    [configurations]="configurations"
     [userProfile]="userProfile"
     [autoCompleteUsersData]="autoCompleteUsersData"
     [autoCompleteGroupsData]="autoCompleteGroupsData"
     (onAutocompleteUsersAssign)="getAutoCompleteUsersAssign($event)"
     (onAutocompleteGroupsAssign)="getAutoCompleteGroupsAssign($event)"
     (onCreateTask)="onCreateTask($event)"
+    (onConfigurations)="getConfigurations($event)"
 >
 </app-create-task-ui>

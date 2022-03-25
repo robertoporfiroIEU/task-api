@@ -19,6 +19,8 @@ export class TaskDetailsPresenter {
     isSpectatorReadOnly: boolean = true;
     isStatusEditable: boolean = true;
     isStatusReadOnly: boolean = true;
+    isPriorityEditable: boolean = true;
+    isPriorityReadOnly: boolean = true;
     isDueDateEditable: boolean = true;
 
     init(task: Task | null) {
@@ -49,6 +51,11 @@ export class TaskDetailsPresenter {
             }
         });
 
+        let dueDate: Date | null = null;
+        if (task?.dueDate) {
+            dueDate = new Date(task.dueDate!);
+        }
+
         this.taskForm = new FormGroup({
             name: new FormControl(task?.name, [Validators.required]),
             description: new FormControl(task?.description),
@@ -57,7 +64,8 @@ export class TaskDetailsPresenter {
             usersSpectators: new FormControl(usersSpectators),
             groupsSpectators: new FormControl(groupsSpectators),
             status: new FormControl(task?.status, [Validators.required]),
-            dueDate: new FormControl(task?.dueDate)
+            priority: new FormControl(task?.priority, [Validators.required]),
+            dueDate: new FormControl(dueDate)
         });
     }
 
@@ -74,6 +82,7 @@ export class TaskDetailsPresenter {
             Utils.isAssignsOrSpectatorsEquals(assigns, this.task?.assigns!) &&
             Utils.isAssignsOrSpectatorsEquals(spectators, this.task?.spectators!) &&
             task.status == this.taskForm.value.status &&
+            task.priority == this.taskForm.value.priority &&
             task.dueDate == this.taskForm.value.dueDate
         ) {
             return;
@@ -84,6 +93,7 @@ export class TaskDetailsPresenter {
         task.assigns = assigns;
         task.spectators = spectators;
         task.status = this.taskForm.value.status;
+        task.priority = this.taskForm.value.priority;
         task.dueDate = this.taskForm.value.dueDate;
 
         this.updateTaskSubject.next(task);
@@ -102,6 +112,11 @@ export class TaskDetailsPresenter {
     changeStatusState(): void {
         this.isStatusEditable = !this.isStatusEditable;
         this.isStatusReadOnly = !this.isStatusReadOnly;
+    }
+
+    changePriorityState(): void {
+        this.isPriorityEditable = !this.isPriorityEditable;
+        this.isPriorityReadOnly = !this.isPriorityReadOnly;
     }
 
     changeDueDateState(): void {

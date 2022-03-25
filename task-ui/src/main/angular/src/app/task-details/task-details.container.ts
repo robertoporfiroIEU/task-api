@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TasksService, Task, User } from '../api';
+import { TasksService, Task, User, ProjectsService, ApplicationConfiguration } from '../api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ErrorService } from '../error.service';
@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class TaskDetailsContainerComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
+    applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
     userProfile: User | null = null;
     task: Task | null = null;
 
@@ -27,30 +28,35 @@ export class TaskDetailsContainerComponent implements OnInit {
         private translateService: TranslateService,
         private shellService: ShellService,
         private tasksService: TasksService,
+        private projectsService: ProjectsService,
         private errorService: ErrorService
     ) {}
 
     ngOnInit(): void {
         this.activatedRoute.paramMap.pipe(
+            take(1),
             switchMap(params => {
                 let taskIdentifier = params.get('taskIdentifier') as string
                 return this.tasksService.getTask(taskIdentifier);
             }),
-            take(1),
+            switchMap(task => {
+                if (Object.keys(task).length === 0) {
+                    this.errorService.showCustomErrorMessage(
+                        'taskUI.task-details-task-not-found-summary',
+                        'taskUI.task-details-task-not-found-details'
+                    );
+                    this.router.navigate([RoutesEnum.tasks])
+                    return [];
+                }
+                this.task = task;
+                return this.projectsService.getProject(task.projectIdentifier!);
+            }),
             catchError(err => {
                 this.errorService.showErrorMessage(err);
                 return [];
             })
-        ).subscribe(task => {
-            if (Object.keys(task).length === 0) {
-                this.errorService.showCustomErrorMessage(
-                    'taskUI.task-details-task-not-found-summary',
-                    'taskUI.task-details-task-not-found-details'
-                );
-                this.router.navigate([RoutesEnum.tasks])
-                return;
-            }
-            this.task = task;
+        ).subscribe(project => {
+            this.applicationConfigurations = project.configurations;
         });
 
         this.userProfileService.userProfile$.pipe(

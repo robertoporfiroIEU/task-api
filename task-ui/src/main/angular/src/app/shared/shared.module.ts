@@ -22,12 +22,15 @@ import { TaskStatusDropdownComponent } from './task-status-dropdown/task-status-
 import { PanelModule } from 'primeng/panel';
 import { AutoCompleteUsersGroupsComponent } from './auto-complete-users-groups/auto-complete-users-groups.component';
 import { AutoCompleteUsersGroupsContainerComponent } from './auto-complete-users-groups/auto-complete-users-groups.container';
+import { TaskPriorityDropdownComponent } from './task-priority-dropdown/task-priority-dropdown.component';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
     declarations: [
         TaskStatusDropdownComponent,
         AutoCompleteUsersGroupsComponent,
-        AutoCompleteUsersGroupsContainerComponent
+        AutoCompleteUsersGroupsContainerComponent,
+        TaskPriorityDropdownComponent
     ],
     imports: [
         CommonModule,
@@ -50,7 +53,8 @@ import { AutoCompleteUsersGroupsContainerComponent } from './auto-complete-users
         AccordionModule,
         DropdownModule,
         AutoCompleteModule,
-        PanelModule
+        PanelModule,
+        BadgeModule
     ],
     exports: [
         BrowserModule,
@@ -74,7 +78,9 @@ import { AutoCompleteUsersGroupsContainerComponent } from './auto-complete-users
         AutoCompleteModule,
         TaskStatusDropdownComponent,
         PanelModule,
-        AutoCompleteUsersGroupsContainerComponent
+        AutoCompleteUsersGroupsContainerComponent,
+        TaskPriorityDropdownComponent,
+        BadgeModule
     ]
 })
 export class SharedModule {
