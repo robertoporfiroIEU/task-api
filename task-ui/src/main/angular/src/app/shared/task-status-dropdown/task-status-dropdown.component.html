@@ -1,6 +1,10 @@
 <div *ngIf="formControlName && !readOnly" class="d-inline">
     <div *ngIf="!onlyPlaceHolder" class="h7 me-1"><span *ngIf="isMandatory" class="red me-2">*</span>{{'taskUI.tasks-header-status' | translate}}</div>
-    <p-dropdown placeholder="{{ 'taskUI.filter-status-placeholder'| translate }}" [options]="statuses" [formControl]="control" (onChange)="statusChanged($event)"></p-dropdown>
+    <p-dropdown placeholder="{{ 'taskUI.filter-status-placeholder'| translate }}"
+            [options]="statuses"
+            [formControl]="control"
+            (onChange)="statusChanged($event)">
+    </p-dropdown>
 </div>
 
 <div *ngIf="readOnly" class="d-inline">

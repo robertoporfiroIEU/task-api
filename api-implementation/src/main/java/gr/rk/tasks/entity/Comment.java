@@ -1,15 +1,16 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "comments")
-public class Comment implements AutomaticValuesGeneration {
+public class Comment implements AutomaticValuesGeneration, GenerateCreationAt, GenerateUpdateAt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +24,9 @@ public class Comment implements AutomaticValuesGeneration {
     @JoinColumn(name = "tasks_id")
     private Task task;
 
+    @ManyToMany(mappedBy = "comments", cascade = CascadeType.PERSIST)
+    private Set<Attachment> attachments;
+
     @Column(unique = true)
     private String identifier;
 
@@ -32,11 +36,12 @@ public class Comment implements AutomaticValuesGeneration {
 
     private boolean deleted;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Generated(GenerationTime.ALWAYS)
-    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public Comment() {
+        this.attachments = new HashSet<>();
+    }
 
     @PrePersist
     @Override
@@ -44,6 +49,18 @@ public class Comment implements AutomaticValuesGeneration {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
         }
+        onCreate();
+    }
+
+    @Override
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    @PreUpdate
+    @Override
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public String getIdentifier() {
@@ -52,6 +69,17 @@ public class Comment implements AutomaticValuesGeneration {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public Set<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<Attachment> attachments) {
+        if (Objects.nonNull(attachments)) {
+            attachments.forEach(a -> a.getComments().add(this));
+        }
+        this.attachments = attachments;
     }
 
     public String getText() {
@@ -100,6 +128,13 @@ public class Comment implements AutomaticValuesGeneration {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void removeAllAttachments() {
+        attachments.forEach(a -> {
+            a.getComments().remove(this);
+        });
+       attachments.clear();
     }
 
     @Override

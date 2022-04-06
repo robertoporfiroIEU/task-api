@@ -86,7 +86,7 @@ insert into
     configurations (configurationName, configurationLabel, configurationValue, color, weight)
 values
     (
-        "priority", "taskUI.priority-mayor", "MAYOR", "#F2FC07FF", 300
+        "priority", "taskUI.priority-major", "MAJOR", "#F2FC07FF", 300
     )
 ;
 

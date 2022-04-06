@@ -85,8 +85,4 @@ export class TasksComponent implements OnInit {
         }
         this.router.navigate([this.createTaskUrl], navigationExtras);
     }
-
-    getTaskColor(taskName: string): string {
-        return this.tasksPresenter.getTaskColor(taskName);
-    }
 }

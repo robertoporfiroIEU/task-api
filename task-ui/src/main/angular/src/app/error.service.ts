@@ -14,7 +14,7 @@ export class ErrorService {
     constructor(
         private messageService: MessageService,
         private translateService: TranslateService,
-        private shellService: ShellService,
+        private shellService: ShellService
     ) {}
 
     showErrorMessage(httpErrorResponse: HttpErrorResponse): void {

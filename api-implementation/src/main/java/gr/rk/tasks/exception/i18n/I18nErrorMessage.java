@@ -16,8 +16,10 @@ public enum I18nErrorMessage {
     SPECTATOR_NOT_FOUND("Spectator not found", "009", 400, "taskApi.spectator-not-found", ErrorStatusEnum.FAIL),
     SPECTATOR_ALREADY_EXIST("Spectator already exist", "010", 400, "taskApi.spectator-already-exist", ErrorStatusEnum.FAIL),
     INVALID_SORT_FIELD("Invalid sort field", "011", 400, "taskApi.invalid-sort-field", ErrorStatusEnum.FAIL),
+    PROPAGATED_USER_IS_NOT_SAME("Propagated user is not the same as the caller of the API", "012", 400, "taskApi.propagated-user-is-not-same", ErrorStatusEnum.FAIL),
     CONSTRAINT_VIOLATION("Constraint Violation", "400", 400, "taskApi.constraint-violation", ErrorStatusEnum.FAIL),
-    SERVER_ERROR("Server Error", "500", 500, "taskApi.server-error", ErrorStatusEnum.ERROR);
+    SERVER_ERROR("Server Error", "500", 500, "taskApi.server-error", ErrorStatusEnum.ERROR),
+    ATTACHMENT_NOT_FOUND("Attachment not found", "012", 400, "taskApi.attachment-not-found", ErrorStatusEnum.FAIL);
 
     private String summary;
     private String errorCode;

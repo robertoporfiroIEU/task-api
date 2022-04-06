@@ -7,14 +7,14 @@
                     <p-avatar
                         class="ms-1"
                         [style]="{
-                            'background-color': getTaskColor(task?.name),
+                            'background-color': (task?.name | stringToColor),
                             'font-size': '2rem',
                             'color': '#ffffff',
                             'height': '64px',
                             'maxWidth': '64px',
                             'width': '100%'}
                         ">
-                        {{task?.name.substring(0, 2)}}
+                        {{task?.name | shortText:2}}
                     </p-avatar>
                 </div>
             </div>
@@ -41,19 +41,51 @@
                 </div>
             </div>
             <div class="row">
+                <!-- description -->
                 <div class="col-12">
                     <span>{{'taskUI.task-details-description' | translate}}</span>
-                    <textarea
-                        (focusout)="updateTask()"
-                        formControlName="description"
-                        maxlength="500"
-                        class="form-control"
-                        id="descriptionTextArea"
-                        rows="5"
-                        cols="30"
-                        pInputTextarea
-                        autoResize="autoResize"></textarea>
+                    <div>
+                        <p-editor formControlName="description"
+                                  (click)="setDescriptionState(true)"
+                                  [readonly]="!isDescriptionEditable"
+                                  [ngClass]="isDescriptionEditable ? '' : 'readonly'"
+                                  [style]="{'height':'100px'}">
+                            <ng-template pTemplate="header">
+                                <span class="ql-formats">
+                                    <select class="ql-size"></select>
+                                    <button type="button" class="ql-bold" aria-label="Bold"></button>
+                                    <button type="button" class="ql-italic" aria-label="Italic"></button>
+                                    <button type="button" class="ql-underline" aria-label="Underline"></button>
+                                    <button type="button" class="ql-strike" aria-label="Strike"></button>
+                                    <button type="button" class="ql-blockquote" aria-label="Blockquote"></button>
+                                    <button type="button" class="ql-link" aria-label="Link"></button>
+                                    <button class="ql-list" value="ordered"></button>
+                                    <button class="ql-list" value="bullet"></button>
+                                </span>
+                            </ng-template>
+                        </p-editor>
+                        <div *ngIf="isDescriptionEditable" class="mt-1 rounded border clearfix">
+                            <div class="float-end mb-1 me-1">
+                                <button *ngIf="taskForm?.get('description')?.valid"
+                                        (click)="updateTask(); setDescriptionState(false)"
+                                        type="button"
+                                        class="ms-1 mt-1 btn btn-outline-success">{{'taskUI.save' | translate}}
+                                    <i class="pi pi-check"></i>
+                                </button>
+                                <button (click)="cancelDescription()"
+                                        type="button"
+                                        class="ms-1 mt-1 btn btn-outline-danger">{{'taskUI.cancel' | translate}}
+                                    <i class="pi pi-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small *ngIf="taskForm?.get('description')?.invalid && taskForm?.get('description')?.dirty"
+                           class="p-error block">{{'taskUI.max-length-500' | translate}}
+                        {{taskForm?.get('description')?.value.length}}
+                    </small>
                 </div>
+            <app-comments [taskIdentifier]="task?.identifier"></app-comments>
             </div>
         </div>
 
@@ -78,13 +110,13 @@
                         <div class="col-12 mt-4">
                             <div>
                                 <app-task-status-dropdown *ngIf="applicationConfigurations"
-                                    [applicationConfigurations]="applicationConfigurations"
-                                    formControlName="status"
-                                    [readOnly]="isStatusReadOnly"
-                                    [editable]="isStatusEditable"
-                                    [taskStatusValue]="task?.status"
-                                    (onStatusChanged)="updateTask(); changeStatusState()"
-                                    (onEditClick)="changeStatusState()"
+                                                          [applicationConfigurations]="applicationConfigurations"
+                                                          formControlName="status"
+                                                          [readOnly]="isStatusReadOnly"
+                                                          [editable]="isStatusEditable"
+                                                          [taskStatusValue]="task?.status"
+                                                          (onStatusChanged)="updateTask(); changeStatusState()"
+                                                          (onEditClick)="changeStatusState()"
                                 >
                                 </app-task-status-dropdown>
                             </div>
@@ -92,13 +124,13 @@
                         <div class="col-12 mt-4">
                             <div>
                                 <app-task-priority-dropdown *ngIf="applicationConfigurations"
-                                    [applicationConfigurations]="applicationConfigurations"
-                                    formControlName="priority"
-                                    [readOnly]="isPriorityReadOnly"
-                                    [editable]="isPriorityEditable"
-                                    [priorityValue]="task?.priority"
-                                    (onPriorityChanged)="updateTask(); changePriorityState()"
-                                    (onEditClick)="changePriorityState()">
+                                                            [applicationConfigurations]="applicationConfigurations"
+                                                            formControlName="priority"
+                                                            [readOnly]="isPriorityReadOnly"
+                                                            [editable]="isPriorityEditable"
+                                                            [priorityValue]="task?.priority"
+                                                            (onPriorityChanged)="updateTask(); changePriorityState()"
+                                                            (onEditClick)="changePriorityState()">
                                 </app-task-priority-dropdown>
                             </div>
                         </div>

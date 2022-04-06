@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class Util {
         if (Objects.isNull(localDateTime)) {
             return null;
         }
+
+        localDateTime = localDateTime.atZone(ZoneOffset.UTC).toLocalDateTime();
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
     }
 

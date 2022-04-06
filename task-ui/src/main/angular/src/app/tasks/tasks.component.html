@@ -242,14 +242,15 @@
                     <button pButton pRipple type="button" label="{{'taskUI.tasks-button-details' | translate}}"
                             class="p-button-outlined p-button-rounded"
                             [routerLink]="[viewTask, task.identifier]"
+                            [queryParams]="{page: 1}"
                     ></button>
                 </div>
             </div>
             <div class="col-12 col-sm-2 mb-2 mb-sm-0 text-center text-sm-start">
                 <p-avatar
-                    [style]="{'background-color': getTaskColor(task.name), 'color': '#ffffff'}"
+                    [style]="{'background-color': (task.name | stringToColor), 'color': '#ffffff'}"
                     size="xlarge">
-                    {{task.name.substring(0, 2)}}
+                    {{task.name | shortText:2}}
                 </p-avatar>
                 <div><strong>{{'taskUI.tasks-header-name' | translate}} </strong></div>
                 <div>{{task.name}}</div>
@@ -291,7 +292,7 @@
                     <div>
                         <p-avatarGroup>
                             <ng-container *ngFor="let assign of flatAssigns(task).slice(0, 2); let i=index;">
-                                <p-avatar [pTooltip]="assign" label="{{assign.substring(0, 3)}}" size="large" shape="circle">
+                                <p-avatar [pTooltip]="assign" label="{{assign | shortText:3}}" size="large" shape="circle">
                                 </p-avatar>
                                 <p-avatar *ngIf="i === flatAssigns(task).length -1 && flatAssigns(task).length > 1" label="..." size="large" shape="circle">
                                 </p-avatar>
@@ -304,7 +305,7 @@
                     <div><strong>{{'taskUI.tasks-header-spectators' | translate }}</strong></div>
                     <p-avatarGroup>
                         <ng-container *ngFor="let spectator of flatSpectators(task).slice(0, 2); let i=index;">
-                            <p-avatar [pTooltip]="spectator" label="{{spectator.substring(0, 3)}}" size="large" shape="circle">
+                            <p-avatar [pTooltip]="spectator" label="{{spectator | shortText:3}}" size="large" shape="circle">
                             </p-avatar>
                             <p-avatar *ngIf="i === flatSpectators(task).length -1 && flatSpectators(task).length > 1" label="..." size="large" shape="circle"></p-avatar>
                         </ng-container>

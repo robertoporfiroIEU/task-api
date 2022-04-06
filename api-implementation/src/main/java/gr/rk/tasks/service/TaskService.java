@@ -8,17 +8,11 @@ import gr.rk.tasks.repository.*;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +32,8 @@ public class TaskService {
 
     private final GroupRepository groupRepository;
 
+    private final AttachmentRepository attachmentRepository;
+
     private final UserPrincipal userPrincipal;
 
     @Value("${applicationConfigurations.taskService.pageMaxSize: 25}")
@@ -52,6 +48,7 @@ public class TaskService {
             SpectatorRepository spectatorRepository,
             UserRepository userRepository,
             GroupRepository groupRepository,
+            AttachmentRepository attachmentRepository,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
@@ -61,6 +58,7 @@ public class TaskService {
         this.spectatorRepository = spectatorRepository;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.attachmentRepository = attachmentRepository;
         this.userPrincipal = userPrincipal;
     }
 
@@ -117,19 +115,36 @@ public class TaskService {
         // validations
         Optional<User> oUser = userRepository
                 .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
+
+        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !createdBy.equals(userPrincipal.getPropagatedUser())){
+            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+        }
+
         if (oUser.isEmpty()) {
             throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
         Optional<Task> oTask = taskRepository
                 .findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+
         if (oTask.isEmpty()) {
             throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
-        // happy path
+        Set<String> attachmentIdentifiers = comment.getAttachments().stream()
+                .map((attachment -> attachment.getIdentifier()))
+                .collect(Collectors.toSet());
+
+        Set<Attachment> attachments = attachmentRepository.findByIdentifierIn(attachmentIdentifiers);
+
+        if (comment.getAttachments().size() != attachmentIdentifiers.size()) {
+            throw new AttachmentNotFoundException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
+        }
+
         comment.setCreatedBy(oUser.get());
+        comment.setAttachments(attachments);
         comment.setTask(oTask.get());
+
         return commentRepository.save(comment);
     }
 
@@ -363,6 +378,10 @@ public class TaskService {
         }
 
         Comment comment = oComment.get();
+        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !comment.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
+            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+        }
+
         comment.setDeleted(true);
     }
 
@@ -446,5 +465,43 @@ public class TaskService {
         }
 
         return taskRepository.save(taskEntity);
+    }
+
+    @Transactional
+    public Comment updateComment(String taskIdentifier, String commentIdentifier, Comment comment) {
+        Optional<Task> oTask = taskRepository.
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+
+        if (oTask.isEmpty()) {
+            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+        }
+
+        Optional<Comment> oComment = commentRepository.
+                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getApplicationUser(), false);
+
+        if (oComment.isEmpty()) {
+            throw new CommentNotFoundException(I18nErrorMessage.COMMENT_NOT_FOUND);
+        }
+
+        Comment commentEntity = oComment.get();
+        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !commentEntity.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
+            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+        }
+
+        commentEntity.setText(comment.getText());
+
+        Set<String> attachmentIdentifiers = comment.getAttachments().stream()
+                .map((attachment -> attachment.getIdentifier()))
+                .collect(Collectors.toSet());
+
+        if (attachmentIdentifiers.size() == 0) {
+            commentEntity.removeAllAttachments();
+        } else {
+            Set<Attachment> attachments = attachmentRepository.findByIdentifierIn(attachmentIdentifiers);
+            commentEntity.removeAllAttachments();
+            commentEntity.setAttachments(attachments);
+        }
+
+        return commentEntity;
     }
 }

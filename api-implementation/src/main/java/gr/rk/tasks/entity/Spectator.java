@@ -2,12 +2,13 @@ package gr.rk.tasks.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "spectators")
-public class Spectator implements AutomaticValuesGeneration {
+public class Spectator implements AutomaticValuesGeneration, GenerateCreationAt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class Spectator implements AutomaticValuesGeneration {
     @JoinColumn(name = "users_username")
     private User user;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     private String applicationUser;
 
@@ -40,6 +41,12 @@ public class Spectator implements AutomaticValuesGeneration {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
         }
+        onCreate();
+    }
+
+    @Override
+    public void onCreate() {
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public String getIdentifier() {

@@ -44,7 +44,7 @@
             (click)="editClick()"><i class="pi pi-pencil"></i>
     </button>
     <div *ngFor="let assign of flatAssignsOrSpectators(task!); let i=index;" class="mt-1">
-        <p-avatar label="{{assign.substring(0, 3)}}"
+        <p-avatar label="{{assign | shortText:3}}"
                   shape="circle">
         </p-avatar>
         <span class="ms-1">{{assign}}</span>

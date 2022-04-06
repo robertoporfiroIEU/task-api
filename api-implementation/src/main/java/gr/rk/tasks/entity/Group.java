@@ -1,14 +1,13 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Entity
 @Table(name = "groups")
-public class Group {
+public class Group implements GenerateCreationAt, GenerateUpdateAt {
 
     @Id
     private String name;
@@ -17,10 +16,7 @@ public class Group {
 
     private String applicationUser;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Generated(GenerationTime.ALWAYS)
-    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "groups", cascade = CascadeType.PERSIST)
@@ -102,6 +98,18 @@ public class Group {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @PrePersist
+    @Override
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    @PreUpdate
+    @Override
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

@@ -8,7 +8,7 @@
         "watch": "ng build --watch --configuration development",
         "build-prod": "npm run generate:schema && ng build --prod",
         "test": "ng test",
-        "generate:schema": "openapi-generator-cli generate -i ../../../../api-definition/src/main/resources/static/V1/openapi.yaml -g typescript-angular -o src/app/api"
+        "generate:schema": "openapi-generator-cli generate -i ../../../../api-definition/src/main/resources/static/V1/openapi.yaml -g typescript-angular -o src/app/api --additional-properties=prependFormOrBodyParameters=false"
     },
     "private": true,
     "dependencies": {
@@ -26,10 +26,10 @@
         "@ngx-translate/http-loader": "^7.0.0",
         "bootstrap": "^5.1.3",
         "jquery": "^3.6.0",
-        "ng-openapi-gen": "^0.19.2",
         "popper.js": "^1.16.1",
         "primeicons": "^5.0.0",
         "primeng": "^13.0.1",
+        "quill": "^1.3.7",
         "rxjs": "^7.4.0",
         "tslib": "^2.3.0",
         "zone.js": "~0.11.4"
@@ -38,9 +38,10 @@
         "@angular-devkit/build-angular": "~13.0.4",
         "@angular/cli": "~13.0.4",
         "@angular/compiler-cli": "~13.0.0",
-        "@openapitools/openapi-generator-cli": "^2.4.18",
+        "@openapitools/openapi-generator-cli": "^2.5.1",
         "@types/jasmine": "~3.10.0",
         "@types/node": "^12.11.1",
+        "@types/quill": "^2.0.9",
         "jasmine-core": "~3.10.0",
         "karma": "~6.3.0",
         "karma-chrome-launcher": "~3.1.0",

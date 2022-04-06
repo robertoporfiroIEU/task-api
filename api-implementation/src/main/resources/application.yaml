@@ -3,6 +3,11 @@ spring:
     default-property-inclusion: NON_NULL
   profiles:
     active: enviroment
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
 
 springdoc:
   api-docs:

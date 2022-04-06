@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { TasksService, Task, User, ProjectsService, ApplicationConfiguration } from '../api';
+import { TasksService, Task, User, ProjectsService, ApplicationConfiguration, PaginatedComments } from '../api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { catchError, Subject, switchMap, take, takeUntil, zip } from 'rxjs';
 import { ErrorService } from '../error.service';
 import { RoutesEnum } from '../RoutesEnum';
 import { UserProfileService } from '../user-profile.service';
@@ -19,6 +19,7 @@ export class TaskDetailsContainerComponent implements OnInit {
     applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
     userProfile: User | null = null;
     task: Task | null = null;
+    comments: PaginatedComments | null = null;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -49,14 +50,22 @@ export class TaskDetailsContainerComponent implements OnInit {
                     return [];
                 }
                 this.task = task;
-                return this.projectsService.getProject(task.projectIdentifier!);
+                return zip(
+                    this.projectsService.getProject(task.projectIdentifier!),
+                    this.tasksService.getComments(task.identifier!, {
+                        page: 0,
+                        size: 25,
+                        sort: 'createdAt,desc'
+                    })
+                )
             }),
             catchError(err => {
                 this.errorService.showErrorMessage(err);
                 return [];
             })
-        ).subscribe(project => {
+        ).subscribe(([project, comments]) => {
             this.applicationConfigurations = project.configurations;
+            this.comments = comments;
         });
 
         this.userProfileService.userProfile$.pipe(

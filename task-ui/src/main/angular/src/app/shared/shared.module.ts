@@ -24,13 +24,31 @@ import { AutoCompleteUsersGroupsComponent } from './auto-complete-users-groups/a
 import { AutoCompleteUsersGroupsContainerComponent } from './auto-complete-users-groups/auto-complete-users-groups.container';
 import { TaskPriorityDropdownComponent } from './task-priority-dropdown/task-priority-dropdown.component';
 import { BadgeModule } from 'primeng/badge';
+import { EditorModule } from 'primeng/editor';
+import { CommentsComponent } from './comments/comments.component';
+import { CommentsContainerComponent } from './comments/comments.container';
+import { CardModule } from 'primeng/card';
+import { TooltipModule } from 'primeng/tooltip';
+import { AppRoutingModule } from '../app-routing.module';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { EditorComponent } from './editor/editor.component';
+import { EditorContainerComponent } from './editor/editor.container';
+import { ShortTextPipe } from './pipes/short-text.pipe';
+import { StringToColorPipe } from './pipes/string-to-color.pipe';
+import { PaginatorModule } from 'primeng/paginator';
 
 @NgModule({
     declarations: [
         TaskStatusDropdownComponent,
         AutoCompleteUsersGroupsComponent,
         AutoCompleteUsersGroupsContainerComponent,
-        TaskPriorityDropdownComponent
+        TaskPriorityDropdownComponent,
+        CommentsComponent,
+        CommentsContainerComponent,
+        EditorComponent,
+        EditorContainerComponent,
+        ShortTextPipe,
+        StringToColorPipe
     ],
     imports: [
         CommonModule,
@@ -54,7 +72,13 @@ import { BadgeModule } from 'primeng/badge';
         DropdownModule,
         AutoCompleteModule,
         PanelModule,
-        BadgeModule
+        BadgeModule,
+        EditorModule,
+        CardModule,
+        TooltipModule,
+        AppRoutingModule,
+        ConfirmDialogModule,
+        PaginatorModule
     ],
     exports: [
         BrowserModule,
@@ -77,10 +101,18 @@ import { BadgeModule } from 'primeng/badge';
         DropdownModule,
         AutoCompleteModule,
         TaskStatusDropdownComponent,
+        CommentsComponent,
+        CommentsContainerComponent,
         PanelModule,
         AutoCompleteUsersGroupsContainerComponent,
         TaskPriorityDropdownComponent,
-        BadgeModule
+        EditorContainerComponent,
+        BadgeModule,
+        EditorModule,
+        CardModule,
+        TooltipModule,
+        ShortTextPipe,
+        StringToColorPipe
     ]
 })
 export class SharedModule {

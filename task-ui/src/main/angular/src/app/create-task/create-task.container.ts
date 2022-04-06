@@ -106,7 +106,7 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
                 let navigationExtras: NavigationExtras = {};
 
                 navigationExtras = {
-                    queryParams: { 'project-identifier': task.projectIdentifier }
+                    queryParams: { 'projectIdentifier': task.projectIdentifier }
                 };
                 this.router.navigate([RoutesEnum.tasks], navigationExtras);
             });

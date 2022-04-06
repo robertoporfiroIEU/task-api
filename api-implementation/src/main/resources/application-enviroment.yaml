@@ -34,4 +34,7 @@ applicationConfigurations:
     pageMaxSize: 25
   Default:
     pageMaxSize: 25
+  FileService:
+    uploadDir: C:\Users\slave\Downloads\uploads\
+
 

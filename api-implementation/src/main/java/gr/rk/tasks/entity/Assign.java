@@ -2,12 +2,13 @@ package gr.rk.tasks.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "assigns")
-public class Assign implements AutomaticValuesGeneration {
+public class Assign implements AutomaticValuesGeneration, GenerateCreationAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +28,7 @@ public class Assign implements AutomaticValuesGeneration {
     @JoinColumn(name = "users_username")
     private User user;
 
-    private LocalDateTime assignDate = LocalDateTime.now();
+    private LocalDateTime assignDate;
 
     private String applicationUser;
 
@@ -39,6 +40,11 @@ public class Assign implements AutomaticValuesGeneration {
         if (Objects.isNull(this.identifier)) {
             this.identifier = UUID.randomUUID().toString();
         }
+    }
+
+    @Override
+    public void onCreate() {
+        this.assignDate = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     public Long getId() {

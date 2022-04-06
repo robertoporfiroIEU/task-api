@@ -8,7 +8,7 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { ApplicationConfiguration, Task, User } from '../api';
+import { ApplicationConfiguration, PaginatedComments, Task, User } from '../api';
 import { TaskDetailsPresenter } from './task-details.presenter';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
@@ -25,6 +25,7 @@ export class TaskDetailsComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
     @Input() task: Task | null = null;
+    @Input() comments: PaginatedComments | null = null;
     @Input() userProfile: User | null = null
     @Input() applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
     @Output() onUpdateTask = new EventEmitter<Task>();
@@ -37,6 +38,10 @@ export class TaskDetailsComponent implements OnInit {
 
     get taskForm(): FormGroup {
         return this.taskDetailsPresenter.taskForm;
+    }
+
+    get isDescriptionEditable(): boolean {
+        return this.taskDetailsPresenter.isDescriptionEditable;
     }
 
     get isStatusEditable(): boolean {
@@ -71,15 +76,13 @@ export class TaskDetailsComponent implements OnInit {
         return this.taskDetailsPresenter.isSpectatorReadOnly;
     }
 
-
     get isDueDateEditable(): boolean {
         return this.taskDetailsPresenter.isDueDateEditable;
     }
 
     TYPE = Type;
 
-    constructor(private taskDetailsPresenter: TaskDetailsPresenter, private cd: ChangeDetectorRef) {
-    }
+    constructor(private taskDetailsPresenter: TaskDetailsPresenter, private cd: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.taskDetailsPresenter.init(this.task);
@@ -90,6 +93,10 @@ export class TaskDetailsComponent implements OnInit {
 
     updateTask(): void {
         this.taskDetailsPresenter.updateTask(this.task!);
+    }
+
+    setDescriptionState(state: boolean): void {
+        this.taskDetailsPresenter.setDescriptionState(state);
     }
 
     changeAssignState(): void {
@@ -112,7 +119,7 @@ export class TaskDetailsComponent implements OnInit {
         this.taskDetailsPresenter.changeDueDateState();
     }
 
-    getTaskColor(taskName: string): string {
-        return this.taskDetailsPresenter.getTaskColor(taskName);
+    cancelDescription(): void {
+        this.taskDetailsPresenter.cancelDescription();
     }
 }
