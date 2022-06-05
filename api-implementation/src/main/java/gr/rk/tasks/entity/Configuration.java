@@ -1,17 +1,15 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "configurations")
-public class Configuration {
+public class Configuration implements GenerateCreationAt, GenerateUpdateAt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +29,7 @@ public class Configuration {
 
     private String icon;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Generated(GenerationTime.ALWAYS)
-    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @ManyToMany
@@ -92,10 +87,6 @@ public class Configuration {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -142,6 +133,18 @@ public class Configuration {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    @PrePersist
+    @Override
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    @PreUpdate
+    @Override
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

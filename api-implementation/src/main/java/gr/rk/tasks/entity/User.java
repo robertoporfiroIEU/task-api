@@ -1,15 +1,14 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements GenerateCreationAt, GenerateUpdateAt {
 
     @Id
     private String username;
@@ -20,10 +19,7 @@ public class User {
 
     private String applicationUser;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Generated(GenerationTime.ALWAYS)
-    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @ManyToMany
@@ -124,7 +120,17 @@ public class User {
         this.projects = projects;
     }
 
+    @PrePersist
+    @Override
+    public void onCreate() {
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
 
+    @PreUpdate
+    @Override
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
 
     @Override
     public boolean equals(Object o) {

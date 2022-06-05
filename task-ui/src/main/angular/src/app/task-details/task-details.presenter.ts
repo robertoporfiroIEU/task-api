@@ -13,6 +13,7 @@ export class TaskDetailsPresenter {
     taskForm = new FormGroup({});
     task: Task | null = null;
 
+    isDescriptionEditable: boolean = false;
     isAssignEditable: boolean = true;
     isAssignReadOnly: boolean = true;
     isSpectatorEditable: boolean = true;
@@ -58,7 +59,7 @@ export class TaskDetailsPresenter {
 
         this.taskForm = new FormGroup({
             name: new FormControl(task?.name, [Validators.required]),
-            description: new FormControl(task?.description),
+            description: new FormControl(task?.description, [Validators.maxLength(500)]),
             usersAssigns: new FormControl(usersAssigns),
             groupsAssigns: new FormControl(groupsAssigns),
             usersSpectators: new FormControl(usersSpectators),
@@ -99,6 +100,10 @@ export class TaskDetailsPresenter {
         this.updateTaskSubject.next(task);
     }
 
+    setDescriptionState(state: boolean): void {
+        this.isDescriptionEditable = state;
+    }
+
     changeAssignState(): void {
         this.isAssignEditable = !this.isAssignEditable;
         this.isAssignReadOnly = !this.isAssignReadOnly;
@@ -123,7 +128,9 @@ export class TaskDetailsPresenter {
         this.isDueDateEditable = !this.isDueDateEditable;
     }
 
-    getTaskColor(taskName: string): string {
-        return Utils.getColorFromStringValue(taskName, Utils.taskColors);
+    cancelDescription(): void {
+        (this.taskForm.get('description') as FormControl).setValue(this.task?.description);
+        this.setDescriptionState(false);
     }
+
 }

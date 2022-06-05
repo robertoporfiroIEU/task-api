@@ -1,5 +1,6 @@
 <app-task-details-ui *ngIf="task && applicationConfigurations && userProfile"
     [userProfile]="userProfile"
+    [comments]="comments"
     [applicationConfigurations]="applicationConfigurations"
     [task]="task"
     (onUpdateTask)="updateTask($event)"

@@ -6,7 +6,7 @@ import {
     TasksService
 } from '../api';
 import { ShellService } from '../shell/shell.service';
-import { catchError, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { ErrorService } from '../error.service';
 import { ActivatedRoute,  Router } from '@angular/router';

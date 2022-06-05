@@ -1,0 +1,11 @@
+<app-comments-ui *ngIf="comments"
+        [comments]="comments"
+        [user]="user$ | async"
+        [addNewCommentSuccess$]="addNewCommentSuccess$"
+        [page]="page"
+        (onUpdateComment)="updateComment($event)"
+        (onDeleteClick)="deleteComment($event)"
+        (onAddNewComment)="addNewComment($event)"
+        (onChangePage)="changePage($event)"
+>
+</app-comments-ui>

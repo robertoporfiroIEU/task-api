@@ -5,6 +5,7 @@ import gr.rk.tasks.V1.dto.PaginatedCommentsDTO;
 import gr.rk.tasks.entity.Comment;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
+import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = { Util.class, UUID.class }, uses = { UserMapper.class })
+@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED, imports = { Util.class, UUID.class }, uses = { AttachmentMapper.class, UserMapper.class })
 public abstract class CommentMapper {
 
     @Autowired
@@ -26,12 +27,14 @@ public abstract class CommentMapper {
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUser")
     @Mapping(ignore = true, target = "identifier")
-    @Mapping(ignore = true, target = "createdBy")
+    @Mapping(ignore = true, target = "updatedAt")
     public abstract Comment toComment(CommentDTO commentDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(comment.getCreatedAt()))")
+    @Mapping(target = "updatedAt", expression = "java(Util.toDateISO8601WithTimeZone(comment.getUpdatedAt()))")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
     public abstract CommentDTO toCommentDTO(Comment comment);
 

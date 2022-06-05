@@ -1,0 +1,70 @@
+<form [formGroup]="editorForm">
+     <!-- editor area -->
+    <div #divElement>
+        <p-editor #editor
+                  formControlName="text"
+                  [placeholder]="placeholder"
+                  [readonly]="isReadOnly"
+                  (click)="editorClick()"
+                  (dblclick)="editorDoubleClick()"
+                  [ngClass]="isReadOnly ? 'readonly' : ''">
+            <ng-template pTemplate="header">
+                <span class="ql-formats">
+                        <select class="ql-size"></select>
+                        <button type="button" class="ql-bold" aria-label="Bold"></button>
+                        <button type="button" class="ql-italic" aria-label="Italic"></button>
+                        <button type="button" class="ql-underline" aria-label="Underline"></button>
+                        <button type="button" class="ql-strike" aria-label="Strike"></button>
+                        <button type="button" class="ql-blockquote" aria-label="Blockquote"></button>
+                        <button type="button" class="ql-link" aria-label="Link"></button>
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                 </span>
+                <!-- upload file-->
+                <input type="file" class="d-none"
+                       (change)="onFileSelected($event)" #fileUpload>
+                <button class="float-end" (click)="fileUpload.click()" type="button"><i class="pi pi-upload"></i></button>
+            </ng-template>
+        </p-editor>
+        <!--Files area-->
+        <div *ngIf="this.editorForm.value?.attachments && this.editorForm.value.attachments.length > 0" class="mt-1 rounded border clearfix">
+            <div *ngFor="let attachment of this.editorForm.value.attachments" class="float-end text-center ms-1 me-1 hover">
+                <a href="{{attachmentURLBase + attachment.identifier}}" target="_blank">
+                    <ng-container *ngIf="attachmentsMimeType.IMAGE.includes(attachment.mimeType), else pdf">
+                        <i class="pi pi-image" style="font-size: 1.5rem"></i>
+                    </ng-container>
+                    <ng-template #pdf>
+                        <div *ngIf="attachmentsMimeType.PDF.includes(attachment.mimeType), else excel"><i class="pi pi-file-pdf" style="font-size: 1.5rem"></i></div>
+                    </ng-template>
+                    <ng-template #excel>
+                        <ng-container *ngIf="attachmentsMimeType.EXCEL.includes(attachment.mimeType), else word"><i class="pi pi-file-excel" style="font-size: 1.5rem"></i></ng-container>
+                    </ng-template>
+                    <ng-template #word>
+                        <div *ngIf="attachmentsMimeType.WORD.includes(attachment.mimeType), else unknown"><i class="pi pi-microsoft" style="font-size: 1.5rem"></i></div>
+                    </ng-template>
+                    <ng-template #unknown>
+                        <ng-container><i class="pi pi-file" style="font-size: 1.5rem"></i></ng-container>
+                    </ng-template>
+                </a>
+                <div>{{attachment.name}} <button *ngIf="!isReadOnly" (click)="removeAttachment(attachment.identifier)" class="btn m-0 p-0"><i class="pi pi-times ms-1"></i></button></div>
+            </div>
+        </div>
+
+        <div *ngIf="!isReadOnly" class="mt-1 rounded border clearfix">
+            <div class="float-end mb-1 me-1">
+                <button (click)="saveClick();"
+                        type="button"
+                        [pTooltip]="editorForm.invalid ? ('taskUI.editor-provide-text' | translate): ''"
+                        [ngClass]="editorForm.invalid ? 'ms-1 mt-1 btn btn-outline-secondary' : 'ms-1 mt-1 btn btn-outline-success'">
+                    {{'taskUI.save' | translate}}
+                    <i class="pi pi-check"></i>
+                </button>
+                <button type="button"
+                        (click)="cancelClick()"
+                        class="ms-1 mt-1 btn btn-outline-danger">{{'taskUI.cancel' | translate}}
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

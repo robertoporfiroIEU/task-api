@@ -1,0 +1,19 @@
+<app-editor-ui
+    [identifier]="identifier"
+    [canEditTheContent]="canEditTheContent"
+    [leaveComment]="leaveComment"
+    [placeholder]="placeholder"
+    [readOnly]="readOnly"
+    [user]="user"
+    [editorText]="editorText"
+    [editorText$]="editorText$"
+    [attachments]="attachments"
+    [onAttachmentUploaded$]="onAttachmentUploaded$"
+    [onSaveSuccessCancelEditor$]="onSaveSuccessCancelEditor$"
+    (onSaveClick)="saveClick($event)"
+    (onCancelClick)="cancelClick()"
+    (onUploadFile)="uploadFile($event)"
+>
+</app-editor-ui>
+
+

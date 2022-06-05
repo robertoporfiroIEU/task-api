@@ -1,0 +1,97 @@
+<h5 class="mt-3 mb-3">{{'taskUI.task-details-comments-header' | translate}}</h5>
+<hr>
+<div #divElement>
+    <app-editor
+        [editorText$]="replyText$"
+        [leaveComment]="true"
+        placeholder="{{'taskUI.comment-leave-comment' | translate}}"
+        [user]="user"
+        [readOnly]="true"
+        [onSaveSuccessCancelEditor$]="addNewCommentSuccess$"
+        (onSaveClick)="addNewComment($event)"
+    >
+    </app-editor>
+</div>
+<hr class="mt-3">
+<div *ngFor="let comment of comments?.content">
+    <div class="row mt-4">
+        <div class="col-12 col-sm-1">
+            <div class="mb-1 mb-sm-0 m-0 mt-sm-1">
+                <p-avatar
+                    shape="circle"
+                    label="{{comment.createdBy.name | shortText:1}}"
+                    size="large"></p-avatar>
+                <span class="ms-2 fw-bold">{{comment?.createdBy.name}}</span>
+            </div>
+        </div>
+        <div class="col-sm-11">
+            <app-editor
+                #editor
+                [identifier]="comment?.identifier"
+                placeholder="{{'taskUI.comment-leave-comment' | translate}}"
+                [user]="user"
+                [readOnly]="true"
+                [canEditTheContent]="comment?.createdBy.name === this.user?.name"
+                [editorText]="comment.text"
+                [attachments]="comment.attachments"
+                (onSaveClick)="updateComment($event, comment)"
+                pTooltip="{{'taskUI.task-details-edit-comment-tooltip' | translate}}"
+            >
+            </app-editor>
+            <div class="footer clearfix mt-0 border rounded mt-1">
+                <div class="float-start">
+                    <small
+                        class="text-black ms-1">
+                        <strong>{{'taskUI.task-details-commented-at' | translate}}</strong> {{comment?.createdAt | date: datePipeDateTimeFormat}}
+                    </small>
+                    <br>
+                    <small *ngIf="comment?.updatedAt"
+                           class="text-black ms-1">
+                        <strong>{{'taskUI.task-details-updated-at' | translate}}</strong> {{comment?.updatedAt | date: datePipeDateTimeFormat}}
+                    </small>
+                </div>
+                <div class="float-end">
+                    <button *ngIf="!isEditable"
+                            pTooltip="{{'taskUI.task-details-share-comment-tooltip' | translate}}"
+                            tooltipPosition="top"
+                            type="button"
+                            (click)="copyCommentURLToClipboard(comment?.identifier)"
+                            class="ms-1 btn"><i class="pi pi-link"></i>
+                    </button>
+                    <ng-container *ngIf="!isEditable && comment?.createdBy.name === user?.name">
+                        <button
+                            pTooltip="{{'taskUI.task-details-reply-comment-tooltip' | translate}}"
+                            tooltipPosition="top"
+                            type="button"
+                            (click)="replyToTheComment(comment)"
+                            class="btn">
+                            <i class="pi pi-reply"></i>
+                        </button>
+                        <button
+                            pTooltip="{{'taskUI.task-details-delete-comment-tooltip' | translate}}"
+                            tooltipPosition="top"
+                            type="button"
+                            (click)="deleteClick(comment)"
+                            class="btn">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-paginator *ngIf="comments?.content && comments?.content?.length > 0"
+    (onPageChange)="paginate($event)"
+    [first]="page * 25"
+    [rows]="25"
+    [totalRecords]="comments?.totalElements">
+</p-paginator>
+
+<p-confirmDialog
+    message="{{'taskUI.comment-delete-message-dialog' | translate}}"
+    acceptLabel="{{'taskUI.yes' | translate }}"
+    rejectLabel="{{'taskUI.no' | translate }}"
+    icon="pi pi-exclamation-triangle">
+</p-confirmDialog>

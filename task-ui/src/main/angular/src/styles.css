@@ -84,6 +84,17 @@ body {
     z-index: 1;
 }
 
+.readonly *.p-editor-toolbar {
+    display:none
+}
+
+.p-editor-content {
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border: 3px solid #dce4ff !important;
+    height: auto !important;
+}
+
 /* Safari */
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }

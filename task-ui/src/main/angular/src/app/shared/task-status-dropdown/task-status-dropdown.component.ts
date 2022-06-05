@@ -3,7 +3,6 @@ import { DropDown } from '../ModelsForUI';
 import { TranslateService } from '@ngx-translate/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ApplicationConfiguration } from '../../api';
-import { Utils } from '../Utils';
 
 @Component({
     selector: 'app-task-status-dropdown',

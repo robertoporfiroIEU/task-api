@@ -122,7 +122,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<PaginatedCommentsDTO> getComments(String identifier,  Pageable pageable) {
+    public ResponseEntity<PaginatedCommentsDTO> getComments(String identifier, Pageable pageable) {
 
         Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
 
@@ -203,6 +203,17 @@ public class TaskResource implements TasksApi {
     public ResponseEntity<Void> deleteTask(String identifier) {
         taskService.deleteTaskLogical(identifier);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<CommentDTO> updateComment(String taskIdentifier, String commentIdentifier, CommentDTO commentDTO) {
+        Comment commentEntity = commentMapper.toComment(commentDTO);
+        commentEntity = taskService.updateComment(taskIdentifier, commentIdentifier, commentEntity);
+
+        // Get the updated commentDTO with information that exists in the Comment entity
+        CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
+
+        return ResponseEntity.ok(commentDTOResponse);
     }
 
     @Override

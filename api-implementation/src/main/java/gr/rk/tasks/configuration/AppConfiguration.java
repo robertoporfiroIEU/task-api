@@ -11,6 +11,6 @@ public class AppConfiguration {
 
     @Bean
     public UserPrincipal getUserPrincipal() {
-       return new UserPrincipal("angular-task-api", List.of("task-api-role"));
+       return new UserPrincipal("angular-task-api", "rafail", List.of("task-api-role"));
     }
 }

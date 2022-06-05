@@ -1,14 +1,13 @@
 package gr.rk.tasks.entity;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task implements GenerateCreationAt, GenerateUpdateAt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +27,7 @@ public class Task {
 
     private String priority;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Generated(GenerationTime.ALWAYS)
-    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
@@ -195,6 +191,18 @@ public class Task {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    @PrePersist
+    @Override
+    public void onCreate() {
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    @PreUpdate
+    @Override
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

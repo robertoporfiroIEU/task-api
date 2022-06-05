@@ -149,9 +149,4 @@ export class TasksPresenter {
     clearFilters(): void {
         this.tasksFormCriteria.reset();
     }
-
-    getTaskColor(taskName: string): string {
-        return Utils.getColorFromStringValue(taskName, Utils.taskColors);
-    }
-
 }
