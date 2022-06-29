@@ -3,8 +3,9 @@ import { ApplicationMenuItem } from './shell/dock/ApplicationMenuItem';
 import { TranslateService } from '@ngx-translate/core';
 import { ShellService } from './shell/shell.service';
 import { RoutesEnum } from './RoutesEnum';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import { filter } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { UserProfileService } from './user-profile.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,13 @@ import { filter } from 'rxjs';
 })
 export class AppComponent {
     dockItemsState: ApplicationMenuItem[] = [];
+    username: string = '';
 
     constructor(
         private translateService: TranslateService,
         private router: Router,
-        private shellService: ShellService
+        private shellService: ShellService,
+        private userService: UserProfileService
     ) {}
 
     ngOnInit(): void {
@@ -60,6 +63,8 @@ export class AppComponent {
             }
         ];
 
+        this.userService.userProfile$.subscribe(user => this.username = user.name);
+
 
         this.shellService.setLoadingSpinner(false);
 
@@ -84,6 +89,6 @@ export class AppComponent {
     }
 
     logout(): void {
-
+        location.href = environment.api.logout + '?post_logout_redirect_uri=' + window.location.origin;
     }
 }

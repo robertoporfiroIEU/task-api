@@ -20,7 +20,9 @@ export class DockPresenter {
     init(dockItemsState: ApplicationMenuItem[]): void {
         if (dockItemsState.find( i => i.id === 'expandDock')) {
             this.dockItems = [...dockItemsState];
+            this.isExpanded = false;
         } else {
+            this.isExpanded = true;
             this.dockItemsWithoutMinimise = [...dockItemsState];
             this.dockItems = [...dockItemsState];
             this.dockItems.push(
@@ -55,11 +57,14 @@ export class DockPresenter {
                     isSelected: false
                 }
             ]
+            this.isExpanded = false;
+
             return;
         }
 
         if (item.id === 'expandDock') {
             this.dockItemsStateSubject.next([...this.dockItemsWithoutMinimise]);
+            this.isExpanded = true;
             return;
         }
 

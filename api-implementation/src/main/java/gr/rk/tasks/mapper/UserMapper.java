@@ -29,7 +29,7 @@ public abstract class UserMapper {
 
     @Named("toUser")
     @Mapping(target = "username", source = "name")
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(ignore = true, target = "groups")

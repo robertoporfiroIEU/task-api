@@ -1,0 +1,40 @@
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: tasks-api
+          uri: http://192.168.1.5:8080
+          predicates:
+            - Path=/tasks-api/**
+      default-filters:
+        - TokenRelay
+  security:
+    oauth2:
+      client:
+        provider:
+          my-keycloak-provider:
+            issuer-uri: http://192.168.1.5:9090/realms/tasks-api
+        registration:
+          keycloak-spring-gateway-client:
+            provider: my-keycloak-provider
+            client-id: angular-tasks-api-application
+            client-secret: jJDqDEwqKdHDGiDNvPc8UkXqRSsLP2II
+            scope: openid
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+
+        resourceserver:
+          jwt:
+            jwk-set-uri: http://localhost:9090/realms/tasks-api/protocol/openid-connect/certs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 80

@@ -26,7 +26,7 @@ public abstract class CommentMapper {
 
     }
 
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUser")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "updatedAt")

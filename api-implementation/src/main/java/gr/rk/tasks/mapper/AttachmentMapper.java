@@ -17,7 +17,7 @@ public abstract class AttachmentMapper {
     @Autowired
     protected UserPrincipal userPrincipal;
 
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "identifier", expression = "java((attachmentDTO.getIdentifier().toString()))")
     @Mapping(ignore = true, target = "createdBy")
     @Mapping(ignore = true, target = "uploadedAt")

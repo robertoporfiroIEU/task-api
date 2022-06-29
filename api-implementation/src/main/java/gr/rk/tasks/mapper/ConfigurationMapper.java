@@ -25,7 +25,7 @@ public abstract class ConfigurationMapper {
     @Mapping(target = "configurationValue", source = "configurationValue")
     @Mapping(target = "color", source = "color")
     @Mapping(target = "icon", source = "icon")
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     public abstract Configuration toConfiguration(ApplicationConfigurationDTO applicationConfigurationDTO);
 
     public abstract ApplicationConfigurationDTO toApplicationConfigurationDTO(Configuration configuration);

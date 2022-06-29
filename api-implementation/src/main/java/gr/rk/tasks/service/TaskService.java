@@ -66,15 +66,15 @@ public class TaskService {
     public Task createTask(Task task, String createdBy, String projectIdentifier) {
         // validations
         Optional<User> oUser = userRepository
-                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
+                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getClientName(), false);
         if (oUser.isEmpty()) {
-            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
         Optional<Project> oProject = projectRepository
-                .findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getApplicationUser(), false);
+                .findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getClientName(), false);
         if (oProject.isEmpty()) {
-            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         // happy path
@@ -90,14 +90,14 @@ public class TaskService {
             page = PageRequest.of(taskCriteriaDTO.getPageable().getPageNumber(), maxSize, taskCriteriaDTO.getPageable().getSort());
         }
 
-        taskCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        taskCriteriaDTO.setApplicationUser(userPrincipal.getClientName());
         taskCriteriaDTO.setPageable(page);
 
         return taskRepository.findTasksDynamicJPQL(taskCriteriaDTO);
     }
 
     public Optional<Task> getTask(String taskIdentifier) {
-        return taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+        return taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
     }
 
     public Page<Comment> getComments(String taskIdentifier, Pageable pageable) {
@@ -107,28 +107,28 @@ public class TaskService {
             page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
         }
 
-        return commentRepository.findCommentByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page);
+        return commentRepository.findCommentByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page);
     }
 
     @Transactional
     public Comment addTaskComment(String taskIdentifier, Comment comment, String createdBy) {
         // validations
         Optional<User> oUser = userRepository
-                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getApplicationUser(), false);
+                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getClientName(), false);
 
         if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !createdBy.equals(userPrincipal.getPropagatedUser())){
-            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+            throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
         }
 
         if (oUser.isEmpty()) {
-            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
         Optional<Task> oTask = taskRepository
-                .findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                .findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Set<String> attachmentIdentifiers = comment.getAttachments().stream()
@@ -138,7 +138,7 @@ public class TaskService {
         Set<Attachment> attachments = attachmentRepository.findByIdentifierIn(attachmentIdentifiers);
 
         if (comment.getAttachments().size() != attachmentIdentifiers.size()) {
-            throw new AttachmentNotFoundException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
         }
 
         comment.setCreatedBy(oUser.get());
@@ -156,7 +156,7 @@ public class TaskService {
         }
 
         List<Assign> assigns = assignRepository
-                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page)
+                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page)
                 .stream()
                 // filter the assigns that have at least one non deleted element
                 .filter(a -> {
@@ -193,14 +193,14 @@ public class TaskService {
     @Transactional
     public Assign addAssign(String taskIdentifier, Assign assign) {
         // validations
-        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         if (Objects.isNull(assign.getUser()) && Objects.isNull(assign.getGroup())) {
-            throw new UserAndGroupNotFoundException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
         }
 
         Task task = oTask.get();
@@ -211,13 +211,13 @@ public class TaskService {
                     .anyMatch(a -> a.getUser().getUsername().equals(assign.getUser().getUsername()) && !a.isDeleted());
 
             if (sameAssign) {
-                throw new AssignAlreadyExistException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
+                throw new ApplicationException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
             }
 
             Optional<User> oUser = userRepository.findById(assign.getUser().getUsername());
 
             if (oUser.isEmpty()) {
-                throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+                throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
             }
 
             assign.setUser(oUser.get());
@@ -229,13 +229,13 @@ public class TaskService {
                     .anyMatch(a -> a.getGroup().getName().equals(assign.getGroup().getName()) && !a.isDeleted());
 
             if (sameAssign) {
-                throw new AssignAlreadyExistException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
+                throw new ApplicationException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
             }
 
             Optional<Group> oGroup = groupRepository.findById(assign.getGroup().getName());
 
             if (oGroup.isEmpty()) {
-                throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+                throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
             }
 
             assign.setGroup(oGroup.get());
@@ -250,13 +250,13 @@ public class TaskService {
     @Transactional
     public Spectator addSpectator(String taskIdentifier, Spectator spectator) {
         // validations
-        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+        Optional<Task> oTask = taskRepository.findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         if (Objects.isNull(spectator.getUser()) && Objects.isNull(spectator.getGroup())) {
-            throw new UserAndGroupNotFoundException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.USER_AND_GROUP_NOT_FOUND);
         }
 
         Task task = oTask.get();
@@ -267,14 +267,14 @@ public class TaskService {
                     .anyMatch(s -> s.getUser().getUsername().equals(spectator.getUser().getUsername()) && !s.isDeleted());
 
             if (sameSpectator) {
-                throw new SpectatorAlreadyExistException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
+                throw new ApplicationException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
             }
 
             if (Objects.nonNull(spectator.getUser())) {
                 Optional<User> oUser = userRepository.findById(spectator.getUser().getUsername());
 
                 if (oUser.isEmpty()) {
-                    throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+                    throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
                 }
 
                 spectator.setUser(oUser.get());
@@ -288,13 +288,13 @@ public class TaskService {
                     .anyMatch(s -> s.getGroup().getName().equals(spectator.getGroup().getName()) && !s.isDeleted());
 
             if (sameSpectator) {
-                throw new SpectatorAlreadyExistException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
+                throw new ApplicationException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
             }
 
             Optional<Group> oGroup = groupRepository.findById(spectator.getGroup().getName());
 
             if (oGroup.isEmpty()) {
-                throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+                throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
             }
 
             spectator.setGroup(oGroup.get());
@@ -314,7 +314,7 @@ public class TaskService {
         }
 
         List<Spectator> spectators = spectatorRepository
-                .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false, page)
+                .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page)
                 .stream()
                 // filter the assigns that have at least one non deleted element
                 .filter(s -> {
@@ -351,10 +351,10 @@ public class TaskService {
     @Transactional
     public void deleteTaskLogical(String taskIdentifier) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Task task = oTask.get();
@@ -364,22 +364,22 @@ public class TaskService {
     @Transactional
     public void deleteCommentLogical(String taskIdentifier, String commentIdentifier) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Optional<Comment> oComment = commentRepository.
-                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getApplicationUser(), false);
+                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getClientName(), false);
 
         if (oComment.isEmpty()) {
-            throw new CommentNotFoundException(I18nErrorMessage.COMMENT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.COMMENT_NOT_FOUND);
         }
 
         Comment comment = oComment.get();
         if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !comment.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
-            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+            throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
         }
 
         comment.setDeleted(true);
@@ -388,17 +388,17 @@ public class TaskService {
     @Transactional
     public void deleteAssignLogical(String taskIdentifier, String assignIdentifier) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Optional<Assign> oAssign = assignRepository.
-                findAssignByIdentifierAndApplicationUserAndDeleted(assignIdentifier, userPrincipal.getApplicationUser(), false);
+                findAssignByIdentifierAndApplicationUserAndDeleted(assignIdentifier, userPrincipal.getClientName(), false);
 
         if (oAssign.isEmpty()) {
-            throw new AssignNotFoundException(I18nErrorMessage.ASSIGN_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.ASSIGN_NOT_FOUND);
         }
 
         Assign assign = oAssign.get();
@@ -408,17 +408,17 @@ public class TaskService {
     @Transactional
     public void deleteSpectatorLogical(String taskIdentifier, String spectatorIdentifier) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Optional<Spectator> oSpectator = spectatorRepository.
-                findSpectatorByIdentifierAndApplicationUserAndDeleted(spectatorIdentifier, userPrincipal.getApplicationUser(), false);
+                findSpectatorByIdentifierAndApplicationUserAndDeleted(spectatorIdentifier, userPrincipal.getClientName(), false);
 
         if (oSpectator.isEmpty()) {
-            throw new SpectatorNotFoundException(I18nErrorMessage.SPECTATOR_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.SPECTATOR_NOT_FOUND);
         }
 
         Spectator spectator = oSpectator.get();
@@ -427,10 +427,10 @@ public class TaskService {
 
     public Task updateTask(String identifier, Task task) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         Task taskEntity = oTask.get();
@@ -470,22 +470,22 @@ public class TaskService {
     @Transactional
     public Comment updateComment(String taskIdentifier, String commentIdentifier, Comment comment) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getApplicationUser(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new TaskNotFoundException(I18nErrorMessage.TASK_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Optional<Comment> oComment = commentRepository.
-                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getApplicationUser(), false);
+                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getClientName(), false);
 
         if (oComment.isEmpty()) {
-            throw new CommentNotFoundException(I18nErrorMessage.COMMENT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.COMMENT_NOT_FOUND);
         }
 
         Comment commentEntity = oComment.get();
         if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !commentEntity.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
-            throw new PropagatedUserIsNotSameException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
+            throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
         }
 
         commentEntity.setText(comment.getText());

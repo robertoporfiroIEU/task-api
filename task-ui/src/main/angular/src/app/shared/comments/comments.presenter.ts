@@ -49,8 +49,7 @@ export class CommentsPresenter implements OnDestroy {
     }
 
     copyCommentURLToClipboard(identifier: string): void {
-        // replace the anchor with the new one
-        this.clipboard.copy(window.location.href.split('#')[0] + '#' + identifier);
+        this.clipboard.copy(this.getCommentURL(identifier));
     }
 
     deleteClick(identifier: string): void {
@@ -63,7 +62,7 @@ export class CommentsPresenter implements OnDestroy {
 
     replyToTheComment(comment: Comment, div: ElementRef): void {
         let text = '<blockquote>' + comment.text + '</blockquote>';
-        let commentURL = window.location.href.split('#')[0] + '#' + comment.identifier;
+        let commentURL = this.getCommentURL(comment.identifier!);
         let commentedByLabel = this.translateService.instant('taskUI.comment-commented-by');
         let commentUrlLabel = this.translateService.instant('taskUI.comment-url-comment');
         text += `<p>${commentedByLabel} ${comment.createdBy.name} <a href="${commentURL}"> ${commentUrlLabel}</a></p>`;
@@ -97,5 +96,17 @@ export class CommentsPresenter implements OnDestroy {
             page: page,
             size: size
         });
+    }
+
+    private getCommentURL(identifier: string): string {
+        // replace the anchor with the new one
+        let urlParts: string[] = window.location.href.split('#');
+        let url: string;
+        if (urlParts.length > 2) {
+            url = urlParts[0] + '#' + urlParts[1];
+        } else {
+            url = window.location.href;
+        }
+        return url + '#' + identifier;
     }
 }

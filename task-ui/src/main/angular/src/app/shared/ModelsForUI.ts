@@ -35,3 +35,8 @@ export interface EditorModel {
     text: string;
     attachments: Attachment[];
 }
+
+export enum Roles {
+    PROJECT_CREATOR = 'PROJECT_CREATOR',
+    TASK_CREATOR = 'TASK_CREATOR'
+}
