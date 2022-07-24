@@ -3,8 +3,7 @@ package gr.rk.tasks.service;
 import gr.rk.tasks.dto.AttachmentWithFileContentDTO;
 import gr.rk.tasks.entity.Attachment;
 import gr.rk.tasks.entity.User;
-import gr.rk.tasks.exception.AttachmentNotFoundException;
-import gr.rk.tasks.exception.UserNotFoundException;
+import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.repository.AttachmentRepository;
 import gr.rk.tasks.repository.UserRepository;
@@ -47,11 +46,11 @@ public class FileService {
             Optional<User> oUser = userRepository
                     .findByUsernameAndApplicationUserAndDeleted(
                             createdBy,
-                            userPrincipal.getApplicationUser(),
+                            userPrincipal.getClientName(),
                             false
                     );
             if (oUser.isEmpty()) {
-                throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+                throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
             }
 
             Attachment attachment = new Attachment();
@@ -65,7 +64,7 @@ public class FileService {
 
             attachment.setDescription(description);
             attachment.setCreatedBy(oUser.get());
-            attachment.setApplicationUser(userPrincipal.getApplicationUser());
+            attachment.setApplicationUser(userPrincipal.getClientName());
             attachment = attachmentRepository.save(attachment);
 
             Path newFile = Paths.get(UPLOAD_DIR + attachment.getIdentifier() + "-" + actualName);
@@ -80,10 +79,10 @@ public class FileService {
 
     public AttachmentWithFileContentDTO find(String identifier) {
         Optional<Attachment> oAttachment = attachmentRepository
-                .findAttachmentByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getApplicationUser(), false);
+                .findAttachmentByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getClientName(), false);
 
         if (oAttachment.isEmpty()) {
-            throw new AttachmentNotFoundException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
         }
 
         Attachment attachment = oAttachment.get();

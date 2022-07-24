@@ -68,12 +68,11 @@
                             <i class="pi pi-reply"></i>
                         </button>
                         <button
-                            pTooltip="{{'taskUI.task-details-delete-comment-tooltip' | translate}}"
-                            tooltipPosition="top"
                             type="button"
                             (click)="deleteClick(comment)"
                             class="btn">
-                            <i class="pi pi-times"></i>
+                            <i  pTooltip="{{'taskUI.task-details-delete-comment-tooltip' | translate}}"
+                                tooltipPosition="left" class="pi pi-times"></i>
                         </button>
                     </ng-container>
                 </div>

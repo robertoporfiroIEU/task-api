@@ -2,8 +2,8 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
+import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.ProjectNotFoundException;
 import gr.rk.tasks.repository.ApplicationConfigurationRepository;
 import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.repository.UserRepository;
@@ -76,7 +76,7 @@ public class ProjectService {
             page = PageRequest.of(projectCriteriaDTO.getPageable().getPageNumber(), maxSize, projectCriteriaDTO.getPageable().getSort());
         }
 
-        projectCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        projectCriteriaDTO.setApplicationUser(userPrincipal.getClientName());
         projectCriteriaDTO.setPageable(page);
 
         return projectRepository.findProjectsDynamicJPQL(projectCriteriaDTO);
@@ -85,7 +85,7 @@ public class ProjectService {
     public Optional<Project> getProject(String identifier) {
         return projectRepository.findProjectByIdentifierAndApplicationUserAndDeleted(
                 identifier,
-                userPrincipal.getApplicationUser(),
+                userPrincipal.getClientName(),
                 false
         );
     }
@@ -93,10 +93,10 @@ public class ProjectService {
     @Transactional
     public void deleteProjectLogical(String projectIdentifier) {
         Optional<Project> oProject = projectRepository.
-                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getApplicationUser(), false);
+                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getClientName(), false);
 
         if (oProject.isEmpty()) {
-            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         Project project = oProject.get();
@@ -105,10 +105,10 @@ public class ProjectService {
 
     public Project updateProject(String projectIdentifier, Project projectWithUpdatedValues) {
         Optional<Project> oProject = projectRepository.
-                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getApplicationUser(), false);
+                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getClientName(), false);
 
         if (oProject.isEmpty()) {
-            throw new ProjectNotFoundException(I18nErrorMessage.PROJECT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         Project project = oProject.get();

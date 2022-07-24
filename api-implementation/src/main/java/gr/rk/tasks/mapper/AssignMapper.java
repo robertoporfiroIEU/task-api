@@ -30,7 +30,7 @@ public abstract class AssignMapper {
     @Mapping(ignore = true, target = "task")
     @Mapping(target = "user", source = "user", qualifiedByName = "toUser")
     @Mapping(target = "group", source = "group", qualifiedByName = "toGroup")
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     public abstract Assign toAssign(AssignDTO assignDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(assign.getIdentifier()))")

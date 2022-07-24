@@ -6,10 +6,11 @@ info:
   description: The purpose of this API is for external systems to manage tasks.
 
 servers:
-  - url: http://localhost:8080
+  - url: /tasks-api/
     description: Task API location
 
 tags:
+  - name: Application
   - name: Projects
   - name: Tasks
   - name: Groups

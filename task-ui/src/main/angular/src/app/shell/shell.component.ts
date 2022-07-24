@@ -12,6 +12,7 @@ export class ShellComponent implements OnInit {
     @Input() applicationTitle: string = '';
     @Input() homeUrl = '';
     @Input() logoImage: string = '';
+    @Input() userName: string = '';
     @Output() onLogout: EventEmitter<void> = new EventEmitter<void>();
     fullScreenMode: boolean = false;
     elem: any;

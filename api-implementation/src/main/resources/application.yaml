@@ -9,6 +9,12 @@ spring:
       max-request-size: 10MB
       enabled: true
 
+server:
+  address: 0.0.0.0
+  servlet:
+    context-path: /tasks-api
+  port: 8080
+
 springdoc:
   api-docs:
       enabled: false

@@ -23,6 +23,17 @@ import { CreateTaskContainerComponent } from './create-task/create-task.containe
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { TaskDetailsContainerComponent } from './task-details/task-details.container';
 
+
+// configuring providers
+import { ApiModule, Configuration, ConfigurationParameters } from './api';
+
+export function apiConfigFactory (): Configuration {
+    const params: ConfigurationParameters = {
+        basePath: window.location.origin + '/tasks-api'
+    }
+    return new Configuration(params);
+}
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -54,6 +65,7 @@ import { TaskDetailsContainerComponent } from './task-details/task-details.conta
             }
         }),
         TooltipModule,
+        ApiModule.forRoot(apiConfigFactory)
     ],
     providers: [{
             provide: APP_INITIALIZER,

@@ -30,7 +30,7 @@ public abstract class ProjectMapper {
                 .totalElements((int)projectEntity.getTotalElements());
     }
 
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUser")
     @Mapping(ignore = true, target = "tasks")
     @Mapping(ignore = true, target = "identifier")

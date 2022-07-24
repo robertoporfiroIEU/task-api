@@ -17,11 +17,11 @@ const routes: Routes = [
     { path: RoutesEnum.viewProject, component: ViewProjectContainerComponent },
     { path: RoutesEnum.tasks, component: TasksContainerComponent },
     { path: RoutesEnum.createTask, component: CreateTaskContainerComponent },
-    { path: RoutesEnum.viewTask, component: TaskDetailsContainerComponent },
+    { path: RoutesEnum.viewTask, component: TaskDetailsContainerComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {useHash: true})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

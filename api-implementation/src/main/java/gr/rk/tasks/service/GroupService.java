@@ -3,9 +3,8 @@ package gr.rk.tasks.service;
 import gr.rk.tasks.dto.GroupCriteriaDTO;
 import gr.rk.tasks.entity.Group;
 import gr.rk.tasks.entity.User;
-import gr.rk.tasks.exception.GroupNotFoundException;
+import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.exception.UserNotFoundException;
 import gr.rk.tasks.repository.GroupRepository;
 import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
@@ -44,7 +43,7 @@ public class GroupService {
             page = PageRequest.of(groupCriteriaDTO.getPageable().getPageNumber(), maxSize, groupCriteriaDTO.getPageable().getSort());
         }
 
-        groupCriteriaDTO.setApplicationUser(userPrincipal.getApplicationUser());
+        groupCriteriaDTO.setApplicationUser(userPrincipal.getClientName());
         groupCriteriaDTO.setPageable(page);
 
         Page<Group> groups =  groupRepository.findGroupDynamicJPQL(groupCriteriaDTO);
@@ -60,7 +59,7 @@ public class GroupService {
     }
 
     public Optional<Group> getGroup(String name) {
-        return groupRepository.findByNameAndApplicationUserAndDeleted(name, userPrincipal.getApplicationUser(), false);
+        return groupRepository.findByNameAndApplicationUserAndDeleted(name, userPrincipal.getClientName(), false);
     }
 
     public Group addGroup(Group group) {
@@ -70,16 +69,16 @@ public class GroupService {
     @Transactional
     public Group addUserToGroup(String groupName, User user) {
         // validations
-        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(groupName, userPrincipal.getApplicationUser(), false);
+        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(groupName, userPrincipal.getClientName(), false);
 
         if (oGroup.isEmpty()) {
-            throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
         }
 
-        Optional<User> oUser = userRepository.findByUsernameAndApplicationUserAndDeleted(user.getUsername(), userPrincipal.getApplicationUser(), false);
+        Optional<User> oUser = userRepository.findByUsernameAndApplicationUserAndDeleted(user.getUsername(), userPrincipal.getClientName(), false);
 
         if (oUser.isEmpty()) {
-            throw new UserNotFoundException(I18nErrorMessage.USER_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
         Group group = oGroup.get();
@@ -104,10 +103,10 @@ public class GroupService {
 
     @Transactional
     public void deleteGroupLogical(String name) {
-        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(name, userPrincipal.getApplicationUser(), false);
+        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(name, userPrincipal.getClientName(), false);
 
         if (oGroup.isEmpty()) {
-            throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
         }
 
         Group group = oGroup.get();
@@ -116,10 +115,10 @@ public class GroupService {
 
     @Transactional
     public void deleteUserFromGroupLogical(String groupName, String username) {
-        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(groupName, userPrincipal.getApplicationUser(), false);
+        Optional<Group> oGroup = groupRepository.findByNameAndApplicationUserAndDeleted(groupName, userPrincipal.getClientName(), false);
 
         if (oGroup.isEmpty()) {
-            throw new GroupNotFoundException(I18nErrorMessage.GROUP_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
         }
 
         Group group = oGroup.get();

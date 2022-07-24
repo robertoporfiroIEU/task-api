@@ -27,7 +27,7 @@ public abstract class GroupMapper {
     }
 
     @Named("toGroup")
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(ignore = true, target = "users")
     @Mapping(ignore = true, target = "assigns")
     @Mapping(ignore = true, target = "spectators")

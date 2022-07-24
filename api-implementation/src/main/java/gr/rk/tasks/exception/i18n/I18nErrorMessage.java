@@ -19,7 +19,7 @@ public enum I18nErrorMessage {
     PROPAGATED_USER_IS_NOT_SAME("Propagated user is not the same as the caller of the API", "012", 400, "taskApi.propagated-user-is-not-same", ErrorStatusEnum.FAIL),
     CONSTRAINT_VIOLATION("Constraint Violation", "400", 400, "taskApi.constraint-violation", ErrorStatusEnum.FAIL),
     SERVER_ERROR("Server Error", "500", 500, "taskApi.server-error", ErrorStatusEnum.ERROR),
-    ATTACHMENT_NOT_FOUND("Attachment not found", "012", 400, "taskApi.attachment-not-found", ErrorStatusEnum.FAIL);
+    ATTACHMENT_NOT_FOUND("Attachment not found", "013", 400, "taskApi.attachment-not-found", ErrorStatusEnum.FAIL);
 
     private String summary;
     private String errorCode;

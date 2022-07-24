@@ -20,6 +20,10 @@ export class DockComponent implements OnInit, OnDestroy {
         return this.dockPresenter.dockItems;
     }
 
+    get isExpanded(): boolean {
+        return this.dockPresenter.isExpanded;
+    }
+
     constructor(private dockPresenter: DockPresenter) {}
 
     ngOnInit(): void {

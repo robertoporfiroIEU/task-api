@@ -24,7 +24,7 @@ public abstract class TaskMapper {
                 .totalElements((int) tasksEntity.getTotalElements());
     }
 
-    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getApplicationUser())")
+    @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
     @Mapping(source = "label", target = "label")
     @Mapping(source = "priority", target = "priority")

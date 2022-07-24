@@ -1,9 +1,11 @@
-<p-dock [model]="dockItems" position="bottom">
-    <ng-template pTemplate="item" let-item>
-        <div class="text-center" (click)="changeDockItem(item)">
-            <i class = "{{ item.fontAwesomeClass }}"></i>
-            <br>
-            <span [ngClass]="item.isSelected ? 'visibleDot' : 'invisibleDot'"></span>
-        </div>
-    </ng-template>
-</p-dock>
+<div [ngClass]="!isExpanded ? 'minimised' : ''">
+    <p-dock [model]="dockItems" position="bottom">
+        <ng-template pTemplate="item" let-item>
+            <div class="text-center" (click)="changeDockItem(item)">
+                <i class="{{ item.fontAwesomeClass }}"></i>
+                <br>
+                <span [ngClass]="item.isSelected ? 'visibleDot' : 'invisibleDot'"></span>
+            </div>
+        </ng-template>
+    </p-dock>
+</div>

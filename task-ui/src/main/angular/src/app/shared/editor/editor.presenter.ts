@@ -76,6 +76,7 @@ export class EditorPresenter implements OnDestroy  {
             ).subscribe(text =>{
                 this.setReadOnlyState(false);
                 (this.editorForm.get('text') as FormControl)?.setValue(text);
+                this.focusEditor();
             });
         }
     }
@@ -133,6 +134,7 @@ export class EditorPresenter implements OnDestroy  {
 
         if (!this.initialEditorTextValue) {
             this.setReadOnlyState(false);
+            this.focusEditor();
         }
     }
 
@@ -141,6 +143,7 @@ export class EditorPresenter implements OnDestroy  {
             return;
         }
         this.setReadOnlyState(false);
+        this.focusEditor();
     }
 
     clearForm(): void {
@@ -162,6 +165,13 @@ export class EditorPresenter implements OnDestroy  {
     ngOnDestroy(): void {
         this.destroy.next();
         this.destroy.complete();
+    }
+
+    private focusEditor(): void {
+        setTimeout(() => {
+            let quill = this.editor.getQuill();
+            quill.setSelection(quill.getLength(), 0);
+        })
     }
 
 }

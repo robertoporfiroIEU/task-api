@@ -104,22 +104,32 @@
                         </td>
                     </ng-container>
                     <td>
-                        <i class="fas fa-eye hover"
-                           pTooltip="{{'taskUI.projects-header-eye-action' | translate}}"
-                           tooltipPosition="top"
-                           routerLink="{{viewProjectURL}}{{project.identifier}}"
-                        >
-                        </i>
-                        <i class="ms-1 fas fa-pencil-alt hover"
-                           pTooltip="{{'taskUI.projects-header-edit-action' | translate}}"
-                           tooltipPosition="top"
-                           routerLink="{{updateProjectURL}}{{project.identifier}}">
-                        </i>
-                        <i class="ms-1 fas fa-tasks text-dark hover"
-                           pTooltip="{{'taskUI.projects-header-task-action' | translate}}"
-                           tooltipPosition="left"
-                           routerLink="/tasks"  [queryParams]="{projectIdentifier: project.identifier}">
-                        </i>
+                        <button
+                            pTooltip="{{'taskUI.projects-header-eye-action' | translate}}"
+                            tooltipPosition="top"
+                            type="button"
+                            routerLink="{{viewProjectURL}}{{project.identifier}}"
+                            class="btn">
+                            <i class="fas fa-eye hover"></i>
+                        </button>
+
+                        <button
+                            pTooltip="{{'taskUI.projects-header-edit-action' | translate}}"
+                            tooltipPosition="top"
+                            type="button"
+                            routerLink="{{updateProjectURL}}{{project.identifier}}"
+                            class="btn">
+                            <i class="ms-1 fas fa-pencil-alt hover"></i>
+                        </button>
+
+                        <button
+                            pTooltip="{{'taskUI.projects-header-task-action' | translate}}"
+                            tooltipPosition="left"
+                            type="button"
+                            routerLink="/tasks"  [queryParams]="{projectIdentifier: project.identifier}"
+                            class="btn">
+                            <i class="ms-1 fas fa-tasks text-dark hover"></i>
+                        </button>
                     </td>
                 </tr>
             </ng-template>

@@ -1,6 +1,6 @@
 package gr.rk.tasks.util;
 
-import gr.rk.tasks.exception.InvalidSortFieldException;
+import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -42,7 +42,7 @@ public class Util {
         return ZonedDateTime.parse(dateTime).toLocalDateTime();
     }
 
-    public static String getOrderByStatement(String entityVariable, Sort sort, Map<String, String> applicableSortFieldsMap) throws InvalidSortFieldException {
+    public static String getOrderByStatement(String entityVariable, Sort sort, Map<String, String> applicableSortFieldsMap) throws ApplicationException {
         if (Objects.isNull(sort) || Objects.isNull(applicableSortFieldsMap) || applicableSortFieldsMap.size() == 0) {
             return "";
         }
@@ -55,7 +55,7 @@ public class Util {
         Sort.Order order = optionalOrder.get();
 
         if (!applicableSortFieldsMap.keySet().contains(order.getProperty())) {
-            throw new InvalidSortFieldException(I18nErrorMessage.INVALID_SORT_FIELD);
+            throw new ApplicationException(I18nErrorMessage.INVALID_SORT_FIELD);
         }
 
         entityVariable += ".";

@@ -21,6 +21,6 @@ public class ApplicationConfigurationService {
     }
 
     public Set<Configuration> getApplicationConfigurations() {
-        return applicationConfigurationRepository.findDefaultAndUserApplicationConfigurations(this.userPrincipal.getApplicationUser());
+        return applicationConfigurationRepository.findDefaultAndUserApplicationConfigurations(this.userPrincipal.getClientName());
     }
 }
