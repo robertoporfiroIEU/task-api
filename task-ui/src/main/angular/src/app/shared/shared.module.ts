@@ -36,6 +36,8 @@ import { EditorContainerComponent } from './editor/editor.container';
 import { ShortTextPipe } from './pipes/short-text.pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
 import { PaginatorModule } from 'primeng/paginator';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
     declarations: [
@@ -78,7 +80,9 @@ import { PaginatorModule } from 'primeng/paginator';
         TooltipModule,
         AppRoutingModule,
         ConfirmDialogModule,
-        PaginatorModule
+        PaginatorModule,
+        MessagesModule,
+        MessageModule
     ],
     exports: [
         BrowserModule,
@@ -112,7 +116,9 @@ import { PaginatorModule } from 'primeng/paginator';
         CardModule,
         TooltipModule,
         ShortTextPipe,
-        StringToColorPipe
+        StringToColorPipe,
+        MessagesModule,
+        MessageModule
     ]
 })
 export class SharedModule {

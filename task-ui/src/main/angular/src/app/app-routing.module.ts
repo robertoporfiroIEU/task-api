@@ -8,16 +8,62 @@ import { TasksContainerComponent } from './tasks/tasks.container';
 import { ViewProjectContainerComponent } from './project-details/view-project.container';
 import { CreateTaskContainerComponent } from './create-task/create-task.container';
 import { TaskDetailsContainerComponent } from './task-details/task-details.container';
+import { RoleGuard } from './role.guard';
+import { Roles } from './shared/ModelsForUI';
+import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
 
 const routes: Routes = [
-    { path: RoutesEnum.projects, component: ProjectContainerComponent },
-    { path: RoutesEnum.empty, component: ProjectContainerComponent },
-    { path: RoutesEnum.createProject, component: CreateProjectContainerComponent },
-    { path: RoutesEnum.updateProject, component: UpdateProjectContainerComponent },
-    { path: RoutesEnum.viewProject, component: ViewProjectContainerComponent },
-    { path: RoutesEnum.tasks, component: TasksContainerComponent },
-    { path: RoutesEnum.createTask, component: CreateTaskContainerComponent },
-    { path: RoutesEnum.viewTask, component: TaskDetailsContainerComponent }
+    {
+        path: RoutesEnum.projects,
+        component: ProjectContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.createProject,
+        component: CreateProjectContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.updateProject,
+        component: UpdateProjectContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.viewProject,
+        component: ViewProjectContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.tasks,
+        component: TasksContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE]}
+    },
+    {
+        path: RoutesEnum.createTask,
+        component: CreateTaskContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE]}
+    },
+    {
+        path: RoutesEnum.viewTask,
+        component: TaskDetailsContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.unauthorised,
+        component: UnauthorisedComponent
+    },
+    {
+        path: '**',
+        redirectTo: RoutesEnum.projects,
+        pathMatch: 'full'
+    },
 ];
 
 @NgModule({

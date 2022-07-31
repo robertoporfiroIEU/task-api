@@ -17,7 +17,7 @@ import { Actions } from './Actions';
 export class CreateProjectContainerComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
-    userProfile$: Observable<User> = this.userProfileService.userProfile$;
+    userProfile$: Observable<User | null> = this.userProfileService.userProfile$;
     action: Actions = Actions.CREATE;
 
     constructor(

@@ -7,7 +7,7 @@ spring:
     gateway:
       routes:
         - id: tasks-api
-          uri: http://192.168.1.5:8080
+          uri: http://rktasks:8080
           predicates:
             - Path=/tasks-api/**
       default-filters:
@@ -17,7 +17,7 @@ spring:
       client:
         provider:
           my-keycloak-provider:
-            issuer-uri: http://192.168.1.5:9090/realms/tasks-api
+            issuer-uri: http://rktasks:9090/realms/tasks-api
         registration:
           keycloak-spring-gateway-client:
             provider: my-keycloak-provider
@@ -25,11 +25,11 @@ spring:
             client-secret: jJDqDEwqKdHDGiDNvPc8UkXqRSsLP2II
             scope: openid
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            redirect-uri: "http://rktasks/login/oauth2/code/keycloak"
 
         resourceserver:
           jwt:
-            jwk-set-uri: http://localhost:9090/realms/tasks-api/protocol/openid-connect/certs
+            jwk-set-uri: http://rktasks:9090/realms/tasks-api/protocol/openid-connect/certs
 management:
   endpoints:
     web:

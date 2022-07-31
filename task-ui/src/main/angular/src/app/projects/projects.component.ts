@@ -6,8 +6,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { ProjectsParams } from './ProjectsParams';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
-import { Column } from '../shared/ModelsForUI';
+import { Column, Roles } from '../shared/ModelsForUI';
 import { RoutesEnum } from '../RoutesEnum';
+import { AuthService } from '../auth.service';
 
 @Component({
     selector: 'app-project-ui',
@@ -43,7 +44,7 @@ export class ProjectsComponent implements OnInit {
        return this.projectPresenter.responsiveLayout;
     }
 
-    constructor(private projectPresenter: ProjectsPresenter) {}
+    constructor(private projectPresenter: ProjectsPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.projectPresenter.init();
@@ -65,6 +66,10 @@ export class ProjectsComponent implements OnInit {
 
     resetFilters(): void {
        this.projectPresenter.resetFilters();
+    }
+
+    canUserCreateOrUpdateProject(): boolean {
+       return this.authService.isUserRoleInRoles([Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE])
     }
 
     ngOnDestroy(): void {

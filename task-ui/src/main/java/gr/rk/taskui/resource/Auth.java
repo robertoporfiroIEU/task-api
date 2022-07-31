@@ -37,7 +37,7 @@ public class Auth {
     }
 
     @GetMapping("/auth/userDetails")
-    public Mono<UserDTO> getUserDetails(Principal principal) {
+    public Mono<UserDTO> getUserDetails() {
         UserDTO userDTO = new UserDTO();
         return ReactiveSecurityContextHolder.getContext().map(ctx -> {
             OidcUser oidcUser = (OidcUser) ctx.getAuthentication().getPrincipal();
@@ -68,13 +68,16 @@ public class Auth {
             @RequestParam(name = "post_logout_redirect_uri") String postLogoutRedirectURI
 
     ) {
-        String logoutURL = this.clientRegistrationRepository
-                .findByRegistrationId("keycloak-spring-gateway-client")
-                .block().getProviderDetails()
-                .getConfigurationMetadata()
-                .get("end_session_endpoint")
-                .toString() + "?post_logout_redirect_uri=" + URLEncoder.encode(postLogoutRedirectURI, StandardCharsets.UTF_8) +
-                "&id_token_hint=" + idToken.getTokenValue();
+        String logoutURL = "";
+        if (Objects.nonNull(idToken)) {
+            logoutURL = this.clientRegistrationRepository
+                    .findByRegistrationId("keycloak-spring-gateway-client")
+                    .block().getProviderDetails()
+                    .getConfigurationMetadata()
+                    .get("end_session_endpoint")
+                    .toString() + "?post_logout_redirect_uri=" + URLEncoder.encode(postLogoutRedirectURI, StandardCharsets.UTF_8) +
+                    "&id_token_hint=" + idToken.getTokenValue();
+        }
 
         session.invalidate();
         response.setStatusCode(HttpStatus.PERMANENT_REDIRECT);

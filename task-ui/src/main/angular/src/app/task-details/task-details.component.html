@@ -29,10 +29,11 @@
                         <input #nameInput
                                formControlName="name"
                                type="text"
-                               (keyup.enter)="updateTask()"
                                (focusout)="updateTask()"
                                class="form-control"
                                pInputText
+                               [readonly]="isTaskNameReadOnly"
+                               [pTooltip]="isTaskNameReadOnly ? ('taskUI.unauthorised-message-content' | translate) : ''"
                                [ngClass]="'form-control ng-invalid ng-dirty'">
                     </div>
                     <small *ngIf="taskForm?.get('name')?.invalid && taskForm?.get('name')?.dirty"
@@ -44,11 +45,11 @@
                 <!-- description -->
                 <div class="col-12">
                     <span>{{'taskUI.task-details-description' | translate}}</span>
-                    <div>
+                    <div [pTooltip]="isDescriptionReadOnly ? ('taskUI.unauthorised-message-content' | translate) : ''">
                         <p-editor formControlName="description"
                                   (click)="setDescriptionState(true)"
-                                  [readonly]="!isDescriptionEditable"
-                                  [ngClass]="isDescriptionEditable ? '' : 'readonly'"
+                                  [readonly]="isDescriptionReadOnly || !isDescriptionEditable"
+                                  [ngClass]="[ isDescriptionReadOnly ? 'readonly disabled' : '', !isDescriptionEditable ? 'readonly' : '' ]"
                                   [style]="{'height':'100px'}">
                             <ng-template pTemplate="header">
                                 <span class="ql-formats">
@@ -85,7 +86,7 @@
                         {{taskForm?.get('description')?.value.length}}
                     </small>
                 </div>
-            <app-comments [taskIdentifier]="task?.identifier"></app-comments>
+                <app-comments [taskIdentifier]="task?.identifier"></app-comments>
             </div>
         </div>
 
@@ -177,15 +178,15 @@
                                         (click)="changeDueDateState()"><i class="pi pi-pencil"></i>
                                 </button>
                             </div>
-                            <div *ngIf="isDueDateEditable">
+                            <div *ngIf="isDueDateReadOnly">
                                 <span *ngIf="task?.dueDate">{{task.dueDate | date: datePipeDateTimeFormat}}</span>
                                 <span *ngIf="!task?.dueDate" class="ms-2">{{'taskUI.n_a' | translate}}</span>
                             </div>
-                            <div *ngIf="!isDueDateEditable">
+                            <div *ngIf="!isDueDateEditable && !isDueDateReadOnly">
                                 <p-calendar
                                     class="mt-2"
                                     formControlName="dueDate"
-                                    [dateFormat]=pCalendarDateFormat
+                                    [dateFormat]="pCalendarDateFormat"
                                     [showIcon]="true"
                                     placeholder="{{'taskUI.create-task-task-due-date' | translate}}"
                                     showTime="true"

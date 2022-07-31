@@ -95,7 +95,11 @@ body {
 }
 
 .readonly *.p-editor-toolbar {
-    display:none
+    display: none;
+}
+
+.disabled *.ql-editor {
+    background-color: #e9ecef !important;
 }
 
 .p-editor-content {

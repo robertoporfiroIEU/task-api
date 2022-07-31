@@ -1,7 +1,7 @@
 <h5 class="mt-3 mb-3">{{'taskUI.task-details-comments-header' | translate}}</h5>
 <hr>
 <div #divElement>
-    <app-editor
+    <app-editor *ngIf="canUSerLeaveAComment()"
         [editorText$]="replyText$"
         [leaveComment]="true"
         placeholder="{{'taskUI.comment-leave-comment' | translate}}"
@@ -19,7 +19,8 @@
             <div class="mb-1 mb-sm-0 m-0 mt-sm-1">
                 <p-avatar
                     shape="circle"
-                    label="{{comment.createdBy.name | shortText:1}}"
+                    label="{{comment.createdBy.name.toUpperCase() | shortText:1}}"
+                    [style]="{'background-color':comment.createdBy.name.toUpperCase() | stringToColor, 'color': '#ffffff'}"
                     size="large"></p-avatar>
                 <span class="ms-2 fw-bold">{{comment?.createdBy.name}}</span>
             </div>

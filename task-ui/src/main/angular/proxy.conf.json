@@ -1,6 +1,11 @@
 {
     "/tasks-api": {
-        "target": "http://localhost",
+        "target": "http://rktasks",
+        "secure": false
+    },
+
+    "/auth": {
+        "target": "http://rktasks",
         "secure": false
     }
 }

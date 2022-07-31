@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { Assign, Spectator, Task } from '../api';
 import { Utils } from '../shared/Utils';
+import { AuthService } from '../auth.service';
+import { Roles } from '../shared/ModelsForUI';
 
 @Injectable()
 export class TaskDetailsPresenter {
@@ -13,16 +15,21 @@ export class TaskDetailsPresenter {
     taskForm = new FormGroup({});
     task: Task | null = null;
 
+    isTaskNameReadOnly: boolean = true;
     isDescriptionEditable: boolean = false;
-    isAssignEditable: boolean = true;
+    isDescriptionReadOnly: boolean = true;
+    isAssignEditable: boolean = false;
     isAssignReadOnly: boolean = true;
-    isSpectatorEditable: boolean = true;
+    isSpectatorEditable: boolean = false;
     isSpectatorReadOnly: boolean = true;
-    isStatusEditable: boolean = true;
+    isStatusEditable: boolean = false;
     isStatusReadOnly: boolean = true;
-    isPriorityEditable: boolean = true;
+    isPriorityEditable: boolean = false;
     isPriorityReadOnly: boolean = true;
-    isDueDateEditable: boolean = true;
+    isDueDateEditable: boolean = false;
+    isDueDateReadOnly: boolean = true;
+
+    constructor(private authService: AuthService) {}
 
     init(task: Task | null) {
         this.task = task;
@@ -68,6 +75,20 @@ export class TaskDetailsPresenter {
             priority: new FormControl(task?.priority, [Validators.required]),
             dueDate: new FormControl(dueDate)
         });
+
+        if (this._canUserUpdateTheTask()) {
+            this.isTaskNameReadOnly = false;
+            this.isDescriptionReadOnly = false;
+            this.isAssignEditable = true;
+            this.isAssignReadOnly = true;
+            this.isSpectatorEditable = true;
+            this.isSpectatorReadOnly = true;
+            this.isStatusEditable = true;
+            this.isStatusReadOnly = true;
+            this.isPriorityEditable = true;
+            this.isPriorityReadOnly = true;
+            this.isDueDateEditable = true;
+        }
     }
 
     updateTask(task: Task): void {
@@ -84,7 +105,7 @@ export class TaskDetailsPresenter {
             Utils.isAssignsOrSpectatorsEquals(spectators, this.task?.spectators!) &&
             task.status == this.taskForm.value.status &&
             task.priority == this.taskForm.value.priority &&
-            task.dueDate == this.taskForm.value.dueDate
+            task.dueDate == this.taskForm.value.dueDate.toISOString()
         ) {
             return;
         }
@@ -101,7 +122,9 @@ export class TaskDetailsPresenter {
     }
 
     setDescriptionState(state: boolean): void {
-        this.isDescriptionEditable = state;
+        if (!this.isDescriptionReadOnly) {
+            this.isDescriptionEditable = state;
+        }
     }
 
     changeAssignState(): void {
@@ -126,6 +149,7 @@ export class TaskDetailsPresenter {
 
     changeDueDateState(): void {
         this.isDueDateEditable = !this.isDueDateEditable;
+        this.isDueDateReadOnly = !this.isDueDateReadOnly;
     }
 
     cancelDescription(): void {
@@ -133,4 +157,12 @@ export class TaskDetailsPresenter {
         this.setDescriptionState(false);
     }
 
+    private _canUserUpdateTheTask(): boolean {
+        return this.authService.isUserRoleInRoles([
+            Roles.DEVELOPER_ROLE,
+            Roles.LEADER_ROLE,
+            Roles.PROJECT_MANAGER_ROLE,
+            Roles.ADMIN_ROLE
+        ]);
+    }
 }

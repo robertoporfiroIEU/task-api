@@ -225,12 +225,15 @@
                 <p-badge [value]="paginatedTasks?.totalElements" severity="info"></p-badge>
             </div>
             <div class="col-6">
-                <button type="button"
-                        (click)="createTaskOpenPage()"
-                        class="btn green-button float-end glow-effect mt-2"
-                >
-                    {{'taskUI.create-new-task' | translate}}
-                </button>
+                <div class="float-end" [pTooltip]="!canUserCreateATask() ? ('taskUI.unauthorised-message-content' | translate) : ''">
+                    <button type="button"
+                            (click)="createTaskOpenPage()"
+                            class="btn green-button glow-effect mt-2"
+                            [disabled]="!canUserCreateATask()"
+                    >
+                        {{'taskUI.create-new-task' | translate}}
+                    </button>
+                </div>
             </div>
         </div>
     </ng-template>

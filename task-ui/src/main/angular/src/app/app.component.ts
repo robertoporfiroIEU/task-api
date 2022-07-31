@@ -6,6 +6,7 @@ import { RoutesEnum } from './RoutesEnum';
 import { NavigationEnd, Router } from '@angular/router';
 import { UserProfileService } from './user-profile.service';
 import { environment } from '../environments/environment';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +21,17 @@ export class AppComponent {
         private translateService: TranslateService,
         private router: Router,
         private shellService: ShellService,
-        private userService: UserProfileService
+        private userService: UserProfileService,
+        private authService: AuthService
     ) {}
 
     ngOnInit(): void {
+
+        this.userService.init();
+
+        this.userService.userProfile$.subscribe(user => this.username = user?.name!);
+        this.authService.init();
+
         this.dockItemsState = [
             {
                 id: 'projects',
@@ -62,9 +70,6 @@ export class AppComponent {
                 isSelected: false
             }
         ];
-
-        this.userService.userProfile$.subscribe(user => this.username = user.name);
-
 
         this.shellService.setLoadingSpinner(false);
 

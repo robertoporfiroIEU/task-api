@@ -4,12 +4,15 @@
             <h5 class="mt-2 grey-color">{{'taskUI.projects' | translate}}</h5>
         </div>
         <div class="col-6">
-            <button type="button"
-                    class="btn green-button float-end glow-effect"
-                    [routerLink]="[createProjectURL]"
-            >
-                {{'taskUI.create-new-project' | translate}}
-            </button>
+            <div class="float-end" [pTooltip]="!canUserCreateOrUpdateProject() ? ('taskUI.unauthorised-message-content' | translate) : ''">
+                <button type="button"
+                        class="btn green-button glow-effect"
+                        [routerLink]="[createProjectURL]"
+                        [disabled]="!canUserCreateOrUpdateProject()"
+                >
+                    {{'taskUI.create-new-project' | translate}}
+                </button>
+            </div>
         </div>
     </div>
 
@@ -113,14 +116,18 @@
                             <i class="fas fa-eye hover"></i>
                         </button>
 
-                        <button
-                            pTooltip="{{'taskUI.projects-header-edit-action' | translate}}"
-                            tooltipPosition="top"
-                            type="button"
-                            routerLink="{{updateProjectURL}}{{project.identifier}}"
-                            class="btn">
-                            <i class="ms-1 fas fa-pencil-alt hover"></i>
-                        </button>
+                        <span [pTooltip]="!canUserCreateOrUpdateProject() ? ('taskUI.unauthorised-message-content' | translate) : ''">
+                            <button
+                                pTooltip="{{'taskUI.projects-header-edit-action' | translate}}"
+                                tooltipPosition="top"
+                                type="button"
+                                routerLink="{{updateProjectURL}}{{project.identifier}}"
+                                class="btn"
+                                [disabled]="!canUserCreateOrUpdateProject()"
+                            >
+                                <i class="ms-1 fas fa-pencil-alt hover"></i>
+                            </button>
+                        </span>
 
                         <button
                             pTooltip="{{'taskUI.projects-header-task-action' | translate}}"
