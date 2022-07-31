@@ -1,5 +1,4 @@
 import {
-    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
@@ -13,7 +12,8 @@ import { TaskDetailsPresenter } from './task-details.presenter';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { Type } from '../shared/ModelsForUI';
+import { Roles, Type } from '../shared/ModelsForUI';
+import { AuthService } from '../auth.service';
 
 @Component({
     selector: 'app-task-details-ui',
@@ -40,8 +40,16 @@ export class TaskDetailsComponent implements OnInit {
         return this.taskDetailsPresenter.taskForm;
     }
 
+    get isTaskNameReadOnly(): boolean {
+        return this.taskDetailsPresenter.isTaskNameReadOnly;
+    }
+
     get isDescriptionEditable(): boolean {
         return this.taskDetailsPresenter.isDescriptionEditable;
+    }
+
+    get isDescriptionReadOnly(): boolean {
+        return this.taskDetailsPresenter.isDescriptionReadOnly;
     }
 
     get isStatusEditable(): boolean {
@@ -80,9 +88,13 @@ export class TaskDetailsComponent implements OnInit {
         return this.taskDetailsPresenter.isDueDateEditable;
     }
 
+    get isDueDateReadOnly(): boolean {
+        return this.taskDetailsPresenter.isDueDateReadOnly;
+    }
+
     TYPE = Type;
 
-    constructor(private taskDetailsPresenter: TaskDetailsPresenter, private cd: ChangeDetectorRef) {}
+    constructor(private taskDetailsPresenter: TaskDetailsPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.taskDetailsPresenter.init(this.task);
@@ -121,5 +133,14 @@ export class TaskDetailsComponent implements OnInit {
 
     cancelDescription(): void {
         this.taskDetailsPresenter.cancelDescription();
+    }
+
+    canUserUpdateTheTask(): boolean {
+        return this.authService.isUserRoleInRoles([
+            Roles.DEVELOPER_ROLE,
+            Roles.LEADER_ROLE,
+            Roles.PROJECT_MANAGER_ROLE,
+            Roles.ADMIN_ROLE]
+        )
     }
 }

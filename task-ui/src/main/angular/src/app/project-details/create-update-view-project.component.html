@@ -1,12 +1,16 @@
 <div class="container">
-    <button
-        class="btn btn-link btn-sm float-end mb-2"
-        *ngIf="action === actions.VIEW"
-        type="submit"
-        routerLink="{{updateProjectURL}}{{project.identifier}}"
-    >
-        <span>{{'taskUI.create-project-update-link' | translate}}</span>
-    </button>
+    <div class="float-end mb-2" [pTooltip]="!canUserEditTheProject() ? ('taskUI.unauthorised-message-content' | translate) : ''">
+        <button
+            class="btn btn-link btn-sm"
+            *ngIf="action === actions.VIEW"
+            type="submit"
+            routerLink="{{updateProjectURL}}{{project.identifier}}"
+            [disabled]="!canUserEditTheProject()"
+        >
+            <span>{{'taskUI.create-project-update-link' | translate}}</span>
+        </button>
+    </div>
+
     <h5 class="mt-2 grey-color">
         <span *ngIf="action === actions.CREATE">{{'taskUI.create-project-title' | translate}}</span>
         <span *ngIf="action === actions.UPDATE">{{'taskUI.update-project-title' | translate}}</span>

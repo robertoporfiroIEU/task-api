@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/tasksapidb
+    url: jdbc:mysql://rktasks:3306/tasksapidb
     username: root
     password:
   jpa:
@@ -16,7 +16,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:9090/realms/tasks-api/protocol/openid-connect/certs
+          jwk-set-uri: http://rktasks:9090/realms/tasks-api/protocol/openid-connect/certs
 logging:
   level:
     org:

@@ -1,4 +1,6 @@
 {
+    "taskUI.unauthorised-message-title": "Unauthorised",
+    "taskUI.unauthorised-message-content": "Your profile does not have the necessary permission for this page.",
     "taskUI.projects": "PROJECTS",
     "taskUI.user-settings": "USER SETTINGS",
     "taskUI.minimise-dock": "MINIMISE DOCK",

@@ -26,6 +26,7 @@ import { TaskDetailsContainerComponent } from './task-details/task-details.conta
 
 // configuring providers
 import { ApiModule, Configuration, ConfigurationParameters } from './api';
+import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
 
 export function apiConfigFactory (): Configuration {
     const params: ConfigurationParameters = {
@@ -49,6 +50,7 @@ export function apiConfigFactory (): Configuration {
         CreateTaskContainerComponent,
         TaskDetailsComponent,
         TaskDetailsContainerComponent,
+        UnauthorisedComponent,
     ],
     imports: [
         BrowserModule,

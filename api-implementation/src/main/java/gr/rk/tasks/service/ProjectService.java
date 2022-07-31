@@ -2,6 +2,7 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
+import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.repository.ApplicationConfigurationRepository;
@@ -50,7 +51,18 @@ public class ProjectService {
     @Transactional
     public Project createProject(Project project) throws org.springframework.dao.DataIntegrityViolationException {
         try {
-            project.setCreatedBy(userRepository.save(project.getCreatedBy()));
+
+            // validations
+            Optional<User> oUser = userRepository
+                    .findByUsernameAndApplicationUserAndDeleted(project.getCreatedBy().getUsername(), userPrincipal.getClientName(), false);
+
+
+            if (oUser.isEmpty()) {
+                // create new user
+                throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
+            }
+
+            project.setCreatedBy(oUser.get());
             project = projectRepository.saveProject(project);
 
            /*

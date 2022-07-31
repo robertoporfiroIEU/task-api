@@ -31,7 +31,7 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
     @Input() taskIdentifier: string | null = null;
     comments: PaginatedComments | null = null;
 
-    user$: Observable<User> = this.userProfileService.userProfile$;
+    user$: Observable<User | null> = this.userProfileService.userProfile$;
     user!: User;
     page: number = 0;
 
@@ -47,7 +47,7 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.userProfileService.userProfile$.pipe(
             takeUntil(this.destroy)
-        ).subscribe( user => this.user = user);
+        ).subscribe( user => this.user = user!);
 
         this.onChangePage$.pipe(
             takeUntil(this.destroy),

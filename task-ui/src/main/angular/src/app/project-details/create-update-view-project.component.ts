@@ -5,6 +5,8 @@ import { Project, User } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 import { Actions } from './Actions';
 import { Utils } from '../shared/Utils';
+import { AuthService } from '../auth.service';
+import { Roles } from '../shared/ModelsForUI';
 
 @Component({
     selector: 'app-create-project-ui',
@@ -28,7 +30,7 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
         return this.createProjectPresenter.projectForm;
     }
 
-    constructor(private createProjectPresenter: CreateUpdateViewProjectPresenter) {}
+    constructor(private createProjectPresenter: CreateUpdateViewProjectPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.createProjectPresenter.init(this.project);
@@ -39,6 +41,10 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
 
     submit(): void {
         this.createProjectPresenter.submit(this.userProfile);
+    }
+
+    canUserEditTheProject(): boolean {
+        return this.authService.isUserRoleInRoles([Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE])
     }
 
     ngOnDestroy(): void {

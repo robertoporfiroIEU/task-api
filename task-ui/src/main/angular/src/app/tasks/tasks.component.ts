@@ -8,6 +8,8 @@ import { FormGroup } from '@angular/forms';
 import { Utils } from '../shared/Utils';
 import { RoutesEnum } from '../RoutesEnum';
 import { NavigationExtras, Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { Roles } from '../shared/ModelsForUI';
 
 @Component({
     selector: 'app-tasks-ui',
@@ -42,7 +44,7 @@ export class TasksComponent implements OnInit {
         return this.tasksPresenter.tasksFormCriteria;
     }
 
-    constructor(private tasksPresenter: TasksPresenter, private router: Router) {}
+    constructor(private tasksPresenter: TasksPresenter, private router: Router, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.createTaskUrl = '/' + RoutesEnum.createTask;
@@ -84,5 +86,13 @@ export class TasksComponent implements OnInit {
             };
         }
         this.router.navigate([this.createTaskUrl], navigationExtras);
+    }
+
+    canUserCreateATask(): boolean {
+        return this.authService.isUserRoleInRoles([
+            Roles.LEADER_ROLE,
+            Roles.PROJECT_MANAGER_ROLE,
+            Roles.ADMIN_ROLE]
+        )
     }
 }

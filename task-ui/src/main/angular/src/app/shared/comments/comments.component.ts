@@ -10,9 +10,10 @@ import { CommentsPresenter } from './comments.presenter';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Utils } from '../Utils';
 import { ConfirmationService } from 'primeng/api';
-import { EditorModel, FileEvent } from '../ModelsForUI';
+import { EditorModel, Roles } from '../ModelsForUI';
 import { Editor } from 'primeng/editor';
 import { EditorContainerComponent } from '../editor/editor.container';
+import { AuthService } from '../../auth.service';
 
 @Component({
     selector: 'app-comments-ui',
@@ -38,7 +39,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
 
     datePipeDateTimeFormat: string = Utils.datePipeDateTimeFormat
 
-    constructor(private commentPresenter: CommentsPresenter) {}
+    constructor(private commentPresenter: CommentsPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.commentPresenter.init(this.comments!, this.user);
@@ -78,6 +79,17 @@ export class CommentsComponent implements OnInit, OnDestroy {
 
     replyToTheComment(comment: Comment): void {
         this.commentPresenter.replyToTheComment(comment, this.div!);
+    }
+
+    canUSerLeaveAComment(): boolean {
+        return this.authService.isUserRoleInRoles(
+            [
+                Roles.DEVELOPER_ROLE,
+                Roles.LEADER_ROLE,
+                Roles.PROJECT_MANAGER_ROLE,
+                Roles.ADMIN_ROLE
+            ]
+        )
     }
 
     ngOnDestroy(): void {

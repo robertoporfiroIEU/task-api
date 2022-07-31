@@ -1,4 +1,4 @@
-import { Assign, Spectator, Task } from '../api';
+import { Assign, Spectator } from '../api';
 
 export class Utils {
     static pCalendarDateFormat: string = 'dd/mm/yy';

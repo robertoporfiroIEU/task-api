@@ -32,7 +32,7 @@ public class Util {
         }
 
         localDateTime = localDateTime.atZone(ZoneOffset.UTC).toLocalDateTime();
-        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) + ".000Z";
     }
 
     public static LocalDateTime toLocalDateTimeFromISO8601WithTimeZone(String dateTime) {
