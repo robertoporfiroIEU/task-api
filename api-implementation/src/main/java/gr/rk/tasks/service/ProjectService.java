@@ -49,25 +49,8 @@ public class ProjectService {
     @Transactional
     public Project createProject(Project project) throws org.springframework.dao.DataIntegrityViolationException {
         try {
-
-            // validations
-            if (!userService.isUserExist(project.getCreatedBy())) {
-                // create new user
-                throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
-            }
-
-            project.setCreatedBy(project.getCreatedBy());
+            project.setCreatedBy(userPrincipal.getPropagatedUser());
             project = projectRepository.saveProject(project);
-
-           /*
-           If the configurations field is an empty array
-                    then the system will provide the default configurations. If the configuration is null
-                    then the system will save the project with an empty configurations
-            */
-            if (Objects.nonNull(project.getConfigurations()) && project.getConfigurations().isEmpty()) {
-                project.setConfigurations(applicationConfigurationRepository.findDefaultApplicationConfigurations());
-            }
-
             return project;
         }
         catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -109,26 +92,19 @@ public class ProjectService {
         project.setDeleted(true);
     }
 
-    public Project updateProject(String projectIdentifier, Project projectWithUpdatedValues) {
+    public Project updateProject(Project projectWithUpdatedValues) {
         Optional<Project> oProject = projectRepository.
-                findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getClientName(), false);
+                findProjectByIdentifierAndApplicationUserAndDeleted(projectWithUpdatedValues.getIdentifier(), userPrincipal.getClientName(), false);
 
         if (oProject.isEmpty()) {
             throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         Project project = oProject.get();
-        if (Objects.nonNull(projectWithUpdatedValues.getName())) {
-            project.setName(projectWithUpdatedValues.getName());
-        }
-
-        if (Objects.nonNull(projectWithUpdatedValues.getPrefixIdentifier())) {
-            project.setPrefixIdentifier(projectWithUpdatedValues.getPrefixIdentifier());
-        }
-
-        if (Objects.nonNull(projectWithUpdatedValues.getDescription())) {
-            project.setDescription(projectWithUpdatedValues.getDescription());
-        }
+        project.setName(projectWithUpdatedValues.getName());
+        project.setPrefixIdentifier(projectWithUpdatedValues.getPrefixIdentifier());
+        project.setDescription(projectWithUpdatedValues.getDescription());
+        project.setConfigurations(projectWithUpdatedValues.getConfigurations());
 
         return projectRepository.save(project);
     }

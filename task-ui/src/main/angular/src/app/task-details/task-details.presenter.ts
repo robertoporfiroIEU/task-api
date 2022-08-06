@@ -38,11 +38,11 @@ export class TaskDetailsPresenter {
 
         task?.assigns?.forEach(assign => {
             if (assign.user) {
-                usersAssigns.push(assign.user.name);
+                usersAssigns.push(assign.user);
             }
 
             if (assign.group) {
-                groupsAssigns.push(assign.group.name);
+                groupsAssigns.push(assign.group);
             }
         });
 
@@ -51,11 +51,11 @@ export class TaskDetailsPresenter {
 
         task?.spectators?.forEach(spectator => {
             if (spectator.user) {
-                usersSpectators.push(spectator.user.name);
+                usersSpectators.push(spectator.user);
             }
 
             if (spectator.group) {
-                groupsSpectators.push(spectator.group.name);
+                groupsSpectators.push(spectator.group);
             }
         });
 
@@ -96,8 +96,17 @@ export class TaskDetailsPresenter {
             return;
         }
 
-        let assigns: Assign[] = Utils.getAssignsFromArray(this.taskForm.value.usersAssigns, this.taskForm.value.groupsAssigns);
-        let spectators: Spectator[] = Utils.getSpectatorsFromArray(this.taskForm.value.usersSpectators, this.taskForm.value.groupsSpectators);
+        let usersAssignsAutoComplete: string[] = this.taskForm.value.usersAssigns;
+        let groupsAssignsAutoComplete: string[] = this.taskForm.value.groupsAssigns;
+        let usersAssigns: Assign[] = usersAssignsAutoComplete?.map<Assign>(user => { return {user: user}});
+        let groupsAssigns: Assign[] = groupsAssignsAutoComplete?.map<Assign>(group => { return {group: group}});
+        let assigns: Assign[] = usersAssigns.concat(groupsAssigns);
+
+        let usersSpectatorsAutoComplete: string[] = this.taskForm.value.usersSpectators;
+        let groupsSpectatorsAutoComplete: string[] = this.taskForm.value.groupsSpectators;
+        let usersSpectators: Spectator[] = usersSpectatorsAutoComplete?.map<Spectator>(user => { return {user: user}});
+        let groupsSpectators: Spectator[] = groupsSpectatorsAutoComplete?.map<Spectator>(user => { return {user: user}});
+        let spectators: Spectator[] = usersSpectators.concat(groupsSpectators);
 
         if (task.name == this.taskForm.value.name &&
             task.description == this.taskForm.value.description &&
@@ -127,14 +136,24 @@ export class TaskDetailsPresenter {
         }
     }
 
-    changeAssignState(): void {
-        this.isAssignEditable = !this.isAssignEditable;
-        this.isAssignReadOnly = !this.isAssignReadOnly;
+    editClickAssigns(): void {
+        this.isAssignEditable = true;
+        this.isAssignReadOnly = false;
     }
 
-    changeSpectatorState(): void {
-        this.isSpectatorEditable = !this.isSpectatorEditable;
-        this.isSpectatorReadOnly = !this.isSpectatorReadOnly;
+    cancelClickAssigns(): void {
+        this.isAssignEditable = true;
+        this.isAssignReadOnly = true;
+    }
+
+    editClickSpectators(): void {
+        this.isSpectatorEditable = true;
+        this.isSpectatorReadOnly = false;
+    }
+
+    cancelClickSpectators(): void {
+        this.isSpectatorEditable = true;
+        this.isSpectatorReadOnly = true;
     }
 
     changeStatusState(): void {

@@ -22,6 +22,7 @@ export class AutoCompleteUsersGroupsContainerComponent implements OnInit {
     @Input() editable: boolean = false;
     @Input() withSaveButton: boolean = false;
     @Output() onEditClick = new EventEmitter<void>();
+    @Output() onCancelClick = new EventEmitter<void>();
     @Output() onSave = new EventEmitter<void>();
 
     userProfile: User | null = null
@@ -38,28 +39,16 @@ export class AutoCompleteUsersGroupsContainerComponent implements OnInit {
         this.autocompleteUsersSubject.pipe(
             takeUntil(this.destroy),
             switchMap(query =>
-                this.usersService.getUsers({}, query)
+                this.usersService.getUsers(query)
             )
-        ).subscribe(paginatedUsers => {
-            if (paginatedUsers.content) {
-                this.autoCompleteUsersData = paginatedUsers.content.map(user =>
-                    user.name
-                )
-            }
-        });
+        ).subscribe(users => this.autoCompleteUsersData = users.map(user => user.name));
 
         this.autocompleteGroupsSubject.pipe(
             takeUntil(this.destroy),
             switchMap(query =>
-                this.groupsService.getGroups({}, query)
+                this.groupsService.getGroups(query)
             )
-        ).subscribe(paginatedGroups => {
-            if (paginatedGroups.content) {
-                this.autoCompleteGroupsData = paginatedGroups.content.map(group =>
-                    group.name
-                )
-            }
-        });
+        ).subscribe(groups => this.autoCompleteGroupsData = groups);
 
         this.userProfileService.userProfile$.pipe(
             takeUntil(this.destroy),
@@ -76,6 +65,10 @@ export class AutoCompleteUsersGroupsContainerComponent implements OnInit {
 
     editClick(): void {
         this.onEditClick.emit();
+    }
+
+    cancelClick(): void {
+        this.onCancelClick.emit();
     }
 
     save(): void {

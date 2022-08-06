@@ -41,6 +41,7 @@ export class ProjectContainerComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        this.shellService.setLoadingSpinner(true);
         this.shellService.onFullScreenMode$.pipe(
             takeUntil(this.destroy)
         ).subscribe( state => {

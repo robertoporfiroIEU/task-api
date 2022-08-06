@@ -21,76 +21,76 @@ export class AppComponent {
         private translateService: TranslateService,
         private router: Router,
         private shellService: ShellService,
-        private userService: UserProfileService,
+        private userProfileService: UserProfileService,
         private authService: AuthService
     ) {}
 
     ngOnInit(): void {
-
-        this.userService.init();
-
-        this.userService.userProfile$.subscribe(user => this.username = user?.name!);
+        this.userProfileService.init();
         this.authService.init();
 
-        this.dockItemsState = [
-            {
-                id: 'projects',
-                tooltipOptions: {
-                    tooltipLabel: this.translateService.instant('taskUI.projects'),
-                    tooltipPosition: 'top',
-                    positionTop: -40,
-                    positionLeft: 15
+        this.userProfileService.userProfile$.subscribe(user =>{
+            this.username = user?.name
+            this.dockItemsState = [
+                {
+                    id: 'projects',
+                    tooltipOptions: {
+                        tooltipLabel: this.translateService.instant('taskUI.projects'),
+                        tooltipPosition: 'top',
+                        positionTop: -40,
+                        positionLeft: 15
+                    },
+                    routerLink: RoutesEnum.projects,
+                    fontAwesomeClass: "fas fa-project-diagram fa-2x text-dark",
+                    isSelected: true
                 },
-                routerLink: RoutesEnum.projects,
-                fontAwesomeClass: "fas fa-project-diagram fa-2x text-dark",
-                isSelected: true
-            },
-            {
-                id: 'my-tasks',
-                tooltipOptions: {
-                    tooltipLabel: this.translateService.instant('taskUI.tasks'),
-                    tooltipPosition: 'top',
-                    positionTop: -40,
-                    positionLeft: 15
+                {
+                    id: 'my-tasks',
+                    tooltipOptions: {
+                        tooltipLabel: this.translateService.instant('taskUI.tasks'),
+                        tooltipPosition: 'top',
+                        positionTop: -40,
+                        positionLeft: 15
+                    },
+                    routerLink: RoutesEnum.tasks,
+                    fontAwesomeClass: "fas fa-tasks fa-2x text-dark",
+                    isSelected: false
                 },
-                routerLink: RoutesEnum.tasks,
-                fontAwesomeClass: "fas fa-tasks fa-2x text-dark",
-                isSelected: false
-            },
-            {
-                id: 'userSettings',
-                tooltipOptions: {
-                    tooltipLabel: this.translateService.instant('taskUI.user-settings'),
-                    tooltipPosition: 'top',
-                    positionTop: -40,
-                    positionLeft: 15
-                },
-                routerLink: 'needToChange',
-                fontAwesomeClass: "fas fa-user-cog fa-2x text-dark",
-                isSelected: false
-            }
-        ];
-
-        this.shellService.setLoadingSpinner(false);
-
-        this.router.events.subscribe(
-            (event: any) => {
-                if (event instanceof NavigationEnd) {
-                    this.dockItemsState.forEach( dockItem => {
-                        let url: string = this.router.url;
-                        if (url === '/' && dockItem.routerLink === RoutesEnum.projects) {
-                            dockItem.isSelected = true;
-                        }
-                        else if (url.includes(dockItem.routerLink)) {
-                            dockItem.isSelected = true;
-                        } else {
-                            dockItem.isSelected = false;
-                        }
-                    })
+                {
+                    id: 'userSettings',
+                    tooltipOptions: {
+                        tooltipLabel: this.translateService.instant('taskUI.user-settings'),
+                        tooltipPosition: 'top',
+                        positionTop: -40,
+                        positionLeft: 15
+                    },
+                    routerLink: RoutesEnum.userSettings,
+                    fontAwesomeClass: "fas fa-user-cog fa-2x text-dark",
+                    isSelected: false
                 }
-                this.shellService.setDockItemsState(this.dockItemsState);
-            }
-        );
+            ];
+
+            this.shellService.setLoadingSpinner(false);
+
+            this.router.events.subscribe(
+                (event: any) => {
+                    if (event instanceof NavigationEnd) {
+                        this.dockItemsState.forEach( dockItem => {
+                            let url: string = this.router.url;
+                            if (url === '/' && dockItem.routerLink === RoutesEnum.projects) {
+                                dockItem.isSelected = true;
+                            }
+                            else if (url.includes(dockItem.routerLink)) {
+                                dockItem.isSelected = true;
+                            } else {
+                                dockItem.isSelected = false;
+                            }
+                        })
+                    }
+                    this.shellService.setDockItemsState(this.dockItemsState);
+                }
+            );
+        });
     }
 
     logout(): void {

@@ -36,10 +36,10 @@ public class UserService {
         RealmResource realmResource = keycloak.realm(realm);
         UsersResource usersResource = realmResource.users();
 
-        return usersResource.search(name).stream().map(userRepresentation ->
-            new UserDTO().name(userRepresentation.getUsername())
-                    .email(userRepresentation.getEmail())
-                    .groups(userRepresentation.getGroups())
+        return usersResource.list().stream().filter(u -> u.getUsername().contains(name)).map(userRepresentation ->
+                new UserDTO().name(userRepresentation.getUsername())
+                        .email(userRepresentation.getEmail())
+                        .groups(userRepresentation.getGroups())
         ).collect(Collectors.toList());
     }
 

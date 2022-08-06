@@ -4,8 +4,6 @@ import { ProjectsParams } from '../projects/ProjectsParams';
 import { Observable, Subject } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Utils } from '../shared/Utils';
-import { Project } from '../api';
 
 @Injectable()
 export class TasksPresenter {
@@ -40,7 +38,7 @@ export class TasksPresenter {
         },
         {
             label: 'createdBy',
-            value: 'createdBy.username'
+            value: 'createdBy'
         }
     ];
 

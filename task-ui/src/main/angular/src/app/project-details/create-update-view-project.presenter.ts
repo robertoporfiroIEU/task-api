@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { Project, User } from '../api';
+import { Project } from '../api';
+import * as _ from 'lodash';
 
 @Injectable()
 export class CreateUpdateViewProjectPresenter {
@@ -15,20 +16,30 @@ export class CreateUpdateViewProjectPresenter {
         description: new FormControl(null),
     });
 
+    project: Project | null = null;
+
     init(project: Project | null): void {
         if (project) {
             this.projectForm.get('name')?.setValue(project.name);
             this.projectForm.get('prefixIdentifier')?.setValue(project.prefixIdentifier);
             this.projectForm.get('description')?.setValue(project.description);
         }
+        this.project = _.clone(project);
     }
 
-    submit(userProfile: User | null = null): void {
-        let project: Project = this.projectForm.value as Project
-        project.createdBy = userProfile as User;
+    submit(): void {
+        let project: Project = this.projectForm.value as Project;
+        if (this.project) {
+            project = _.clone(this.project);
+        }
+
+        project.name = this.projectForm.value.name;
+        project.prefixIdentifier = this.projectForm.value.prefixIdentifier;
+        project.description = this.projectForm.value.description;
+
         // when we set an empty array, then the system will provide the default configurations
         project.configurations = [];
-        this.submittedSubject.next(this.projectForm.value as Project);
+        this.submittedSubject.next(project);
     }
 
 }

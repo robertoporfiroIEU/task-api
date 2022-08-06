@@ -37,17 +37,17 @@
                    class="p-error block">{{'taskUI.field-required' | translate}}
             </small>
         </div>
-        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-4">
+        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-5">
             <span class="p-float-label">
                 <input id="createdBy"
                        [readonly]="true"
                        type="text"
-                       [value]="project?.createdBy.name"
+                       [value]="project?.createdBy"
                        pInputText class="form-control">
                 <label for="createdBy">{{'taskUI.create-project-created-by' | translate}}</label>
             </span>
         </div>
-        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-4">
+        <div *ngIf="action !== actions.CREATE" class="mb-3 mt-5">
             <span class="p-float-label">
                 <input id="creationDate"
                        [readonly]="true"
@@ -57,7 +57,7 @@
                 <label for="createdBy">{{'taskUI.create-project-creation-date' | translate}}</label>
             </span>
         </div>
-        <div class="mb-3 mt-4">
+        <div class="mb-3 mt-5">
             <span class="p-float-label">
                 <input formControlName="prefixIdentifier"
                        id="prefixIdentifier"
@@ -71,7 +71,7 @@
                    class="p-error block">{{'taskUI.field-required' | translate}}
             </small>
         </div>
-        <div class="mb-3 mt-4">
+        <div class="mb-3 mt-5">
            <span class="p-float-label">
                <textarea
                    [readonly]="action === actions.VIEW"

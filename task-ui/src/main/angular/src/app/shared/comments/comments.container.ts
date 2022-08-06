@@ -4,13 +4,14 @@ import {
     OnInit
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PaginatedComments, TasksService, User, Comment, Attachment, Pageable } from '../../api';
+import { PaginatedComments, TasksService, Comment, Attachment, Pageable } from '../../api';
 import { catchError, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { UserProfileService } from '../../user-profile.service';
 import { ErrorService } from '../../error.service';
 import { ShellService } from '../../shell/shell.service';
 import { MessageService } from 'primeng/api';
 import { ActivatedRoute } from '@angular/router';
+import { UserPrincipal } from '../ModelsForUI';
 
 @Component({
     selector: 'app-comments',
@@ -31,8 +32,8 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
     @Input() taskIdentifier: string | null = null;
     comments: PaginatedComments | null = null;
 
-    user$: Observable<User | null> = this.userProfileService.userProfile$;
-    user!: User;
+    user$: Observable<UserPrincipal | null> = this.userProfileService.userProfile$;
+    user!: UserPrincipal;
     page: number = 0;
 
     constructor(private tasksService: TasksService,
@@ -60,7 +61,7 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
             if (p['page']) {
                 this.page = p['page'] - 1;
             }
-            this.changePageSubject.next({page: this.page, size: 25, sort: 'createdAt,desc',});
+            this.changePageSubject.next({page: this.page, size: 25, sort: 'createdAt,desc'});
         });
 
 
@@ -98,7 +99,7 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
 
     updateComment(comment: Comment): void {
         this.shellService.setLoadingSpinner(true);
-        this.tasksService.updateComment(this.taskIdentifier!, comment.identifier!, comment).pipe(
+        this.tasksService.updateComment(this.taskIdentifier!, comment).pipe(
             takeUntil(this.destroy),
             catchError(error => {
                 this.errorService.showErrorMessage(error);

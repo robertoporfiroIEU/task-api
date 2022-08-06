@@ -5,12 +5,12 @@ import {
     OnInit,
     Output, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
-import { Comment, Pageable, PaginatedComments, User } from '../../api';
+import { Comment, Pageable, PaginatedComments } from '../../api';
 import { CommentsPresenter } from './comments.presenter';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Utils } from '../Utils';
 import { ConfirmationService } from 'primeng/api';
-import { EditorModel, Roles } from '../ModelsForUI';
+import { EditorModel, Roles, UserPrincipal } from '../ModelsForUI';
 import { Editor } from 'primeng/editor';
 import { EditorContainerComponent } from '../editor/editor.container';
 import { AuthService } from '../../auth.service';
@@ -25,7 +25,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
     private destroy = new Subject<void>();
 
     @Input() comments: PaginatedComments | null = null;
-    @Input() user!: User
+    @Input() userPrincipal!: UserPrincipal;
     @Input() addNewCommentSuccess$!: Observable<void>;
     @Input() page: number = 0;
     @Output() onDeleteClick = new EventEmitter<string>();
@@ -42,7 +42,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
     constructor(private commentPresenter: CommentsPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
-        this.commentPresenter.init(this.comments!, this.user);
+        this.commentPresenter.init(this.comments!);
 
         this.commentPresenter.deleteClick$.pipe(
             takeUntil(this.destroy)

@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, ControlContainer } from '@angular/forms';
 import { Task, User } from '../../api';
-import { Utils } from '../Utils';
 import { Type } from '../ModelsForUI';
 
 @Component({
@@ -24,6 +23,7 @@ export class AutoCompleteUsersGroupsComponent implements OnInit {
     @Output() onAutocompleteUsers = new EventEmitter<string>();
     @Output() onAutocompleteGroups = new EventEmitter<string>();
     @Output() onEditClick = new EventEmitter<void>();
+    @Output() onCancelClick = new EventEmitter<void>();
     @Output() onSave = new EventEmitter<void>();
 
     usersControl: AbstractControl | null = null;
@@ -60,16 +60,12 @@ export class AutoCompleteUsersGroupsComponent implements OnInit {
         this.onAutocompleteGroups.emit(event.query);
     }
 
-    flatAssignsOrSpectators(task: Task): string[] {
-        if (this.type === Type.ASSIGNS) {
-            return Utils.flatAssignsOrSpectators(task?.assigns!);
-        } else {
-            return Utils.flatAssignsOrSpectators(task?.spectators!);
-        }
-    }
-
     editClick(): void {
         this.onEditClick.emit();
+    }
+
+    cancelClick(): void {
+        this.onCancelClick.emit();
     }
 
     save(): void {

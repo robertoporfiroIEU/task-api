@@ -1,5 +1,13 @@
 import { Attachment } from '../api';
 
+export interface UserPrincipal {
+    name: string;
+    email: string;
+    language?: string;
+    groups: string[];
+    roles: string[];
+}
+
 export interface Column {
     field: string; // This is the field name of the object. An example User: { name: 'test' } the field is the name
     header: string; // This is the translate key of the field.

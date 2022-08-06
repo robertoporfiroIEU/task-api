@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { ShellModule } from './shell/shell.module';
 import { ProjectsComponent } from './projects/projects.component';
@@ -22,12 +22,15 @@ import { CreateTaskComponent } from './create-task/create-task.component';
 import { CreateTaskContainerComponent } from './create-task/create-task.container';
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { TaskDetailsContainerComponent } from './task-details/task-details.container';
+import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { UserSettingsContainerComponent } from './user-settings/user-settings.container';
+import { ApiModule, Configuration, ConfigurationParameters } from './api';
+import { CsrfInterceptorInterceptor } from './csrf-interceptor.interceptor';
+import { UserProfileService } from './user-profile.service';
 
 
 // configuring providers
-import { ApiModule, Configuration, ConfigurationParameters } from './api';
-import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
-
 export function apiConfigFactory (): Configuration {
     const params: ConfigurationParameters = {
         basePath: window.location.origin + '/tasks-api'
@@ -51,6 +54,8 @@ export function apiConfigFactory (): Configuration {
         TaskDetailsComponent,
         TaskDetailsContainerComponent,
         UnauthorisedComponent,
+        UserSettingsComponent,
+        UserSettingsContainerComponent
     ],
     imports: [
         BrowserModule,
@@ -59,6 +64,7 @@ export function apiConfigFactory (): Configuration {
         SharedModule,
         ShellModule,
         HttpClientModule,
+        HttpClientXsrfModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -75,6 +81,7 @@ export function apiConfigFactory (): Configuration {
             deps: [TranslateService],
             multi: true
         },
+        { provide: HTTP_INTERCEPTORS, useClass: CsrfInterceptorInterceptor, multi: true },
         MessageService
     ],
     bootstrap: [AppComponent]
@@ -89,9 +96,18 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 
 export function appInitializerFactory(translate: TranslateService) {
     return () => {
-        let defaultLanguage: string = translate.getBrowserLang() ? translate.getBrowserLang()!: 'en';
+        let language: string | null = localStorage.getItem('language');
 
-        translate.setDefaultLang(defaultLanguage);
-        return translate.use(defaultLanguage);
+        if (!language) {
+            let browserLanguage = translate.getBrowserLang();
+
+            if (browserLanguage) {
+                language = browserLanguage;
+            } else {
+                language = 'en';
+            }
+        }
+        translate.setDefaultLang(language);
+        return translate.use(language);
     };
 }

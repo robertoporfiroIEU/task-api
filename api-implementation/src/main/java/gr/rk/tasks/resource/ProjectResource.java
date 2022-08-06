@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,7 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
+    @Secured("ROLE_READ_PROJECT")
     public ResponseEntity<PaginatedProjectsDTO> getProjects(
             Pageable pageable,
             String identifier,
@@ -61,14 +63,16 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
-    public ResponseEntity<ProjectDTO> updateProject(String identifier, ProjectDTO projectDTO) {
+    @Secured("ROLE_UPDATE_PROJECT")
+    public ResponseEntity<ProjectDTO> updateProject(ProjectDTO projectDTO) {
         Project project = this.projectMapper.toProject(projectDTO);
-        Project projectEntity = projectService.updateProject(identifier, project);
+        Project projectEntity = projectService.updateProject(project);
         projectDTO = this.projectMapper.toProjectDTO(projectEntity);
         return ResponseEntity.ok(projectDTO);
     }
 
     @Override
+    @Secured("ROLE_READ_PROJECT")
     public ResponseEntity<ProjectDTO> getProject(String identifier) {
         ProjectDTO projectDTO = new ProjectDTO();
         Optional<Project> oProjectEntity = projectService.getProject(identifier);
@@ -81,6 +85,7 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
+    @Secured("ROLE_CREATE_PROJECT")
     public ResponseEntity<ProjectDTO> createProject(ProjectDTO projectDTO) {
         Project projectEntity = projectMapper.toProject(projectDTO);
         projectEntity = projectService.createProject(projectEntity);
@@ -90,6 +95,7 @@ public class ProjectResource implements ProjectsApi {
     }
 
     @Override
+    @Secured("ROLE_DELETE_PROJECT")
     public ResponseEntity<Void> deleteProject(String identifier) {
         projectService.deleteProjectLogical(identifier);
         return ResponseEntity.ok().build();

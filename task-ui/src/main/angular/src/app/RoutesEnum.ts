@@ -7,5 +7,6 @@ export enum RoutesEnum {
     tasks = 'tasks',
     viewTask = 'tasks/:taskIdentifier',
     createTask = 'tasks/create-task',
+    userSettings = 'user-settings',
     unauthorised = 'Unauthorised',
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,6 +49,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_READ_TASK")
     public ResponseEntity<PaginatedTasksDTO> getTasks(
             Pageable pageable,
             String identifier,
@@ -92,14 +94,16 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<TaskDTO> updateTask(String identifier, TaskDTO taskDTO) {
+    @Secured("ROLE_UPDATE_TASK")
+    public ResponseEntity<TaskDTO> updateTask(TaskDTO taskDTO) {
         Task task = this.taskMapper.toTask(taskDTO);
-        Task taskEntity = this.taskService.updateTask(identifier, task);
+        Task taskEntity = this.taskService.updateTask(task);
         taskDTO = this.taskMapper.toTaskDTO(taskEntity);
         return ResponseEntity.ok(taskDTO);
     }
 
     @Override
+    @Secured("ROLE_READ_TASK")
     public ResponseEntity<TaskDTO> getTask(String identifier) {
         TaskDTO taskDTO = new TaskDTO();
         Optional<Task> oTaskEntity = taskService.getTask(identifier);
@@ -112,9 +116,10 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_CREATE_TASK")
     public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
         Task taskEntity = taskMapper.toTask(taskDTO);
-        taskEntity = taskService.createTask(taskEntity, taskDTO.getCreatedBy(), taskDTO.getProjectIdentifier());
+        taskEntity = taskService.createTask(taskEntity, taskDTO.getProjectIdentifier());
 
         // Get taskDTO with information that exists in the Task entity
         TaskDTO taskDTOResponse = taskMapper.toTaskDTO(taskEntity);
@@ -122,6 +127,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_READ_TASK")
     public ResponseEntity<PaginatedCommentsDTO> getComments(String identifier, Pageable pageable) {
 
         Page<Comment> commentsEntity = taskService.getComments(identifier, pageable);
@@ -138,9 +144,10 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_UPDATE_TASK")
     public ResponseEntity<CommentDTO> addTaskComment(String identifier, CommentDTO commentDTO) {
         Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.addTaskComment(identifier, commentEntity, commentDTO.getCreatedBy());
+        commentEntity = taskService.addTaskComment(identifier, commentEntity);
 
         // Get commentDTO with information that exists in the Comment entity
         CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
@@ -149,6 +156,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_READ_TASK")
     public ResponseEntity<PaginatedAssignsDTO> getAssigns(String identifier,  Pageable pageable) {
 
         Page<Assign> assignsEntity = taskService.getAssigns(identifier, pageable);
@@ -165,6 +173,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_UPDATE_TASK")
     public ResponseEntity<AssignDTO> addAssign(String identifier, AssignDTO assignDTO) {
         Assign assignEntity = assignMapper.toAssign(assignDTO);
         assignEntity = taskService.addAssign(identifier, assignEntity);
@@ -175,6 +184,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_UPDATE_TASK")
     public ResponseEntity<SpectatorDTO> addSpectator(String identifier, SpectatorDTO spectatorDTO) {
         Spectator spectatorEntity = spectatorMapper.toSpectator(spectatorDTO);
         spectatorEntity = taskService.addSpectator(identifier, spectatorEntity);
@@ -185,6 +195,7 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_READ_TASK")
     public ResponseEntity<PaginatedSpectatorsDTO> getSpectators(String identifier, Pageable pageable) {
         Page<Spectator> spectatorsEntity = taskService.getSpectators(identifier, pageable);
 
@@ -200,15 +211,17 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_DELETE_TASK")
     public ResponseEntity<Void> deleteTask(String identifier) {
         taskService.deleteTaskLogical(identifier);
         return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<CommentDTO> updateComment(String taskIdentifier, String commentIdentifier, CommentDTO commentDTO) {
+    @Secured("ROLE_UPDATE_TASK")
+    public ResponseEntity<CommentDTO> updateComment(String taskIdentifier, CommentDTO commentDTO) {
         Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.updateComment(taskIdentifier, commentIdentifier, commentEntity);
+        commentEntity = taskService.updateComment(taskIdentifier, commentEntity);
 
         // Get the updated commentDTO with information that exists in the Comment entity
         CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);
@@ -217,12 +230,14 @@ public class TaskResource implements TasksApi {
     }
 
     @Override
+    @Secured("ROLE_UPDATE_TASK")
     public ResponseEntity<Void> deleteComment(String taskIdentifier, String commentIdentifier) {
         taskService.deleteCommentLogical(taskIdentifier, commentIdentifier);
         return ResponseEntity.ok().build();
     }
 
     @Override
+    @Secured("ROLE_DELETE_TASK")
     public ResponseEntity<Void> deleteAssign(String taskIdentifier, String assignIdentifier) {
         taskService.deleteAssignLogical(taskIdentifier, assignIdentifier);
         return ResponseEntity.ok().build();
@@ -230,6 +245,7 @@ public class TaskResource implements TasksApi {
 
 
     @Override
+    @Secured("ROLE_DELETE_TASK")
     public ResponseEntity<Void> deleteSpectator(String taskIdentifier, String spectatorIdentifier) {
         taskService.deleteSpectatorLogical(taskIdentifier, spectatorIdentifier);
         return ResponseEntity.ok().build();

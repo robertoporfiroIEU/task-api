@@ -7,6 +7,7 @@
             [suggestions]="autoCompleteUsersData"
             (completeMethod)="autocompleteUsers($event)"
             [multiple]="true"
+            [unique]="true"
             [delay]="500"
             class="float-start w-100"
             placeholder="{{usersAutoCompletePlaceHolder | translate}}">
@@ -22,18 +23,26 @@
             [suggestions]="autoCompleteGroupsData"
             (completeMethod)="autocompleteGroups($event)"
             [multiple]="true"
+            [unique]="true"
             [delay]="500"
             class="float-start w-100"
             placeholder="{{groupsAutoCompletePlaceHolder | translate}}">
         </p-autoComplete>
 </div>
 
-<button *ngIf="withSaveButton && (formControlNameForGroups || formControlNameForUsers) && !readOnly"
+<ng-container *ngIf="withSaveButton && (formControlNameForGroups || formControlNameForUsers) && !readOnly">
+    <button
         (click)="save()"
         type="button"
         class="ms-1 mt-1 btn btn-outline-success">{{'taskUI.save' | translate}} <i class="pi pi-check"></i>
-</button>
+    </button>
 
+    <button type="button"
+            (click)="cancelClick()"
+            class="ms-1 mt-1 btn btn-outline-danger">{{'taskUI.cancel' | translate}}
+        <i class="pi pi-times"></i>
+    </button>
+</ng-container>
 
 <div *ngIf="readOnly">
     <div *ngIf="type === TYPE.ASSIGNS" class="h6 d-inline">{{'taskUI.tasks-header-assigns' | translate }}</div>
@@ -43,13 +52,35 @@
             type="button"
             (click)="editClick()"><i class="pi pi-pencil"></i>
     </button>
-    <div *ngFor="let assign of flatAssignsOrSpectators(task!); let i=index;" class="mt-1">
-        <p-avatar label="{{assign | shortText:3}}"
-                  shape="circle">
-        </p-avatar>
-        <span class="ms-1">{{assign}}</span>
-    </div>
-    <div *ngIf="flatAssignsOrSpectators(task!)?.length == 0"><span
-        class="ms-2">{{'taskUI.n_a' | translate}}</span>
-    </div>
+    <ng-container *ngIf="type === TYPE.ASSIGNS">
+        <div *ngFor="let assign of task?.assigns; let i=index;" class="mt-1">
+            <p-avatar *ngIf="assign.user" label="{{assign.user | shortText:3}}"
+                      shape="circle">
+            </p-avatar>
+            <p-avatar *ngIf="assign.group" label="{{assign.group | shortText:3}}"
+                      shape="circle">
+            </p-avatar>
+            <span *ngIf="assign.user" class="ms-1">{{assign.user}}</span>
+            <span *ngIf="assign.group" class="ms-1">{{assign.group}}</span>
+        </div>
+        <div *ngIf="task.assigns?.length == 0"><span
+            class="ms-2">{{'taskUI.n_a' | translate}}</span>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="type === TYPE.SPECTATORS">
+        <div *ngFor="let spectator of task?.spectators; let i=index;" class="mt-1">
+            <p-avatar *ngIf="spectator.user" label="{{spectator.user | shortText:3}}"
+                      shape="circle">
+            </p-avatar>
+            <p-avatar *ngIf="spectator.group" label="{{spectator.group | shortText:3}}"
+                      shape="circle">
+            </p-avatar>
+            <span *ngIf="spectator.user" class="ms-1">{{spectator.user}}</span>
+            <span *ngIf="spectator.group" class="ms-1">{{spectator.group}}</span>
+        </div>
+        <div *ngIf="task.spectators?.length == 0"><span
+            class="ms-2">{{'taskUI.n_a' | translate}}</span>
+        </div>
+    </ng-container>
+
 </div>

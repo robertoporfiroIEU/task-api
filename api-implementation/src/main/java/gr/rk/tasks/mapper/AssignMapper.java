@@ -5,6 +5,7 @@ import gr.rk.tasks.V1.dto.PaginatedAssignsDTO;
 import gr.rk.tasks.entity.Assign;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
+import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class })
+@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED, imports =  { Util.class, UUID.class })
 public abstract class AssignMapper {
 
     @Autowired
@@ -28,6 +29,7 @@ public abstract class AssignMapper {
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "assignDate")
     @Mapping(ignore = true, target = "task")
+    @Mapping(ignore = true, target = "deleted")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "group", source = "group")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")

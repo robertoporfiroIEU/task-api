@@ -1,6 +1,6 @@
 <app-comments-ui *ngIf="comments"
         [comments]="comments"
-        [user]="user$ | async"
+        [userPrincipal]="user$ | async"
         [addNewCommentSuccess$]="addNewCommentSuccess$"
         [page]="page"
         (onUpdateComment)="updateComment($event)"

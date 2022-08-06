@@ -27,8 +27,9 @@
                     <p-accordionTab header="{{'taskUI.tasks-filters' | translate}}">
                         <form class="row" [formGroup]="tasksFormCriteria">
                             <div class="col-12 col-lg-4">
-                               <span class="p-float-label">
+                               <span class="p-float-label w-100">
                                     <input
+                                        class="w-100"
                                         formControlName="identifier"
                                         id="taskIdentifier"
                                         type="text"
@@ -43,6 +44,7 @@
                             <div class="col-12 col-lg-4 mt-4 mt-lg-0">
                             <span class="p-float-label">
                                 <input
+                                    class="w-100"
                                     formControlName="name"
                                     id="taskName"
                                     type="text"
@@ -58,6 +60,7 @@
                                 <div class="mt-2 mt-sm-0">
                                     <p-calendar
                                         formControlName="creationDateFromTo"
+                                        styleClass="w-100"
                                         [dateFormat]=pCalendarDateFormat
                                         [showIcon]="true"
                                         placeholder="{{'taskUI.filter-creation-date-from-to-placeholder' | translate}}"
@@ -73,6 +76,7 @@
                             <div class="col-12 col-lg-4 mt-4">
                                  <span class="p-float-label">
                                     <input
+                                        class="w-100"
                                         formControlName="createdBy"
                                         id="createdBy"
                                         type="text"
@@ -94,6 +98,7 @@
                                 </app-task-status-dropdown>
                                 <span *ngIf="!configurations" class="p-float-label">
                                     <input
+                                        class="w-100"
                                         formControlName="status"
                                         id="status"
                                         type="text"
@@ -114,6 +119,7 @@
                                 </app-task-priority-dropdown>
                                 <span *ngIf="!configurations" class="p-float-label">
                                     <input
+                                        class="w-100"
                                         formControlName="priority"
                                         id="priority"
                                         type="text"
@@ -127,6 +133,7 @@
                             <div class="col-12 col-lg-4 mt-4">
                                 <div>
                                     <p-calendar
+                                        styleClass="w-100"
                                         formControlName="dueDateFromTo"
                                         [dateFormat]=pCalendarDateFormat
                                         [showIcon]="true"
@@ -143,6 +150,7 @@
                             <div class="col-12 col-lg-4 mt-4">
                             <span class="p-float-label">
                                 <input
+                                    class="w-100"
                                     formControlName="assignedTo"
                                     id="assignedTo"
                                     type="text"
@@ -157,6 +165,7 @@
                             <div class="col-12 col-lg-4 mt-4">
                                 <span class="p-float-label">
                                     <input
+                                        class="w-100"
                                         formControlName="spectator"
                                         id="spectator"
                                         type="text"
@@ -171,6 +180,7 @@
                             <div *ngIf="!projectIdentifier" class="col-12 col-lg-4">
                                <span class="p-float-label mt-4">
                                     <input
+                                        class="w-100"
                                         formControlName="projectIdentifier"
                                         id="projectIdentifier"
                                         type="text"
@@ -263,7 +273,7 @@
                     <div><strong>{{'taskUI.tasks-header-identifier' | translate}} </strong></div>
                     <div>{{task.identifier}}</div>
                     <div class="mt-4"><strong>{{'taskUI.tasks-header-username' | translate}} </strong></div>
-                    <div>{{task.createdBy.name}}</div>
+                    <div>{{task.createdBy}}</div>
                     <div class="mt-4"><strong>{{'taskUI.tasks-header-project-identifier' | translate}} </strong></div>
                     <div>{{task.projectIdentifier}}</div>
                 </div>
@@ -294,26 +304,30 @@
                     <div><strong>{{'taskUI.tasks-header-assigns' | translate }}</strong></div>
                     <div>
                         <p-avatarGroup>
-                            <ng-container *ngFor="let assign of flatAssigns(task).slice(0, 2); let i=index;">
-                                <p-avatar [pTooltip]="assign" label="{{assign | shortText:3}}" size="large" shape="circle">
+                            <ng-container *ngFor="let assign of task?.assigns.slice(0, 2); let i=index;">
+                                <p-avatar *ngIf="assign?.user" [pTooltip]="assign?.user" label="{{assign.user | shortText:3}}" size="large" shape="circle">
                                 </p-avatar>
-                                <p-avatar *ngIf="i === flatAssigns(task).length -1 && flatAssigns(task).length > 1" label="..." size="large" shape="circle">
+                                <p-avatar *ngIf="assign?.group" [pTooltip]="assign?.group" label="{{assign.group | shortText:3}}" size="large" shape="circle">
+                                </p-avatar>
+                                <p-avatar *ngIf="i === task?.assigns.length -1 && task?.assigns.length > 1" label="..." size="large" shape="circle">
                                 </p-avatar>
                             </ng-container>
                         </p-avatarGroup>
-                        <div *ngIf="flatAssigns(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
+                        <div *ngIf="task?.assigns.length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
                     </div>
                 </div>
                 <div class="me-3">
                     <div><strong>{{'taskUI.tasks-header-spectators' | translate }}</strong></div>
                     <p-avatarGroup>
-                        <ng-container *ngFor="let spectator of flatSpectators(task).slice(0, 2); let i=index;">
-                            <p-avatar [pTooltip]="spectator" label="{{spectator | shortText:3}}" size="large" shape="circle">
+                        <ng-container *ngFor="let spectator of task?.spectators.slice(0, 2); let i=index;">
+                            <p-avatar *ngIf="spectator?.user" [pTooltip]="spectator.user" label="{{spectator.user | shortText:3}}" size="large" shape="circle">
                             </p-avatar>
-                            <p-avatar *ngIf="i === flatSpectators(task).length -1 && flatSpectators(task).length > 1" label="..." size="large" shape="circle"></p-avatar>
+                            <p-avatar *ngIf="spectator?.group" [pTooltip]="spectator.group" label="{{spectator.group | shortText:3}}" size="large" shape="circle">
+                            </p-avatar>
+                            <p-avatar *ngIf="i === task?.spectators.length -1 && task?.spectators.length > 1" label="..." size="large" shape="circle"></p-avatar>
                         </ng-container>
                     </p-avatarGroup>
-                    <div *ngIf="flatSpectators(task).length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
+                    <div *ngIf="task?.spectators.length == 0"><span class="ms-2">{{'taskUI.n_a' | translate}}</span></div>
                 </div>
             </div>
         </div>

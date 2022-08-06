@@ -11,6 +11,7 @@ import { TaskDetailsContainerComponent } from './task-details/task-details.conta
 import { RoleGuard } from './role.guard';
 import { Roles } from './shared/ModelsForUI';
 import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
+import { UserSettingsContainerComponent } from './user-settings/user-settings.container';
 
 const routes: Routes = [
     {
@@ -52,6 +53,12 @@ const routes: Routes = [
     {
         path: RoutesEnum.viewTask,
         component: TaskDetailsContainerComponent,
+        canActivate: [RoleGuard],
+        data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
+    },
+    {
+        path: RoutesEnum.userSettings,
+        component: UserSettingsContainerComponent,
         canActivate: [RoleGuard],
         data: { rolesAllowed: [Roles.CONSULTATION_ROLE, Roles.DEVELOPER_ROLE, Roles.LEADER_ROLE, Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE] }
     },

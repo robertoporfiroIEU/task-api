@@ -3,7 +3,7 @@
 }
 
 .nonFullScreenMode {
-    box-shadow: 0px 15px 10px -15px #111;
+    box-shadow: 0px 15px 0 -15px #111;
     width: 100%;
     overflow: auto;
     margin-bottom: 92px;

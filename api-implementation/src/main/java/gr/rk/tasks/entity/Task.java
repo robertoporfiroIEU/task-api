@@ -97,20 +97,22 @@ public class Task implements GenerateCreationAt, GenerateUpdateAt {
     }
 
     public void setAssigns(List<Assign> assigns) {
-        if (Objects.nonNull(assigns)) {
-            assigns.forEach(a -> a.setTask(this));
-            this.assigns.addAll(assigns);
+        if (Objects.isNull(assigns) || assigns.isEmpty()) {
+            this.assigns.clear();
         } else {
             this.assigns.clear();
+            assigns.forEach(a -> a.setTask(this));
+            this.assigns.addAll(assigns);
         }
     }
 
     public void setSpectators(List<Spectator> spectators) {
-        if (Objects.nonNull(spectators)) {
-            spectators.forEach(s -> s.setTask(this));
-            this.spectators.addAll(spectators);
+        if (Objects.isNull(spectators) || spectators.isEmpty()) {
+            this.spectators.clear();
         } else {
             this.spectators.clear();
+            spectators.forEach(s -> s.setTask(this));
+            this.spectators.addAll(spectators);
         }
     }
 

@@ -6,7 +6,8 @@ export const environment = {
     production: false,
     api : {
         logout: '/auth/logout',
-        userDetails: '/auth/userDetails'
+        userDetails: '/auth/userDetails',
+        csrf: '/login'
     }
 
 };

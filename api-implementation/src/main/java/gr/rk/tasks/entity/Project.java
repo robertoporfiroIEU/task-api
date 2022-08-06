@@ -120,11 +120,15 @@ public class Project implements GenerateCreationAt, GenerateUpdateAt {
     }
 
     public void setConfigurations(Set<Configuration> configurations) {
-        if (Objects.nonNull(configurations)) {
-            configurations.forEach(c -> c.getProjects().add(this));
-        }
+        if (Objects.isNull(configurations) || configurations.isEmpty()) {
+            this.configurations.forEach(configuration -> configuration.getProjects().remove(this));
+            this.configurations.clear();
 
-        this.configurations = configurations;
+        } else {
+            this.configurations.clear();
+            configurations.forEach(c -> c.getProjects().add(this));
+            this.configurations.addAll(configurations);
+        }
     }
 
     public Set<Configuration> getConfigurations() {

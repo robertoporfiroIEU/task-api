@@ -111,12 +111,20 @@ export class TaskDetailsComponent implements OnInit {
         this.taskDetailsPresenter.setDescriptionState(state);
     }
 
-    changeAssignState(): void {
-        this.taskDetailsPresenter.changeAssignState();
+    editClickAssigns(): void {
+        this.taskDetailsPresenter.editClickAssigns();
     }
 
-    changeSpectatorState(): void {
-        this.taskDetailsPresenter.changeSpectatorState();
+    cancelClickAssigns(): void {
+        this.taskDetailsPresenter.cancelClickAssigns();
+    }
+
+    editClickSpectators(): void {
+        this.taskDetailsPresenter.editClickSpectators();
+    }
+
+    cancelClickSpectators(): void {
+        this.taskDetailsPresenter.cancelClickSpectators();
     }
 
     changeStatusState(): void {

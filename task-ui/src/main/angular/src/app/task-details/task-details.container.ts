@@ -34,6 +34,7 @@ export class TaskDetailsContainerComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.shellService.setLoadingSpinner(true);
         this.activatedRoute.paramMap.pipe(
             take(1),
             switchMap(params => {
@@ -64,6 +65,7 @@ export class TaskDetailsContainerComponent implements OnInit {
                 return [];
             })
         ).subscribe(([project, comments]) => {
+            this.shellService.setLoadingSpinner(false);
             this.applicationConfigurations = project.configurations;
             this.comments = comments;
         });
@@ -82,7 +84,7 @@ export class TaskDetailsContainerComponent implements OnInit {
     updateTask(task: Task) {
         this.shellService.setLoadingSpinner(true);
         let identifier: string = task.identifier!;
-        this.tasksService.updateTask(identifier, task)
+        this.tasksService.updateTask(task)
             .pipe(catchError(error => {
                 this.errorService.showErrorMessage(error);
                 return [];

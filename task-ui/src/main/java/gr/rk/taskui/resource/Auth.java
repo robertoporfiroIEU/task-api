@@ -1,6 +1,6 @@
 package gr.rk.taskui.resource;
 
-import gr.rk.tasks.V1.dto.UserDTO;
+import gr.rk.taskui.dto.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -9,20 +9,20 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 public class Auth {
@@ -35,29 +35,35 @@ public class Auth {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
+    @GetMapping("/auth/csrf")
+    public CsrfToken csrfToken(ServerWebExchange exchange) {
+        Mono<CsrfToken> csrfToken = (Mono<CsrfToken>) exchange.getAttributes().get(CsrfToken.class.getName());
+        return csrfToken.block();
+    }
+
     @GetMapping("/auth/userDetails")
-    public Mono<UserDTO> getUserDetails() {
-//        UserDTO userDTO = new UserDTO();
-//        return ReactiveSecurityContextHolder.getContext().map(ctx -> {
-//            OidcUser oidcUser = (OidcUser) ctx.getAuthentication().getPrincipal();
-//            userDTO.setName(oidcUser.getClaims().get("user_name").toString());
-//
-//            if (Objects.nonNull(oidcUser.getClaims().get("email"))) {
-//                userDTO.setEmail(oidcUser.getClaims().get("email").toString());
-//            }
-//
-//            if (Objects.nonNull(oidcUser.getClaims().get("realm_access"))) {
-//                final Map<String, List<String>> realmAccess = (Map<String, List<String>>) oidcUser.getClaims().get("realm_access");
-//                List<GroupDTO> groupsDTO = realmAccess.get("roles")
-//                        .stream()
-//                        .map(roleName -> new GroupDTO().name(roleName)) // prefix required by Spring Security for roles.
-//                        .collect(Collectors.toList());
-//
-//                userDTO.setGroups(groupsDTO);
-//            }
-//            return userDTO;
-//        });
-        return null;
+    public Mono<UserPrincipal> getUserDetails() {
+        UserPrincipal userPrincipal = new UserPrincipal();
+        return ReactiveSecurityContextHolder.getContext().map(ctx -> {
+            OidcUser oidcUser = (OidcUser) ctx.getAuthentication().getPrincipal();
+            userPrincipal.setName(oidcUser.getClaims().get("user_name").toString());
+
+            if (Objects.nonNull(oidcUser.getClaims().get("email"))) {
+                userPrincipal.setEmail(oidcUser.getClaims().get("email").toString());
+            }
+
+            if (Objects.nonNull(oidcUser.getClaims().get("realm_access"))) {
+                final Map<String, List<String>> realmAccess = (Map<String, List<String>>) oidcUser.getClaims().get("realm_access");
+                List<String> roles = realmAccess.get("roles");
+                userPrincipal.setRoles(roles);
+            }
+
+            if (Objects.nonNull(oidcUser.getClaims().get("groups"))) {
+                List<String> groupsDTO = (List<String>) oidcUser.getClaims().get("groups");
+                userPrincipal.setGroups(groupsDTO);
+            }
+            return userPrincipal;
+        });
     }
 
     @GetMapping("/auth/logout")

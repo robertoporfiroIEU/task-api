@@ -103,7 +103,7 @@
                             <span class="p-column-title">{{col.field}}</span>
                             <span *ngIf="col.field === 'createdAt'">{{project[col.field] | date: datePipeDateFormat}}</span>
                             <span *ngIf="col.field !== 'createdAt' && col.field !== 'createdBy'">{{project[col.field]}}</span>
-                            <span *ngIf="col.field === 'createdBy'">{{project.createdBy.name}}</span>
+                            <span *ngIf="col.field === 'createdBy'">{{project.createdBy}}</span>
                         </td>
                     </ng-container>
                     <td>

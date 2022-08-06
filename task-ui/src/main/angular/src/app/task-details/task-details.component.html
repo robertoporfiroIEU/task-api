@@ -111,13 +111,13 @@
                         <div class="col-12 mt-4">
                             <div>
                                 <app-task-status-dropdown *ngIf="applicationConfigurations"
-                                                          [applicationConfigurations]="applicationConfigurations"
-                                                          formControlName="status"
-                                                          [readOnly]="isStatusReadOnly"
-                                                          [editable]="isStatusEditable"
-                                                          [taskStatusValue]="task?.status"
-                                                          (onStatusChanged)="updateTask(); changeStatusState()"
-                                                          (onEditClick)="changeStatusState()"
+                                      [applicationConfigurations]="applicationConfigurations"
+                                      formControlName="status"
+                                      [readOnly]="isStatusReadOnly"
+                                      [editable]="isStatusEditable"
+                                      [taskStatusValue]="task?.status"
+                                      (onStatusChanged)="updateTask(); changeStatusState()"
+                                      (onEditClick)="changeStatusState()"
                                 >
                                 </app-task-status-dropdown>
                             </div>
@@ -125,13 +125,13 @@
                         <div class="col-12 mt-4">
                             <div>
                                 <app-task-priority-dropdown *ngIf="applicationConfigurations"
-                                                            [applicationConfigurations]="applicationConfigurations"
-                                                            formControlName="priority"
-                                                            [readOnly]="isPriorityReadOnly"
-                                                            [editable]="isPriorityEditable"
-                                                            [priorityValue]="task?.priority"
-                                                            (onPriorityChanged)="updateTask(); changePriorityState()"
-                                                            (onEditClick)="changePriorityState()">
+                                    [applicationConfigurations]="applicationConfigurations"
+                                    formControlName="priority"
+                                    [readOnly]="isPriorityReadOnly"
+                                    [editable]="isPriorityEditable"
+                                    [priorityValue]="task?.priority"
+                                    (onPriorityChanged)="updateTask(); changePriorityState()"
+                                    (onEditClick)="changePriorityState()">
                                 </app-task-priority-dropdown>
                             </div>
                         </div>
@@ -139,12 +139,13 @@
                             <div class="p-fluid">
                                 <app-auto-complete-users-groups
                                     [type]="TYPE.ASSIGNS"
-                                    (onSave)="updateTask(); changeAssignState()"
+                                    (onSave)="updateTask(); cancelClickAssigns()"
                                     [task]="task"
                                     [withSaveButton]="true"
                                     [readOnly]="isAssignReadOnly"
                                     [editable]="isAssignEditable"
-                                    (onEditClick)="changeAssignState()"
+                                    (onEditClick)="editClickAssigns()"
+                                    (onCancelClick)="cancelClickAssigns()"
                                     formControlNameForUsers="usersAssigns"
                                     formControlNameForGroups="groupsAssigns"
                                 ></app-auto-complete-users-groups>
@@ -154,12 +155,13 @@
                             <div class="p-fluid">
                                 <app-auto-complete-users-groups
                                     [type]="TYPE.SPECTATORS"
-                                    (onSave)="updateTask(); changeSpectatorState()"
+                                    (onSave)="updateTask(); cancelClickSpectators()"
                                     [task]="task"
                                     [withSaveButton]="true"
                                     [readOnly]="isSpectatorReadOnly"
                                     [editable]="isSpectatorEditable"
-                                    (onEditClick)="changeSpectatorState()"
+                                    (onEditClick)="editClickSpectators()"
+                                    (onCancelClick)="cancelClickSpectators()"
                                     formControlNameForUsers="usersSpectators"
                                     formControlNameForGroups="groupsSpectators"
                                 ></app-auto-complete-users-groups>
@@ -200,7 +202,7 @@
                         </div>
                         <div class="col-12 mt-4">
                             <div class="h6">{{'taskUI.tasks-header-username' | translate}}</div>
-                            <span>{{task?.createdBy.name}}</span>
+                            <span>{{task?.createdBy}}</span>
                         </div>
                     </div>
                 </div>
