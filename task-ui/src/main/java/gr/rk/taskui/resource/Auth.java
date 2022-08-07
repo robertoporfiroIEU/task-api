@@ -1,6 +1,5 @@
 package gr.rk.taskui.resource;
 
-import gr.rk.tasks.V1.dto.GroupDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,26 +37,27 @@ public class Auth {
 
     @GetMapping("/auth/userDetails")
     public Mono<UserDTO> getUserDetails() {
-        UserDTO userDTO = new UserDTO();
-        return ReactiveSecurityContextHolder.getContext().map(ctx -> {
-            OidcUser oidcUser = (OidcUser) ctx.getAuthentication().getPrincipal();
-            userDTO.setName(oidcUser.getClaims().get("user_name").toString());
-
-            if (Objects.nonNull(oidcUser.getClaims().get("email"))) {
-                userDTO.setEmail(oidcUser.getClaims().get("email").toString());
-            }
-
-            if (Objects.nonNull(oidcUser.getClaims().get("realm_access"))) {
-                final Map<String, List<String>> realmAccess = (Map<String, List<String>>) oidcUser.getClaims().get("realm_access");
-                List<GroupDTO> groupsDTO = realmAccess.get("roles")
-                        .stream()
-                        .map(roleName -> new GroupDTO().name(roleName)) // prefix required by Spring Security for roles.
-                        .collect(Collectors.toList());
-
-                userDTO.setGroups(groupsDTO);
-            }
-            return userDTO;
-        });
+//        UserDTO userDTO = new UserDTO();
+//        return ReactiveSecurityContextHolder.getContext().map(ctx -> {
+//            OidcUser oidcUser = (OidcUser) ctx.getAuthentication().getPrincipal();
+//            userDTO.setName(oidcUser.getClaims().get("user_name").toString());
+//
+//            if (Objects.nonNull(oidcUser.getClaims().get("email"))) {
+//                userDTO.setEmail(oidcUser.getClaims().get("email").toString());
+//            }
+//
+//            if (Objects.nonNull(oidcUser.getClaims().get("realm_access"))) {
+//                final Map<String, List<String>> realmAccess = (Map<String, List<String>>) oidcUser.getClaims().get("realm_access");
+//                List<GroupDTO> groupsDTO = realmAccess.get("roles")
+//                        .stream()
+//                        .map(roleName -> new GroupDTO().name(roleName)) // prefix required by Spring Security for roles.
+//                        .collect(Collectors.toList());
+//
+//                userDTO.setGroups(groupsDTO);
+//            }
+//            return userDTO;
+//        });
+        return null;
     }
 
     @GetMapping("/auth/logout")

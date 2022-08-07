@@ -2,12 +2,10 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.repository.ApplicationConfigurationRepository;
 import gr.rk.tasks.repository.ProjectRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +26,7 @@ public class ProjectService {
 
     private final ApplicationConfigurationRepository applicationConfigurationRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final UserPrincipal userPrincipal;
 
@@ -39,12 +37,12 @@ public class ProjectService {
     public ProjectService(
             ProjectRepository projectRepository,
             ApplicationConfigurationRepository applicationConfigurationRepository,
-            UserRepository userRepository,
+            UserService userService,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
         this.applicationConfigurationRepository = applicationConfigurationRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.userPrincipal = userPrincipal;
     }
 
@@ -53,16 +51,12 @@ public class ProjectService {
         try {
 
             // validations
-            Optional<User> oUser = userRepository
-                    .findByUsernameAndApplicationUserAndDeleted(project.getCreatedBy().getUsername(), userPrincipal.getClientName(), false);
-
-
-            if (oUser.isEmpty()) {
+            if (!userService.isUserExist(project.getCreatedBy())) {
                 // create new user
                 throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
             }
 
-            project.setCreatedBy(oUser.get());
+            project.setCreatedBy(project.getCreatedBy());
             project = projectRepository.saveProject(project);
 
            /*

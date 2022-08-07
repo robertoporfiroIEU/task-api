@@ -35,9 +35,8 @@ public class Task implements GenerateCreationAt, GenerateUpdateAt {
 
     private LocalDateTime dueDate;
 
-    @OneToOne
-    @JoinColumn(name = "users_username", nullable = false)
-    private User createdBy;
+    @Column(name="userName")
+    private String createdBy;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private Set<Comment> comments;
@@ -84,7 +83,7 @@ public class Task implements GenerateCreationAt, GenerateUpdateAt {
         this.dueDate = dueDate;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -100,17 +99,19 @@ public class Task implements GenerateCreationAt, GenerateUpdateAt {
     public void setAssigns(List<Assign> assigns) {
         if (Objects.nonNull(assigns)) {
             assigns.forEach(a -> a.setTask(this));
+            this.assigns.addAll(assigns);
+        } else {
+            this.assigns.clear();
         }
-        this.assigns.clear();
-        this.assigns.addAll(assigns);
     }
 
     public void setSpectators(List<Spectator> spectators) {
         if (Objects.nonNull(spectators)) {
             spectators.forEach(s -> s.setTask(this));
+            this.spectators.addAll(spectators);
+        } else {
+            this.spectators.clear();
         }
-        this.spectators.clear();
-        this.spectators.addAll(spectators);
     }
 
     public Long getId() {
@@ -149,7 +150,7 @@ public class Task implements GenerateCreationAt, GenerateUpdateAt {
         return dueDate;
     }
 
-    public User getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 

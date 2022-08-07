@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class }, uses = { GroupMapper.class, UserMapper.class })
+@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class })
 public abstract class AssignMapper {
 
     @Autowired
@@ -28,15 +28,15 @@ public abstract class AssignMapper {
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "assignDate")
     @Mapping(ignore = true, target = "task")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUser")
-    @Mapping(target = "group", source = "group", qualifiedByName = "toGroup")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "group", source = "group")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     public abstract Assign toAssign(AssignDTO assignDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(assign.getIdentifier()))")
     @Mapping(target = "assignDate", expression = "java(Util.toDateISO8601WithTimeZone(assign.getAssignDate()))")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTOWithoutGroup")
-    @Mapping(target = "group", source = "group", qualifiedByName = "groupDTOFromUser")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "group", source = "group")
     public abstract AssignDTO toAssignDTO(Assign assign);
 
     protected abstract List<AssignDTO> toAssignsDTOList(Page<Assign> assigns);

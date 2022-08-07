@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports = { Util.class, UUID.class }, uses = { UserMapper.class })
+@Mapper(componentModel = "spring", imports = { Util.class, UUID.class })
 public abstract class AttachmentMapper {
 
     @Autowired
@@ -25,7 +25,7 @@ public abstract class AttachmentMapper {
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(attachment.getIdentifier()))")
     @Mapping(target = "uploadedAt", expression = "java(Util.toDateISO8601WithTimeZone(attachment.getUploadedAt()))")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
+    @Mapping(target = "createdBy", source = "createdBy")
     public abstract AttachmentDTO toAttachmentDTO(Attachment attachment);
 
     protected abstract List<AttachmentDTO> toAttachmentsDTOList(List<Attachment> attachments);

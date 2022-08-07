@@ -2,11 +2,9 @@ package gr.rk.tasks.service;
 
 import gr.rk.tasks.dto.AttachmentWithFileContentDTO;
 import gr.rk.tasks.entity.Attachment;
-import gr.rk.tasks.entity.User;
 import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
 import gr.rk.tasks.repository.AttachmentRepository;
-import gr.rk.tasks.repository.UserRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,29 +25,23 @@ public class FileService {
 
     private final UserPrincipal userPrincipal;
     private final AttachmentRepository attachmentRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Value("${applicationConfigurations.FileService.uploadDir}")
     private String UPLOAD_DIR;
 
     @Autowired
-    public FileService(UserPrincipal userPrincipal, AttachmentRepository attachmentRepository, UserRepository userRepository) {
+    public FileService(UserPrincipal userPrincipal, AttachmentRepository attachmentRepository, UserService userService) {
         this.userPrincipal = userPrincipal;
         this.attachmentRepository = attachmentRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Transactional
     public Attachment upload(String actualName, String createdBy, String description, byte[] fileContent) {
         try {
             // validations
-            Optional<User> oUser = userRepository
-                    .findByUsernameAndApplicationUserAndDeleted(
-                            createdBy,
-                            userPrincipal.getClientName(),
-                            false
-                    );
-            if (oUser.isEmpty()) {
+            if (!userService.isUserExist(createdBy)) {
                 throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
             }
 
@@ -63,7 +55,7 @@ public class FileService {
             attachment.setMimeType(mimeType);
 
             attachment.setDescription(description);
-            attachment.setCreatedBy(oUser.get());
+            attachment.setCreatedBy(createdBy);
             attachment.setApplicationUser(userPrincipal.getClientName());
             attachment = attachmentRepository.save(attachment);
 

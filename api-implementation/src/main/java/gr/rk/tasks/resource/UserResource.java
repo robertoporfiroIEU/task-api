@@ -1,71 +1,26 @@
 package gr.rk.tasks.resource;
 
 import gr.rk.tasks.V1.api.UsersApi;
-import gr.rk.tasks.V1.dto.PaginatedUsersDTO;
 import gr.rk.tasks.V1.dto.UserDTO;
-import gr.rk.tasks.entity.User;
-import gr.rk.tasks.mapper.UserMapper;
 import gr.rk.tasks.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 public class UserResource implements UsersApi {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Autowired
-    public UserResource(UserService userService, UserMapper userMapper) {
+    public UserResource(UserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @Override
-    public ResponseEntity<PaginatedUsersDTO> getUsers(Pageable pageable, String name, String email) {
-        Page<User> usersEntity = userService.getUsers(pageable, name, email);
-
-        PaginatedUsersDTO paginatedUsersDTO = new PaginatedUsersDTO()
-                .content(new ArrayList<>())
-                .totalElements(0);
-
-        if (!usersEntity.isEmpty()) {
-            paginatedUsersDTO = userMapper.toPaginatedUsersDTO(usersEntity);
-        }
-        return ResponseEntity.ok(paginatedUsersDTO);
+    public ResponseEntity<List<UserDTO>> getUsers(String name) {
+        return ResponseEntity.ok(userService.getUsers(name));
     }
-
-    @Override
-    public ResponseEntity<UserDTO> getUser(String name) {
-        UserDTO userDTO = new UserDTO();
-        Optional<User> oUseEntity = userService.getUser(name);
-
-        if (oUseEntity.isPresent()) {
-            userDTO = userMapper.toUserDTO(oUseEntity.get());
-        }
-
-        return ResponseEntity.ok(userDTO);
-    }
-
-    @Override
-    public ResponseEntity<UserDTO> createUser(UserDTO userDTO) {
-        User userEntity = userMapper.toUser(userDTO);
-        userEntity = userService.addUser(userEntity);
-
-        UserDTO userDTOResponse = userMapper.toUserDTO(userEntity);
-        return ResponseEntity.ok(userDTOResponse);
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteUser(String name) {
-       userService.deleteUserLogical(name);
-       return ResponseEntity.ok().build();
-    }
-
 }

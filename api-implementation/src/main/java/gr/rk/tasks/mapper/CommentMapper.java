@@ -13,7 +13,12 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED, imports = { Util.class, UUID.class }, uses = { AttachmentMapper.class, UserMapper.class })
+@Mapper(
+        componentModel = "spring",
+        collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED,
+        imports = { Util.class, UUID.class },
+        uses = { AttachmentMapper.class}
+)
 public abstract class CommentMapper {
 
     @Autowired
@@ -27,7 +32,7 @@ public abstract class CommentMapper {
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUser")
+    @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "updatedAt")
     public abstract Comment toComment(CommentDTO commentDTO);
@@ -35,7 +40,7 @@ public abstract class CommentMapper {
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(comment.getCreatedAt()))")
     @Mapping(target = "updatedAt", expression = "java(Util.toDateISO8601WithTimeZone(comment.getUpdatedAt()))")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
+    @Mapping(target = "createdBy", source = "createdBy")
     public abstract CommentDTO toCommentDTO(Comment comment);
 
     protected abstract List<CommentDTO> toCommentsDTOList(Page<Comment> comments);

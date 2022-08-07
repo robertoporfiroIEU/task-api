@@ -667,254 +667,44 @@ paths:
       tags:
         - Groups
       operationId: getGroups
-      x-paginated-object:
-        - gr.rk.tasks.V1.dto.GroupDTO
       parameters:
-        - in: query
-          name: pageable
-          required: false
-          schema:
-            $ref: '#/components/schemas/Pageable'
         - in: query
           name: name
           required: false
           schema:
             type: string
-        - in: query
-          name: creationDateFrom
-          required: false
-          schema:
-            type: string
-            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
-        - in: query
-          name: creationDateTo
-          required: false
-          schema:
-            type: string
-            pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
       responses:
         "200":
-          description: Paginated groups.
+          description: groups.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedGroups'
+                items:
+                  type: string
         default:
           $ref: '#/components/responses/ErrorResponse'
-    post:
-      description: Creates a group
-      tags:
-        - Groups
-      operationId: createGroup
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Group'
-      responses:
-        "200":
-          description: A Group
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
-  /groups/{name}:
-    get:
-      description: Returns specific group
-      tags:
-        - Groups
-      operationId: getGroup
-      parameters:
-        - name: name
-          in: path
-          description: name of the Group
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: A Group
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    delete:
-      description: Deletes the group logical
-      tags:
-        - "Groups"
-      operationId: deleteGroup
-      parameters:
-        - name: name
-          in: path
-          description: name of the Group
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successfully logical delete.
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
-
-
-
-  /groups/{name}/users:
-    post:
-      description: Returns the specific group with the new user inside
-      tags:
-        - Groups
-      operationId: addUserToGroup
-      parameters:
-        - name: name
-          in: path
-          description: name of the Group
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        "200":
-          description: A Group with the User list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
-
-  /groups/{groupName}/users/{username}:
-    delete:
-      description: Delete the user from the group logical
-      tags:
-        - "Groups"
-      operationId: deleteUserFromGroup
-      parameters:
-        - name: groupName
-          in: path
-          description: name of the Group
-          required: true
-          schema:
-            type: string
-        - name: username
-          in: path
-          description: name of the User
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successfully logical delete.
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
 
   /users:
     get:
-      description: |
-        These are the users that exist in the API
       tags:
         - Users
       operationId: getUsers
       parameters:
         - in: query
-          name: pageable
-          required: false
-          schema:
-            $ref: '#/components/schemas/Pageable'
-        - in: query
           name: name
           required: false
           schema:
             type: string
-        - in: query
-          name: email
-          required: false
-          schema:
-            type: string
-            format: 'email'
       responses:
         "200":
           description: Paginated users.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedUsers'
+                items:
+                  $ref: '#/components/schemas/User'
         default:
           $ref: '#/components/responses/ErrorResponse'
-    post:
-      description: Create a new User
-      tags:
-        - Users
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        "200":
-          description: A User
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
-  /users/{name}:
-    get:
-      description: Return specific user
-      tags:
-        - Users
-      operationId: getUser
-      parameters:
-        - name: name
-          in: path
-          description: identifier of the user
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: A user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    delete:
-      description: Deletes the user logical
-      tags:
-        - "Users"
-      operationId: deleteUser
-      parameters:
-        - name: name
-          in: path
-          description: identifier of the user
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successfully logical delete.
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
 
 
   /applicationConfigurations:
@@ -1013,15 +803,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/Page'
 
-    PaginatedGroups:
-      type: object
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/Group'
-      allOf:
-        - $ref: '#/components/schemas/Page'
-
     PaginatedHistory:
       type: object
       properties:
@@ -1054,14 +835,6 @@ components:
         content:
           items:
             $ref: '#/components/schemas/Task'
-      allOf:
-        - $ref: '#/components/schemas/Page'
-
-    PaginatedUsers:
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/User'
       allOf:
         - $ref: '#/components/schemas/Page'
 
@@ -1098,7 +871,7 @@ components:
          example: "2021-01-30T08:30:00Z"
          readOnly: true
        createdBy:
-         $ref: '#/components/schemas/User'
+         type: string
        applicationUser:
          type: string
          description: This field is the applicationUser from the IDP
@@ -1181,7 +954,7 @@ components:
           example: "2021-01-30T08:30:00Z"
           readOnly: true
         createdBy:
-          $ref: '#/components/schemas/User'
+          type: string
         projectIdentifier:
           type: string
         applicationUser:
@@ -1221,7 +994,7 @@ components:
           description: This is the text of the comment
           type: string
         createdBy:
-          $ref: '#/components/schemas/User'
+          type: string
         attachments:
           description: These are the attachments of the comment
           items:
@@ -1248,9 +1021,9 @@ components:
           format: uuid
           readOnly: true
         group:
-          $ref: '#/components/schemas/Group'
+          type: string
         user:
-          $ref: '#/components/schemas/User'
+          type: string
         assignDate:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
@@ -1287,7 +1060,7 @@ components:
           description: This is the description of the attachment
           type: string
         createdBy:
-          $ref: '#/components/schemas/User'
+          type: string
         uploadedAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
@@ -1305,40 +1078,14 @@ components:
           format: uuid
           readOnly: true
         group:
-          $ref: '#/components/schemas/Group'
+          type: string
         user:
-          $ref: '#/components/schemas/User'
+          type: string
         createdAt:
           type: string
           pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
           example: "2021-01-30T08:30:00Z"
           readOnly: true
-
-    Group:
-      description: This is a group that a user belongs to
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        applicationUser:
-          type: string
-          description: This field is the applicationUser from the IDP
-          example: Application1
-          readOnly: true
-        createdAt:
-          type: string
-          pattern: '^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(([Zz])|([\+|\-]([01][0-9]|2[0-3]):[0-5][0-9]))$'
-          description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-          readOnly: true
-        users:
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/User'
 
     User:
       description: This is a user object
@@ -1352,9 +1099,8 @@ components:
           type: string
           format: email
         groups:
-          readOnly: true
           items:
-            $ref: "#/components/schemas/Group"
+            type: string
 
     History:
       description: This is the history object. This object describes the changes that happens to a specific object

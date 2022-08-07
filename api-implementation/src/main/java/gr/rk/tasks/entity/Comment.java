@@ -16,9 +16,8 @@ public class Comment implements AutomaticValuesGeneration, GenerateCreationAt, G
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "users_username")
-    private User createdBy;
+    @Column(name = "userName", nullable = false)
+    private String createdBy;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "tasks_id")
@@ -78,8 +77,8 @@ public class Comment implements AutomaticValuesGeneration, GenerateCreationAt, G
     public void setAttachments(Set<Attachment> attachments) {
         if (Objects.nonNull(attachments)) {
             attachments.forEach(a -> a.getComments().add(this));
+            this.attachments = attachments;
         }
-        this.attachments = attachments;
     }
 
     public String getText() {
@@ -90,11 +89,11 @@ public class Comment implements AutomaticValuesGeneration, GenerateCreationAt, G
         this.text = text;
     }
 
-    public User getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
