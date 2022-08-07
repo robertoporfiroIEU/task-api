@@ -114,7 +114,7 @@ public class TaskResource implements TasksApi {
     @Override
     public ResponseEntity<TaskDTO> createTask(TaskDTO taskDTO) {
         Task taskEntity = taskMapper.toTask(taskDTO);
-        taskEntity = taskService.createTask(taskEntity, taskDTO.getCreatedBy().getName(), taskDTO.getProjectIdentifier());
+        taskEntity = taskService.createTask(taskEntity, taskDTO.getCreatedBy(), taskDTO.getProjectIdentifier());
 
         // Get taskDTO with information that exists in the Task entity
         TaskDTO taskDTOResponse = taskMapper.toTaskDTO(taskEntity);
@@ -140,7 +140,7 @@ public class TaskResource implements TasksApi {
     @Override
     public ResponseEntity<CommentDTO> addTaskComment(String identifier, CommentDTO commentDTO) {
         Comment commentEntity = commentMapper.toComment(commentDTO);
-        commentEntity = taskService.addTaskComment(identifier, commentEntity, commentDTO.getCreatedBy().getName());
+        commentEntity = taskService.addTaskComment(identifier, commentEntity, commentDTO.getCreatedBy());
 
         // Get commentDTO with information that exists in the Comment entity
         CommentDTO commentDTOResponse = commentMapper.toCommentDTO(commentEntity);

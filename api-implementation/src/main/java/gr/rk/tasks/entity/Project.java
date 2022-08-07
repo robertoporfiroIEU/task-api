@@ -30,9 +30,8 @@ public class Project implements GenerateCreationAt, GenerateUpdateAt {
     @Column(nullable = false)
     private String applicationUser;
 
-    @ManyToOne()
-    @JoinColumn(name = "users_username", nullable = false)
-    private User createdBy;
+    @Column(name = "userName", nullable = false)
+    private String createdBy;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private Set<Task> tasks;
@@ -95,11 +94,11 @@ public class Project implements GenerateCreationAt, GenerateUpdateAt {
         this.applicationUser = applicationUser;
     }
 
-    public User getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

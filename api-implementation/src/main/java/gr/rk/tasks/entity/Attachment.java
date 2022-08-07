@@ -31,9 +31,8 @@ public class Attachment implements AutomaticValuesGeneration, GenerateCreationAt
 
     private LocalDateTime uploadedAt;
 
-    @OneToOne
-    @JoinColumn(name = "users_username", nullable = false)
-    private User createdBy;
+    @Column(name = "userName", nullable = false)
+    private String createdBy;
 
     @ManyToMany()
     @JoinTable(
@@ -106,11 +105,11 @@ public class Attachment implements AutomaticValuesGeneration, GenerateCreationAt
         this.uploadedAt = uploadedAt;
     }
 
-    public User getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class }, uses = { GroupMapper.class, UserMapper.class })
+@Mapper(componentModel = "spring", imports =  { Util.class, UUID.class })
 public abstract class SpectatorMapper {
 
     @Autowired
@@ -28,15 +28,15 @@ public abstract class SpectatorMapper {
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "task")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUser")
-    @Mapping(target = "group", source = "group", qualifiedByName = "toGroup")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "group", source = "group")
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     public abstract Spectator toSpectator(SpectatorDTO spectatorDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(spectator.getIdentifier()))")
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(spectator.getCreatedAt()))")
-    @Mapping(target = "user", source = "user", qualifiedByName = "toUserDTOWithoutGroup")
-    @Mapping(target = "group", source = "group", qualifiedByName = "groupDTOFromUser")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "group", source = "group")
     public abstract SpectatorDTO toSpectatorDTO(Spectator spectator);
 
     protected abstract List<SpectatorDTO> toSpectatorDTOList(Page<Spectator> spectators);

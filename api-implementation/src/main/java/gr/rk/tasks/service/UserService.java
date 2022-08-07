@@ -1,69 +1,46 @@
 package gr.rk.tasks.service;
 
-import gr.rk.tasks.entity.User;
-import gr.rk.tasks.exception.ApplicationException;
-import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.repository.UserRepository;
-import gr.rk.tasks.security.UserPrincipal;
+import gr.rk.tasks.V1.dto.UserDTO;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Value("${applicationConfigurations.keycloak.realm}")
+    private String realm;
 
-    private final UserPrincipal userPrincipal;
-
-    @Value("${applicationConfigurations.userService.pageMaxSize: 25}")
-    private int maxSize;
+    private Keycloak keycloak;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserPrincipal userPrincipal) {
-        this.userRepository = userRepository;
-        this.userPrincipal = userPrincipal;
+    public UserService(KeycloakService keycloakService) {
+        this.keycloak = keycloakService.getKeycloak();
     }
 
-    public Page<User> getUsers(Pageable pageable, String name, String email) {
-        Pageable page = pageable;
-
-        if (pageable.getPageSize() > maxSize) {
-            page = PageRequest.of(pageable.getPageNumber(), maxSize, pageable.getSort());
-        }
-
-        return userRepository.findUsersDynamicJPQL(page, name, email, userPrincipal.getClientName());
+    public boolean isUserExist(String name) {
+        List<UserDTO> users = getUsers(name);
+        return users.stream().filter(user -> user.getName().equals(name)).count() > 0;
     }
 
-    public Optional<User> getUser(String name) {
-        return userRepository.findByUsernameAndApplicationUserAndDeleted(name, userPrincipal.getClientName(), false);
-    }
+    public List<UserDTO> getUsers(String name) {
+        keycloak.tokenManager().getAccessToken();
 
-    public User addUser(User user) {
-        return userRepository.save(user);
-    }
+        RealmResource realmResource = keycloak.realm(realm);
+        UsersResource usersResource = realmResource.users();
 
-    @Transactional
-    public void deleteUser(String username) {
-        userRepository.deleteByUsername(username);
-    }
-
-    @Transactional
-    public void deleteUserLogical(String name) {
-        Optional<User> oUser = userRepository.findByUsernameAndApplicationUserAndDeleted(name, userPrincipal.getClientName(), false);
-
-        if (oUser.isEmpty()) {
-            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
-        }
-
-        User user = oUser.get();
-        user.setDeleted(true);
+        return usersResource.search(name).stream().map(userRepresentation ->
+            new UserDTO().name(userRepresentation.getUsername())
+                    .email(userRepresentation.getEmail())
+                    .groups(userRepresentation.getGroups())
+        ).collect(Collectors.toList());
     }
 
 }

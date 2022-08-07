@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper(
         componentModel = "spring",
         imports =  { Util.class },
-        uses = { UserMapper.class, ConfigurationMapper.class },
+        uses = { ConfigurationMapper.class },
         collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED
 )
 public abstract class ProjectMapper {
@@ -31,13 +31,13 @@ public abstract class ProjectMapper {
     }
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUser")
+    @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(ignore = true, target = "tasks")
     @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "deleted")
     public abstract Project toProject(ProjectDTO projectDTO);
 
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
+    @Mapping(target = "createdBy", source = "createdBy")
     @Mapping(target = "createdAt", expression = "java(Util.toDateISO8601WithTimeZone(project.getCreatedAt()))")
     @Mapping(target = "applicationUser", expression = "java(project.getApplicationUser())")
     public abstract ProjectDTO toProjectDTO(Project project);

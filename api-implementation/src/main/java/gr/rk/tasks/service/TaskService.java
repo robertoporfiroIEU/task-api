@@ -28,13 +28,13 @@ public class TaskService {
 
     private final SpectatorRepository spectatorRepository;
 
-    private final UserRepository userRepository;
-
-    private final GroupRepository groupRepository;
+    private final UserService userService;
 
     private final AttachmentRepository attachmentRepository;
 
     private final UserPrincipal userPrincipal;
+
+    private final GroupService groupService;
 
     @Value("${applicationConfigurations.taskService.pageMaxSize: 25}")
     private int maxSize;
@@ -46,28 +46,26 @@ public class TaskService {
             CommentRepository commentRepository,
             AssignRepository assignRepository,
             SpectatorRepository spectatorRepository,
-            UserRepository userRepository,
-            GroupRepository groupRepository,
             AttachmentRepository attachmentRepository,
-            UserPrincipal userPrincipal
+            UserPrincipal userPrincipal,
+            UserService userService,
+            GroupService groupService
     ) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.commentRepository = commentRepository;
         this.assignRepository = assignRepository;
         this.spectatorRepository = spectatorRepository;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
         this.attachmentRepository = attachmentRepository;
         this.userPrincipal = userPrincipal;
+        this.userService = userService;
+        this.groupService = groupService;
     }
 
     @Transactional
     public Task createTask(Task task, String createdBy, String projectIdentifier) {
         // validations
-        Optional<User> oUser = userRepository
-                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getClientName(), false);
-        if (oUser.isEmpty()) {
+        if (!userService.isUserExist(createdBy)) {
             throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
@@ -78,7 +76,7 @@ public class TaskService {
         }
 
         // happy path
-        task.setCreatedBy(oUser.get());
+        task.setCreatedBy(createdBy);
         task.setProject(oProject.get());
         return taskRepository.saveTask(task);
     }
@@ -113,15 +111,12 @@ public class TaskService {
     @Transactional
     public Comment addTaskComment(String taskIdentifier, Comment comment, String createdBy) {
         // validations
-        Optional<User> oUser = userRepository
-                .findByUsernameAndApplicationUserAndDeleted(createdBy, userPrincipal.getClientName(), false);
+        if (!userService.isUserExist(createdBy)) {
+            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
+        }
 
         if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !createdBy.equals(userPrincipal.getPropagatedUser())){
             throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
-        }
-
-        if (oUser.isEmpty()) {
-            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
         }
 
         Optional<Task> oTask = taskRepository
@@ -141,7 +136,7 @@ public class TaskService {
             throw new ApplicationException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
         }
 
-        comment.setCreatedBy(oUser.get());
+        comment.setCreatedBy(createdBy);
         comment.setAttachments(attachments);
         comment.setTask(oTask.get());
 
@@ -156,36 +151,7 @@ public class TaskService {
         }
 
         List<Assign> assigns = assignRepository
-                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page)
-                .stream()
-                // filter the assigns that have at least one non deleted element
-                .filter(a -> {
-                    if (Objects.nonNull(a.getUser()) && !a.getUser().isDeleted()) {
-                        return true;
-                    }
-
-                    if (Objects.nonNull(a.getGroup()) && !a.getGroup().isDeleted()) {
-                        return true;
-                    }
-
-                    return false;
-                })
-                // Remove deleted users and deleted groups
-                .map(a -> {
-                    if (Objects.nonNull(a.getUser())) {
-                        if (a.getUser().isDeleted()) {
-                            a.setUser(null);
-                        }
-                    }
-
-                    if (Objects.nonNull(a.getGroup())) {
-                        if (a.getGroup().isDeleted()) {
-                            a.setGroup(null);
-                        }
-                    }
-                    return a;
-                })
-                .collect(Collectors.toList());
+                .findAssignByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page).toList();
 
         return new PageImpl<>(assigns, pageable, assigns.size());
     }
@@ -208,37 +174,33 @@ public class TaskService {
         if (Objects.nonNull(assign.getUser())) {
             boolean sameAssign = task.getAssigns()
                     .stream()
-                    .anyMatch(a -> a.getUser().getUsername().equals(assign.getUser().getUsername()) && !a.isDeleted());
+                    .anyMatch(a -> a.getUser().equals(assign.getUser()) && !a.isDeleted());
 
             if (sameAssign) {
                 throw new ApplicationException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
             }
 
-            Optional<User> oUser = userRepository.findById(assign.getUser().getUsername());
-
-            if (oUser.isEmpty()) {
+            if (!userService.isUserExist((assign.getUser()))) {
                 throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
             }
 
-            assign.setUser(oUser.get());
+            assign.setUser(assign.getUser());
         }
 
         if (Objects.nonNull(assign.getGroup())) {
             boolean sameAssign = task.getAssigns()
                     .stream()
-                    .anyMatch(a -> a.getGroup().getName().equals(assign.getGroup().getName()) && !a.isDeleted());
+                    .anyMatch(a -> a.getGroup().equals(assign.getGroup()) && !a.isDeleted());
 
             if (sameAssign) {
                 throw new ApplicationException(I18nErrorMessage.ASSIGN_ALREADY_EXIST);
             }
 
-            Optional<Group> oGroup = groupRepository.findById(assign.getGroup().getName());
-
-            if (oGroup.isEmpty()) {
+            if (!groupService.isGroupExist(assign.getGroup())) {
                 throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
             }
 
-            assign.setGroup(oGroup.get());
+            assign.setGroup(assign.getGroup());
         }
 
         // happy path
@@ -262,22 +224,21 @@ public class TaskService {
         Task task = oTask.get();
 
         if (Objects.nonNull(spectator.getUser())) {
-            boolean sameSpectator = task.getAssigns()
+            boolean sameSpectator = task.getSpectators()
                     .stream()
-                    .anyMatch(s -> s.getUser().getUsername().equals(spectator.getUser().getUsername()) && !s.isDeleted());
+                    .anyMatch(s -> s.getUser().equals(spectator.getUser()));
 
             if (sameSpectator) {
                 throw new ApplicationException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
             }
 
             if (Objects.nonNull(spectator.getUser())) {
-                Optional<User> oUser = userRepository.findById(spectator.getUser().getUsername());
 
-                if (oUser.isEmpty()) {
+                if (!userService.isUserExist(spectator.getUser())) {
                     throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
                 }
 
-                spectator.setUser(oUser.get());
+                spectator.setUser(spectator.getUser());
             }
         }
 
@@ -285,19 +246,17 @@ public class TaskService {
 
             boolean sameSpectator = task.getAssigns()
                     .stream()
-                    .anyMatch(s -> s.getGroup().getName().equals(spectator.getGroup().getName()) && !s.isDeleted());
+                    .anyMatch(s -> s.getGroup().equals(spectator.getGroup()));
 
             if (sameSpectator) {
                 throw new ApplicationException(I18nErrorMessage.SPECTATOR_ALREADY_EXIST);
             }
 
-            Optional<Group> oGroup = groupRepository.findById(spectator.getGroup().getName());
-
-            if (oGroup.isEmpty()) {
+            if (!groupService.isGroupExist(spectator.getGroup())) {
                 throw new ApplicationException(I18nErrorMessage.GROUP_NOT_FOUND);
             }
 
-            spectator.setGroup(oGroup.get());
+            spectator.setGroup(spectator.getGroup());
         }
 
         // happy path
@@ -314,36 +273,7 @@ public class TaskService {
         }
 
         List<Spectator> spectators = spectatorRepository
-                .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page)
-                .stream()
-                // filter the assigns that have at least one non deleted element
-                .filter(s -> {
-                    if (Objects.nonNull(s.getUser()) && !s.getUser().isDeleted()) {
-                        return true;
-                    }
-
-                    if (Objects.nonNull(s.getGroup()) && !s.getGroup().isDeleted()) {
-                        return true;
-                    }
-
-                    return false;
-                })
-                // Remove deleted users and deleted groups
-                .map(s -> {
-                    if (Objects.nonNull(s.getUser())) {
-                        if (s.getUser().isDeleted()) {
-                            s.setUser(null);
-                        }
-                    }
-
-                    if (Objects.nonNull(s.getGroup())) {
-                        if (s.getGroup().isDeleted()) {
-                            s.setGroup(null);
-                        }
-                    }
-                    return s;
-                })
-                .collect(Collectors.toList());
+                .findSpectatorByTaskIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false, page).toList();
 
         return new PageImpl<>(spectators, pageable, spectators.size());
     }
@@ -378,7 +308,7 @@ public class TaskService {
         }
 
         Comment comment = oComment.get();
-        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !comment.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
+        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !comment.getCreatedBy().equals(userPrincipal.getPropagatedUser())){
             throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
         }
 
@@ -484,7 +414,7 @@ public class TaskService {
         }
 
         Comment commentEntity = oComment.get();
-        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !commentEntity.getCreatedBy().getUsername().equals(userPrincipal.getPropagatedUser())){
+        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !commentEntity.getCreatedBy().equals(userPrincipal.getPropagatedUser())){
             throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
         }
 

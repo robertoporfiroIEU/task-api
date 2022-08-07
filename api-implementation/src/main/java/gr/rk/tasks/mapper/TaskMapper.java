@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = { Util.class }, uses = { UserMapper.class, AssignMapper.class, SpectatorMapper.class })
+@Mapper(componentModel = "spring", imports = { Util.class }, uses = { AssignMapper.class, SpectatorMapper.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -42,7 +42,7 @@ public abstract class TaskMapper {
     @Mapping(target = "applicationUser", expression = "java(task.getApplicationUser())")
     @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getIdentifier())")
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "toUserDTO")
+    @Mapping(target = "createdBy", source = "createdBy")
     public abstract TaskDTO toTaskDTO(Task task);
 
     protected abstract List<TaskDTO> toTasksDTOList(Page<Task> tasks);

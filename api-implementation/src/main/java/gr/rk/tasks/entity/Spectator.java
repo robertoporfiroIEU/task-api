@@ -17,17 +17,15 @@ public class Spectator implements AutomaticValuesGeneration, GenerateCreationAt 
     @Column(unique = true)
     private String identifier;
 
-    @ManyToOne
-    @JoinColumn(name = "groups_name")
-    private Group group;
+    @Column(name = "groupName")
+    private String group;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "tasks_id")
     private Task task;
 
-    @ManyToOne
-    @JoinColumn(name = "users_username")
-    private User user;
+    @Column(name = "userName")
+    private String user;
 
     private LocalDateTime createdAt;
 
@@ -53,19 +51,19 @@ public class Spectator implements AutomaticValuesGeneration, GenerateCreationAt 
         return identifier;
     }
 
-    public Group getGroup() {
+    public String getGroup() {
         return group;
     }
 
-    public void setGroup(Group group) {
+    public void setGroup(String group) {
         this.group = group;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

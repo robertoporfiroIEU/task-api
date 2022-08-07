@@ -17,6 +17,7 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://rktasks:9090/realms/tasks-api/protocol/openid-connect/certs
+
 logging:
   level:
     org:
@@ -27,15 +28,16 @@ logging:
             sql: trace
 
 applicationConfigurations:
+  keycloak:
+    authServerUrl: http://rktasks:9090
+    realm: tasks-api
+    clientId: rest-client-tasks-api
+    clientSecret: kxYukJZHZyrzfyJkEwrVuGWpRNSKSRWs
   addTestData: false
   deleteTestData: false
   projectService:
     pageMaxSize: 25
   taskService:
-    pageMaxSize: 25
-  groupService:
-    pageMaxSize: 25
-  userService:
     pageMaxSize: 25
   Default:
     pageMaxSize: 25
