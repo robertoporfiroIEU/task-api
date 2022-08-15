@@ -1,6 +1,6 @@
-<app-create-task-ui *ngIf="userProfile"
+<app-create-task-ui *ngIf="userPrincipal"
     [configurations]="configurations"
-    [userProfile]="userProfile"
+    [userPrincipal]="userPrincipal"
     [autoCompleteUsersData]="autoCompleteUsersData"
     [autoCompleteGroupsData]="autoCompleteGroupsData"
     (onAutocompleteUsersAssign)="getAutoCompleteUsersAssign($event)"

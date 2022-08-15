@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CreateTaskPresenter } from './create-task.presenter';
 import { FormGroup } from '@angular/forms';
-import { DropDown, Type } from '../shared/ModelsForUI';
+import { DropDown, Type, UserPrincipal } from '../shared/ModelsForUI';
 import { Utils } from '../shared/Utils';
 import { User, Task, ApplicationConfiguration } from '../api';
 import { Subject, takeUntil } from 'rxjs';
+import { Message } from 'primeng/api';
 
 @Component({
     selector: 'app-create-task-ui',
@@ -15,7 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class CreateTaskComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
-    @Input() userProfile: User | null = null
+    @Input() userPrincipal: UserPrincipal | null = null
     @Input() autoCompleteUsersData: string[] = [];
     @Input() autoCompleteGroupsData: string[] = [];
     @Input() configurations: ApplicationConfiguration[] | undefined = undefined;
@@ -28,6 +29,14 @@ export class CreateTaskComponent implements OnInit {
         return this.createTaskPresenter.taskForm;
     }
 
+    get projectIdentifierIsMandatoryMessages(): Message[] {
+        return this.createTaskPresenter.projectIdentifierIsMandatoryMessages;
+    }
+
+    set projectIdentifierIsMandatoryMessages(messages: Message[]) {
+        this.createTaskPresenter.projectIdentifierIsMandatoryMessages = messages;
+    }
+
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
     TYPE = Type;
@@ -35,7 +44,7 @@ export class CreateTaskComponent implements OnInit {
     constructor(private createTaskPresenter: CreateTaskPresenter) {}
 
     ngOnInit(): void {
-        this.createTaskPresenter.init(this.userProfile);
+        this.createTaskPresenter.init(this.userPrincipal!);
 
         this.createTaskPresenter.onCreateTask$.pipe(
             takeUntil(this.destroy)

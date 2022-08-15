@@ -1,24 +1,29 @@
 import { Injectable } from '@angular/core';
-import { User } from './api';
 import { Observable, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { UserPrincipal } from './shared/ModelsForUI';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserProfileService {
 
-    userProfileSubject = new ReplaySubject<User>(1);
-    userProfile$: Observable<User> = this.userProfileSubject.asObservable();
+    userProfileSubject = new ReplaySubject<UserPrincipal>(1);
+    userProfile$: Observable<UserPrincipal> = this.userProfileSubject.asObservable();
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient, private translationService: TranslateService) {}
 
     init(): void {
-        this.getUser().subscribe(user => this.userProfileSubject.next(user));
+        this.getUser().subscribe(user => {
+            let language = this.translationService.currentLang;
+            user.language = language;
+            this.userProfileSubject.next(user);
+        });
     }
 
-    getUser(): Observable<User> {
-        return this.httpClient.get<User>(environment.api.userDetails);
+    getUser(): Observable<UserPrincipal> {
+        return this.httpClient.get<UserPrincipal>(environment.api.userDetails);
     }
 }

@@ -1,10 +1,11 @@
 import { ElementRef, Injectable, OnDestroy } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Subject } from 'rxjs';
-import { Comment, Pageable, PaginatedComments, User } from '../../api';
+import { Comment, Pageable, PaginatedComments } from '../../api';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { EditorModel } from '../ModelsForUI';
+import { EditorModel, UserPrincipal } from '../ModelsForUI';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable()
 export class CommentsPresenter implements OnDestroy {
@@ -27,23 +28,23 @@ export class CommentsPresenter implements OnDestroy {
     onChangePage$ = this.changePageSubject.asObservable();
 
     comments: PaginatedComments | null = null;
-    user!: User;
+    userPrincipal!: UserPrincipal;
 
     constructor(
         private clipboard: Clipboard,
         private confirmationService: ConfirmationService,
-        private translateService: TranslateService
+        private translateService: TranslateService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
     ) {}
 
-    init(comments: PaginatedComments, user: User) {
-        this.user = user;
+    init(comments: PaginatedComments) {
         this.comments = comments;
     }
 
     addNewComment(editorModel: EditorModel): void {
         this.addNewCommentSubject.next({
             text: editorModel.text,
-            createdBy: this.user,
             attachments: editorModel.attachments
         });
     }
@@ -65,7 +66,7 @@ export class CommentsPresenter implements OnDestroy {
         let commentURL = this.getCommentURL(comment.identifier!);
         let commentedByLabel = this.translateService.instant('taskUI.comment-commented-by');
         let commentUrlLabel = this.translateService.instant('taskUI.comment-url-comment');
-        text += `<p>${commentedByLabel} ${comment.createdBy.name} <a href="${commentURL}"> ${commentUrlLabel}</a></p>`;
+        text += `<p>${commentedByLabel} ${comment.createdBy} <a href="${commentURL}"> ${commentUrlLabel}</a></p>`;
         div.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         this.replyTextSubject.next(text);
     }
@@ -92,9 +93,18 @@ export class CommentsPresenter implements OnDestroy {
             }
         }
 
+        this.router.navigate(
+            [],
+            {
+                relativeTo: this.activatedRoute,
+                queryParams: { page: page + 1 },
+                queryParamsHandling: 'merge'
+            });
+
         this.changePageSubject.next({
             page: page,
-            size: size
+            size: size,
+            sort: 'createdAt,desc'
         });
     }
 

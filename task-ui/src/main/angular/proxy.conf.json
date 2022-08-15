@@ -7,5 +7,10 @@
     "/auth": {
         "target": "http://rktasks",
         "secure": false
+    },
+
+    "/login": {
+        "target": "http://rktasks",
+        "secure": false
     }
 }

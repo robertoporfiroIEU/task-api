@@ -33,8 +33,10 @@ public abstract class CommentMapper {
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "createdBy", source = "createdBy")
-    @Mapping(ignore = true, target = "identifier")
+    @Mapping(target = "identifier", source = "identifier")
     @Mapping(ignore = true, target = "updatedAt")
+    @Mapping(ignore = true, target = "deleted")
+    @Mapping(ignore = true, target = "task")
     public abstract Comment toComment(CommentDTO commentDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(comment.getIdentifier()))")

@@ -28,7 +28,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
             "priority", "priority",
             "createdAt", "createdAt",
             "dueDate", "dueDate",
-            "createdBy", "createdBy.username"
+            "createdBy", "createdBy"
     );
 
     @PersistenceContext
@@ -80,14 +80,14 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
         if (Objects.nonNull(taskCriteriaDTO.getAssignedTo())) {
             joinPart = " join " + entityVariableWithDot + "assigns a ";
-            filters.add("(a.user.username like :assignedTo OR a.group.name like :assignedTo)");
+            filters.add("(a.user like :assignedTo OR a.group like :assignedTo)");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo","%" + taskCriteriaDTO.getAssignedTo() + "%")));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("assignedTo", "%" + taskCriteriaDTO.getAssignedTo() + "%")));
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getSpectator())) {
             joinPart = " join " + entityVariableWithDot + "spectators s ";
-            filters.add("s.user.username like :spectator OR s.group.name like :spectator");
+            filters.add("s.user.username like :spectator OR s.group like :spectator");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator","%" + taskCriteriaDTO.getSpectator() + "%")));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator", "%" + taskCriteriaDTO.getSpectator() + "%")));
         }
@@ -123,7 +123,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         }
 
         if (Objects.nonNull(taskCriteriaDTO.getCreatedBy())) {
-            filters.add(entityVariableWithDot + "createdBy.username like :createdBy");
+            filters.add(entityVariableWithDot + "createdBy like :createdBy");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("createdBy", "%" + taskCriteriaDTO.getCreatedBy() + "%")));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("createdBy", "%" + taskCriteriaDTO.getCreatedBy() + "%")));
         }

@@ -63,20 +63,17 @@ public class TaskService {
     }
 
     @Transactional
-    public Task createTask(Task task, String createdBy, String projectIdentifier) {
-        // validations
-        if (!userService.isUserExist(createdBy)) {
-            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
-        }
+    public Task createTask(Task task, String projectIdentifier) {
 
         Optional<Project> oProject = projectRepository
                 .findProjectByIdentifierAndApplicationUserAndDeleted(projectIdentifier, userPrincipal.getClientName(), false);
+
         if (oProject.isEmpty()) {
             throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
         }
 
         // happy path
-        task.setCreatedBy(createdBy);
+        task.setCreatedBy(userPrincipal.getPropagatedUser());
         task.setProject(oProject.get());
         return taskRepository.saveTask(task);
     }
@@ -109,16 +106,7 @@ public class TaskService {
     }
 
     @Transactional
-    public Comment addTaskComment(String taskIdentifier, Comment comment, String createdBy) {
-        // validations
-        if (!userService.isUserExist(createdBy)) {
-            throw new ApplicationException(I18nErrorMessage.USER_NOT_FOUND);
-        }
-
-        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !createdBy.equals(userPrincipal.getPropagatedUser())){
-            throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
-        }
-
+    public Comment addTaskComment(String taskIdentifier, Comment comment) {
         Optional<Task> oTask = taskRepository
                 .findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
@@ -136,7 +124,7 @@ public class TaskService {
             throw new ApplicationException(I18nErrorMessage.ATTACHMENT_NOT_FOUND);
         }
 
-        comment.setCreatedBy(createdBy);
+        comment.setCreatedBy(userPrincipal.getPropagatedUser());
         comment.setAttachments(attachments);
         comment.setTask(oTask.get());
 
@@ -355,50 +343,29 @@ public class TaskService {
         spectator.setDeleted(true);
     }
 
-    public Task updateTask(String identifier, Task task) {
+    public Task updateTask(Task task) {
         Optional<Task> oTask = taskRepository.
-                findTaskByIdentifierAndApplicationUserAndDeleted(identifier, userPrincipal.getClientName(), false);
+                findTaskByIdentifierAndApplicationUserAndDeleted(task.getIdentifier(), userPrincipal.getClientName(), false);
 
         if (oTask.isEmpty()) {
-            throw new ApplicationException(I18nErrorMessage.PROJECT_NOT_FOUND);
+            throw new ApplicationException(I18nErrorMessage.TASK_NOT_FOUND);
         }
 
         Task taskEntity = oTask.get();
-        if (Objects.nonNull(task.getName())) {
-            taskEntity.setName(task.getName());
-        }
-
-        if (Objects.nonNull(task.getStatus())) {
-            taskEntity.setStatus(task.getStatus());
-        }
-
-        if (Objects.nonNull(task.getPriority())) {
-            taskEntity.setPriority(task.getPriority());
-        }
-
-        if (Objects.nonNull(task.getDescription())) {
-            taskEntity.setDescription(task.getDescription());
-        }
-
-        if (Objects.nonNull(task.getAssigns())) {
-            taskEntity.setAssigns(task.getAssigns());
-        }
-
-        if (Objects.nonNull(task.getSpectators())) {
-            taskEntity.setSpectators(task.getSpectators());
-        }
-
-        if (Objects.nonNull(task.getDueDate())) {
-            taskEntity.setDueDate(task.getDueDate());
-        } else if (Objects.isNull(task.getDueDate()) && Objects.nonNull(taskEntity.getDueDate())) {
-            taskEntity.setDueDate(task.getDueDate());
-        }
+        taskEntity.setName(task.getName());
+        taskEntity.setStatus(task.getStatus());
+        taskEntity.setPriority(task.getPriority());
+        taskEntity.setDescription(task.getDescription());
+        taskEntity.setAssigns(task.getAssigns());
+        taskEntity.setSpectators(task.getSpectators());
+        taskEntity.setDueDate(task.getDueDate());
+        taskEntity.setDueDate(task.getDueDate());
 
         return taskRepository.save(taskEntity);
     }
 
     @Transactional
-    public Comment updateComment(String taskIdentifier, String commentIdentifier, Comment comment) {
+    public Comment updateComment(String taskIdentifier, Comment comment) {
         Optional<Task> oTask = taskRepository.
                 findTaskByIdentifierAndApplicationUserAndDeleted(taskIdentifier, userPrincipal.getClientName(), false);
 
@@ -407,16 +374,13 @@ public class TaskService {
         }
 
         Optional<Comment> oComment = commentRepository.
-                findCommentByIdentifierAndApplicationUserAndDeleted(commentIdentifier, userPrincipal.getClientName(), false);
+                findCommentByIdentifierAndApplicationUserAndDeleted(comment.getIdentifier(), userPrincipal.getClientName(), false);
 
         if (oComment.isEmpty()) {
             throw new ApplicationException(I18nErrorMessage.COMMENT_NOT_FOUND);
         }
 
         Comment commentEntity = oComment.get();
-        if (Objects.nonNull(userPrincipal.getPropagatedUser()) && !commentEntity.getCreatedBy().equals(userPrincipal.getPropagatedUser())){
-            throw new ApplicationException(I18nErrorMessage.PROPAGATED_USER_IS_NOT_SAME);
-        }
 
         commentEntity.setText(comment.getText());
 

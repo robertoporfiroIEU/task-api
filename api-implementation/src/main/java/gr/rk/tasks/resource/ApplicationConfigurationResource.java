@@ -7,6 +7,7 @@ import gr.rk.tasks.mapper.ConfigurationMapper;
 import gr.rk.tasks.service.ApplicationConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ApplicationConfigurationResource implements ApplicationConfiguratio
 
 
     @Override
+    @Secured("ROLE_READ_PROJECT")
     public ResponseEntity<List<ApplicationConfigurationDTO>> getApplicationConfigurations() {
         Set<Configuration> configurations = applicationConfigurationService.getApplicationConfigurations();
         return ResponseEntity.ok(new ArrayList<>(this.configurationMapper.toApplicationConfigurationDTOSet(configurations)));

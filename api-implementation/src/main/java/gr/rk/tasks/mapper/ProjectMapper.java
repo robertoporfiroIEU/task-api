@@ -32,8 +32,8 @@ public abstract class ProjectMapper {
 
     @Mapping(target = "applicationUser", expression = "java(userPrincipal.getClientName())")
     @Mapping(target = "createdBy", source = "createdBy")
+    @Mapping(target = "identifier", source = "identifier")
     @Mapping(ignore = true, target = "tasks")
-    @Mapping(ignore = true, target = "identifier")
     @Mapping(ignore = true, target = "deleted")
     public abstract Project toProject(ProjectDTO projectDTO);
 

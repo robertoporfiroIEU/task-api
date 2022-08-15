@@ -1,59 +1,52 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { UserProfileService } from './user-profile.service';
-import { Group, User, UsersService } from './api';
+import { UserPrincipal } from './shared/ModelsForUI';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    userProfile: User | null = null;
+    private userPrincipal: UserPrincipal | null = null;
+    private successSubject = new Subject<void>();
+    onSuccess$ = this.successSubject.asObservable();
 
-    constructor(private userProfileService: UserProfileService, private usersService: UsersService) {}
+    constructor(private userProfileService: UserProfileService, private httpClient: HttpClient) {}
 
     init(): void {
-        this.userProfileService
-            .userProfile$
-            .pipe(
-                switchMap(user => {
-                    this.userProfile = user;
-                    /*
-                       If the user logs in for the first time, then we need to register the current user into the API
-                    */
-                    let userNameFromLocalStorage = localStorage.getItem('user');
-                    if ( userNameFromLocalStorage &&  userNameFromLocalStorage === user.name) {
-                        return of(user);
-                    }
-                    return this.usersService.createUser(user);
-                })
-            )
-            .subscribe(user => {
-                localStorage.setItem('user', user.name);
-            });
+        this.userProfileService.userProfile$.subscribe(userPrincipal => this.userPrincipal = userPrincipal);
+        this.getCsrfToken();
     }
 
     rolesAllowed(rolesAllowed: string[]): Observable<boolean> {
         return this.userProfileService.userProfile$.pipe(
             map( user => {
-                if (!user?.groups?.length) {
+                if (!user?.roles?.length) {
                     return false;
                 }
-                return rolesAllowed.some(r => user?.groups?.map(g => g.name).includes(r))
+                return rolesAllowed.some(r => user?.roles?.includes(r))
             })
         )
     }
 
     isUserRoleInRoles(rolesAllowed: string[]): boolean {
-        if (!this.userProfile) {
+        if (!this.userPrincipal) {
             return false;
         }
 
-        if (!this.userProfile?.groups?.length) {
+        if (!this.userPrincipal?.roles?.length) {
             return false;
         }
 
-        return rolesAllowed.some(r => this.userProfile?.groups?.map((g: Group )=> g.name).includes(r))
+        return rolesAllowed.some(r => this.userPrincipal?.roles?.includes(r))
     }
 
+    getCsrfToken(): void {
+        this.httpClient.get(environment.api.csrf, {
+            responseType: 'text'
+        }).subscribe();
+    }
 }

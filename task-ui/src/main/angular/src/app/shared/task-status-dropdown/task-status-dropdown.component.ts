@@ -36,11 +36,11 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     ngOnChanges() {}
 
     ngOnInit(): void {
-        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations.filter(
+        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations?.filter(
             c => c.configurationName === 'status'
         );
 
-        statusesFromConfigurations.forEach(a => this.statuses.push(
+        statusesFromConfigurations?.forEach(a => this.statuses.push(
             {
                 label: this.translateService.instant(a.configurationLabel!),
                 value: a.configurationValue

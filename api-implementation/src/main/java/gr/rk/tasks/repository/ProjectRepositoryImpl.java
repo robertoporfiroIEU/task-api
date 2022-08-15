@@ -25,7 +25,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
             "identifier", "identifier",
             "name", "name",
             "createdAt", "createdAt",
-            "createdBy", "createdBy.username"
+            "createdBy", "createdBy"
     );
 
     @PersistenceContext
@@ -87,7 +87,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         }
 
         if (Objects.nonNull(projectCriteriaDTO.getCreatedBy())) {
-            filters.add(entityVariableWithDot + "createdBy.username like :createdBy");
+            filters.add(entityVariableWithDot + "createdBy like :createdBy");
             projectsTypedQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("createdBy", "%" + projectCriteriaDTO.getCreatedBy() + "%")));
             totalResultsQueryParamBinders.add((projectTypedQuery -> projectTypedQuery.setParameter("createdBy", "%" + projectCriteriaDTO.getCreatedBy() + "%")));
         }

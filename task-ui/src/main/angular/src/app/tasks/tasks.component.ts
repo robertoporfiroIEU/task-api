@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, of, Subject, takeUntil } from 'rxjs';
-import { ApplicationConfiguration, PaginatedTasks, Project, Task } from '../api';
+import { ApplicationConfiguration, PaginatedTasks } from '../api';
 import { TasksParams } from './TasksParams';
 import { TasksPresenter } from './tasks.presenter';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
@@ -67,14 +67,6 @@ export class TasksComponent implements OnInit {
 
     clearFilters(): void {
         this.tasksPresenter.clearFilters();
-    }
-
-    flatAssigns(task: Task): string[] {
-        return Utils.flatAssignsOrSpectators(task?.assigns!);
-    }
-
-    flatSpectators(task: Task): string[] {
-        return Utils.flatAssignsOrSpectators(task?.spectators!);
     }
 
     createTaskOpenPage(): void {

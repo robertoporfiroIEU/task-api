@@ -89,6 +89,26 @@ paths:
                 $ref: '#/components/schemas/Project'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    put:
+      description: Updates specific project
+      tags:
+        - "Projects"
+      operationId: updateProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        "200":
+          description: A Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /projects/{identifier}:
@@ -104,33 +124,6 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        "200":
-          description: A Project
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    put:
-      description: Updates specific project
-      tags:
-        - "Projects"
-      operationId: updateProject
-      parameters:
-        - name: identifier
-          in: path
-          description: identifier of the Project
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Project'
       responses:
         "200":
           description: A Project
@@ -264,7 +257,26 @@ paths:
                 $ref: '#/components/schemas/Task'
         default:
           $ref: '#/components/responses/ErrorResponse'
-
+    put:
+      description: Updates specific task
+      tags:
+        - "Tasks"
+      operationId: updateTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "200":
+          description: A Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /tasks/{identifier}:
@@ -283,33 +295,6 @@ paths:
       responses:
         "200":
           description: A Task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    put:
-      description: Updates specific task
-      tags:
-        - "Tasks"
-      operationId: updateTask
-      parameters:
-        - name: identifier
-          in: path
-          description: identifier of the Task
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Task'
-      responses:
-        "200":
-          description: A Project
           content:
             application/json:
               schema:
@@ -389,6 +374,33 @@ paths:
                 $ref: '#/components/schemas/Comment'
         default:
           $ref: '#/components/responses/ErrorResponse'
+    put:
+      description: Update a comment
+      tags:
+        - "Tasks"
+      operationId: updateComment
+      parameters:
+        - name: identifier
+          in: path
+          description: identifier of the Task
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        "200":
+          description: An updated comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 
   /tasks/{taskIdentifier}/comments/{commentIdentifier}:
@@ -413,39 +425,6 @@ paths:
       responses:
         "200":
           description: Successfully logical delete.
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    put:
-      description: Update a comment
-      tags:
-        - "Tasks"
-      operationId: updateComment
-      parameters:
-        - name: taskIdentifier
-          in: path
-          description: identifier of the Task
-          required: true
-          schema:
-            type: string
-        - name: commentIdentifier
-          in: path
-          description: identifier of the Comment
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Comment'
-      responses:
-        "200":
-          description: An updated comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Comment'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -697,7 +676,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Paginated users.
+          description: Users
           content:
             application/json:
               schema:
@@ -849,12 +828,10 @@ components:
      type: object
      required:
        - name
-       - createdBy
      properties:
        identifier:
          type: string
          description: Returned by GET, not used in POST/PUT/PATCH
-         readOnly: true
        name:
          description: This is the name of the project
          type: string
@@ -872,6 +849,7 @@ components:
          readOnly: true
        createdBy:
          type: string
+         readOnly: true
        applicationUser:
          type: string
          description: This field is the applicationUser from the IDP
@@ -926,12 +904,10 @@ components:
       type: object
       required:
         - name
-        - createdBy
       properties:
         identifier:
           type: string
           description: Returned by GET, not used in POST/PUT/PATCH
-          readOnly: true
         name:
           description: This is the name of the task
           type: string
@@ -975,21 +951,21 @@ components:
         assigns:
           items:
             $ref: '#/components/schemas/Assign'
+          maxItems: 10
         spectators:
           items:
             $ref: '#/components/schemas/Spectator'
+          maxItems: 10
 
     Comment:
       description: This is a comment object that belongs to a Task
       type: object
       required:
         - text
-        - createdBy
       properties:
         identifier:
           type: string
           format: uuid
-          readOnly: true
         text:
           description: This is the text of the comment
           type: string

@@ -5,7 +5,7 @@
         [editorText$]="replyText$"
         [leaveComment]="true"
         placeholder="{{'taskUI.comment-leave-comment' | translate}}"
-        [user]="user"
+        [user]="userPrincipal"
         [readOnly]="true"
         [onSaveSuccessCancelEditor$]="addNewCommentSuccess$"
         (onSaveClick)="addNewComment($event)"
@@ -19,10 +19,10 @@
             <div class="mb-1 mb-sm-0 m-0 mt-sm-1">
                 <p-avatar
                     shape="circle"
-                    label="{{comment.createdBy.name.toUpperCase() | shortText:1}}"
-                    [style]="{'background-color':comment.createdBy.name.toUpperCase() | stringToColor, 'color': '#ffffff'}"
+                    label="{{comment.createdBy.toUpperCase() | shortText:1}}"
+                    [style]="{'background-color':comment.createdBy.toUpperCase() | stringToColor, 'color': '#ffffff'}"
                     size="large"></p-avatar>
-                <span class="ms-2 fw-bold">{{comment?.createdBy.name}}</span>
+                <span class="ms-2 fw-bold">{{comment?.createdBy}}</span>
             </div>
         </div>
         <div class="col-sm-11">
@@ -30,9 +30,9 @@
                 #editor
                 [identifier]="comment?.identifier"
                 placeholder="{{'taskUI.comment-leave-comment' | translate}}"
-                [user]="user"
+                [user]="userPrincipal"
                 [readOnly]="true"
-                [canEditTheContent]="comment?.createdBy.name === this.user?.name"
+                [canEditTheContent]="comment?.createdBy === this.userPrincipal?.name"
                 [editorText]="comment.text"
                 [attachments]="comment.attachments"
                 (onSaveClick)="updateComment($event, comment)"
@@ -52,22 +52,21 @@
                     </small>
                 </div>
                 <div class="float-end">
-                    <button *ngIf="!isEditable"
-                            pTooltip="{{'taskUI.task-details-share-comment-tooltip' | translate}}"
+                    <button pTooltip="{{'taskUI.task-details-share-comment-tooltip' | translate}}"
                             tooltipPosition="top"
                             type="button"
                             (click)="copyCommentURLToClipboard(comment?.identifier)"
                             class="ms-1 btn"><i class="pi pi-link"></i>
                     </button>
-                    <ng-container *ngIf="!isEditable && comment?.createdBy.name === user?.name">
-                        <button
-                            pTooltip="{{'taskUI.task-details-reply-comment-tooltip' | translate}}"
-                            tooltipPosition="top"
-                            type="button"
-                            (click)="replyToTheComment(comment)"
-                            class="btn">
-                            <i class="pi pi-reply"></i>
-                        </button>
+                    <button *ngIf="canUSerLeaveAComment()"
+                        pTooltip="{{'taskUI.task-details-reply-comment-tooltip' | translate}}"
+                        tooltipPosition="top"
+                        type="button"
+                        (click)="replyToTheComment(comment)"
+                        class="btn">
+                        <i class="pi pi-reply"></i>
+                    </button>
+                    <ng-container *ngIf="comment?.createdBy === userPrincipal?.name">
                         <button
                             type="button"
                             (click)="deleteClick(comment)"

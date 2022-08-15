@@ -43,7 +43,7 @@ export class ProjectsPresenter {
     projectsFormCriteria: FormGroup = new FormGroup({
         identifier: new FormControl(null),
         name: new FormControl(null),
-        creationDateFromTo: new FormControl(null),
+        creationDateFromTo: new FormControl(new Date()),
         createdBy: new FormControl(null)
     })
 

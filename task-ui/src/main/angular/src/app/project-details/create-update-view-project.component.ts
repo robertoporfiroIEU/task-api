@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateUpdateViewProjectPresenter } from './create-update-view-project.presenter';
 import { FormGroup } from '@angular/forms';
-import { Project, User } from '../api';
+import { Project } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 import { Actions } from './Actions';
 import { Utils } from '../shared/Utils';
@@ -18,7 +18,6 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
 
     private destroy: Subject<void>  = new Subject();
     @Input() action: Actions = Actions.VIEW;
-    @Input() userProfile: User | null = null;
     @Input() project: Project | null = null;
     @Output() onSubmit = new EventEmitter<Project>();
 
@@ -40,7 +39,7 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
     }
 
     submit(): void {
-        this.createProjectPresenter.submit(this.userProfile);
+        this.createProjectPresenter.submit();
     }
 
     canUserEditTheProject(): boolean {

@@ -38,11 +38,11 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
     ngOnChanges() {}
 
     ngOnInit(): void {
-        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations.filter(
+        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations?.filter(
             c => c.configurationName === 'priority'
         );
 
-        statusesFromConfigurations.forEach(a => this.priorities.push(
+        statusesFromConfigurations?.forEach(a => this.priorities.push(
             {
                 label: this.translateService.instant(a.configurationLabel!),
                 value: a.configurationValue

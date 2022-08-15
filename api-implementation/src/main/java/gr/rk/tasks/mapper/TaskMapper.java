@@ -5,6 +5,7 @@ import gr.rk.tasks.V1.dto.TaskDTO;
 import gr.rk.tasks.entity.Task;
 import gr.rk.tasks.security.UserPrincipal;
 import gr.rk.tasks.util.Util;
+import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = { Util.class }, uses = { AssignMapper.class, SpectatorMapper.class })
+@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED, imports = { Util.class }, uses = { AssignMapper.class, SpectatorMapper.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -28,12 +29,13 @@ public abstract class TaskMapper {
     @Mapping(target = "dueDate", expression = "java(Util.toLocalDateTimeFromISO8601WithTimeZone(taskDTO.getDueDate()))")
     @Mapping(source = "label", target = "label")
     @Mapping(source = "priority", target = "priority")
-    @Mapping(ignore = true, target = "identifier")
+    @Mapping(source = "identifier", target = "identifier")
     @Mapping(ignore = true, target = "comments")
     @Mapping(ignore = true, target = "createdAt")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(ignore = true, target = "createdBy")
     @Mapping(ignore = true, target = "project")
+    @Mapping(ignore = true, target = "deleted")
     public abstract Task toTask(TaskDTO taskDTO);
 
 

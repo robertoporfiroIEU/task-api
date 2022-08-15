@@ -21,6 +21,8 @@ public abstract class AttachmentMapper {
     @Mapping(target = "identifier", expression = "java((attachmentDTO.getIdentifier().toString()))")
     @Mapping(ignore = true, target = "createdBy")
     @Mapping(ignore = true, target = "uploadedAt")
+    @Mapping(ignore = true, target = "deleted")
+    @Mapping(ignore = true, target = "comments")
     public abstract Attachment toAttachment(AttachmentDTO attachmentDTO);
 
     @Mapping(target = "identifier", expression = "java(UUID.fromString(attachment.getIdentifier()))")

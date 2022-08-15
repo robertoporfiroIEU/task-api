@@ -1,0 +1,77 @@
+<div class="container">
+    <h5 class="mt-2 grey-color">
+        <span>{{'taskUI.user-settings-title' | translate}}</span>
+    </h5>
+    <form [formGroup]="userForm" class="mt-4 mb-2">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="mb-3">
+                    <span class="p-float-label">
+                        <input
+                            id="userName"
+                            formControlName="name"
+                            type="text"
+                            class="form-control"
+                            maxlength="250"
+                            readonly
+                            pInputText
+                        >
+                        <label for="userName">{{'taskUI.user-settings-username' | translate }}</label>
+                    </span>
+                </div>
+                <div class="mb-3 mt-5">
+                    <span class="p-float-label">
+                        <input id="email"
+                               formControlName="email"
+                               class="form-control"
+                               type="text"
+                               readonly
+                               pInputText>
+                        <label for="email">{{'taskUI.user-settings-email' | translate}}</label>
+                    </span>
+                </div>
+            <div>
+                <h5>{{"taskUI.user-settings-language-title" | translate}}</h5>
+                <p-dropdown placeholder="{{'taskUI.user-settings-language-placeholder'| translate }}"
+                            appendTo="body"
+                            [options]="languages"
+                            formControlName="language">
+                </p-dropdown>
+            </div>
+            <hr class="mt-2">
+            <button (click)="changeLanguage()" type="button" class="btn btn-primary">{{'taskUI.save' | translate}}</button>
+        </div>
+            <div class="col-sm-6">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">{{'taskUI.user-settings-role-name' | translate}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let role of userPrincipal?.roles; let i = index">
+                        <th scope="row">{{i}}</th>
+                        <td>{{role}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <hr>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">{{'taskUI.user-settings-group-name' | translate}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let group of userPrincipal?.groups; let i = index">
+                        <th scope="row">{{i}}</th>
+                        <td>{{group.substr(1)}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>

@@ -72,6 +72,7 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.shellService.setFullScreenMode(false);
+        this.shellService.setLoadingSpinner(true);
     }
 
     lazyLoadPaginatedTasks(taskParams: TasksParams): void {

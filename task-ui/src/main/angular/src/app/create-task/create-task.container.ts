@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
     GroupsService,
     TasksService,
-    User,
     UsersService,
     Task,
     ApplicationConfiguration,
@@ -16,6 +15,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { ErrorService } from '../error.service';
 import { RoutesEnum } from '../RoutesEnum';
 import { MessageService } from 'primeng/api';
+import { UserPrincipal } from '../shared/ModelsForUI';
 
 @Component({
     selector: 'app-create-task',
@@ -26,7 +26,7 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
     private destroy: Subject<void> = new Subject();
     private autocompleteUsersSubject = new Subject<string>();
     private autocompleteGroupsSubject = new Subject<string>();
-    userProfile: User | null = null
+    userPrincipal: UserPrincipal | null = null
     autoCompleteUsersData: string[] = [];
     autoCompleteGroupsData: string[] = [];
     configurations: ApplicationConfiguration[] | undefined = undefined;
@@ -51,32 +51,20 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
         this.autocompleteUsersSubject.pipe(
             takeUntil(this.destroy),
             switchMap(query =>
-                this.usersService.getUsers({}, query)
+                this.usersService.getUsers(query)
             )
-        ).subscribe(paginatedUsers => {
-            if (paginatedUsers.content) {
-                this.autoCompleteUsersData = paginatedUsers.content.map(user =>
-                    user.name
-                )
-            }
-        });
+        ).subscribe(users => this.autoCompleteUsersData = users.map(user => user.name));
 
         this.autocompleteGroupsSubject.pipe(
             takeUntil(this.destroy),
             switchMap(query =>
-                this.groupsService.getGroups({}, query)
+                this.groupsService.getGroups(query)
             )
-        ).subscribe(paginatedGroups => {
-            if (paginatedGroups.content) {
-                this.autoCompleteGroupsData = paginatedGroups.content.map(group =>
-                    group.name
-                )
-            }
-        });
+        ).subscribe(groups => this.autoCompleteGroupsData = groups);
 
         this.userProfileService.userProfile$.pipe(
             takeUntil(this.destroy),
-        ).subscribe( userProfile => this.userProfile = userProfile);
+        ).subscribe( userPrincipal => this.userPrincipal = userPrincipal);
     }
 
     getAutoCompleteUsersAssign(query: string): void {
@@ -117,10 +105,6 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
             this.projectsService.getProject(projectIdentifier).pipe(
                 takeUntil(this.destroy)
             ).subscribe(project => this.configurations = project.configurations);
-        } else {
-            this.applicationConfigurationsService.getApplicationConfigurations().pipe(
-                takeUntil(this.destroy)
-            ).subscribe(configurations => this.configurations = configurations);
         }
     }
 

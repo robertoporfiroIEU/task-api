@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Project, ProjectsService, User } from '../api';
 import { ShellService } from '../shell/shell.service';
-import { UserProfileService } from '../user-profile.service';
 import { catchError, Subject, switchMap, take } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,7 +22,6 @@ export class ViewProjectContainerComponent implements OnInit {
     constructor(
         private projectsService: ProjectsService,
         private shellService: ShellService,
-        private userProfileService: UserProfileService,
         private messageService: MessageService,
         private translateService: TranslateService,
         private activatedRoute: ActivatedRoute,
@@ -47,10 +45,6 @@ export class ViewProjectContainerComponent implements OnInit {
         ).subscribe(project => {
             this.project = project;
         });
-
-        this.userProfileService.userProfile$.pipe(
-            take(1)
-        ).subscribe(user => this.userProfile = user)
     }
 
     ngOnDestroy(): void {
