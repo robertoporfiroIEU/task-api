@@ -110,8 +110,8 @@
                         <hr>
                         <div class="col-12 mt-4">
                             <div>
-                                <app-task-status-dropdown *ngIf="applicationConfigurations"
-                                      [applicationConfigurations]="applicationConfigurations"
+                                <app-task-status-dropdown *ngIf="configurations"
+                                      [configurations]="configurations"
                                       formControlName="status"
                                       [readOnly]="isStatusReadOnly"
                                       [editable]="isStatusEditable"
@@ -124,8 +124,8 @@
                         </div>
                         <div class="col-12 mt-4">
                             <div>
-                                <app-task-priority-dropdown *ngIf="applicationConfigurations"
-                                    [applicationConfigurations]="applicationConfigurations"
+                                <app-task-priority-dropdown *ngIf="configurations"
+                                    [configurations]="configurations"
                                     formControlName="priority"
                                     [readOnly]="isPriorityReadOnly"
                                     [editable]="isPriorityEditable"

@@ -1,9 +1,8 @@
 import { Component, EventEmitter, forwardRef, Input, OnInit, Optional, Output } from '@angular/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DropDown } from '../ModelsForUI';
-import { ApplicationConfiguration } from '../../api';
+import { ProjectConfiguration } from '../../api';
 import { TranslateService } from '@ngx-translate/core';
-import { Utils } from '../Utils';
 
 @Component({
     selector: 'app-task-priority-dropdown',
@@ -25,7 +24,7 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
     @Input() readOnly: boolean = false;
     @Input() editable: boolean = false
     @Input() priorityValue: string | null = null;
-    @Input() applicationConfigurations: ApplicationConfiguration[] = [];
+    @Input() configurations: ProjectConfiguration[] = [];
     @Output() onPriorityChanged = new EventEmitter<string>();
     @Output() onEditClick = new EventEmitter<void>();
 
@@ -38,13 +37,13 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
     ngOnChanges() {}
 
     ngOnInit(): void {
-        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations?.filter(
+        let statusesFromConfigurations: ProjectConfiguration[] = this.configurations?.filter(
             c => c.configurationName === 'priority'
         );
 
         statusesFromConfigurations?.forEach(a => this.priorities.push(
             {
-                label: this.translateService.instant(a.configurationLabel!),
+                label: a.configurationValue,
                 value: a.configurationValue
             }
         ));
@@ -74,7 +73,7 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
     }
 
     getPriorityColor(priorityValue: string): string {
-        return this.applicationConfigurations.find(
+        return this.configurations.find(
             c => c.configurationValue === priorityValue && c.configurationName === 'priority'
         )?.color!;
     }

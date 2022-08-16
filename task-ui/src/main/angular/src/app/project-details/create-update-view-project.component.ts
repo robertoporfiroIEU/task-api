@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CreateUpdateViewProjectPresenter } from './create-update-view-project.presenter';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { Project } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 import { Actions } from './Actions';
@@ -29,6 +29,14 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
         return this.createProjectPresenter.projectForm;
     }
 
+    get statusesFormArray(): FormArray {
+        return this.createProjectPresenter.projectForm.get('statuses') as FormArray;
+    }
+
+    get prioritiesFormArray(): FormArray {
+        return this.createProjectPresenter.projectForm.get('priorities') as FormArray;
+    }
+
     constructor(private createProjectPresenter: CreateUpdateViewProjectPresenter, private authService: AuthService) {}
 
     ngOnInit(): void {
@@ -46,8 +54,24 @@ export class CreateUpdateViewProjectComponent implements OnInit, OnDestroy {
         return this.authService.isUserRoleInRoles([Roles.PROJECT_MANAGER_ROLE, Roles.ADMIN_ROLE])
     }
 
+    addStatus(): void {
+        this.createProjectPresenter.addStatus();
+    }
+
+    addPriority(): void {
+        this.createProjectPresenter.addPriority();
+    }
+
     ngOnDestroy(): void {
         this.destroy.next();
         this.destroy.complete();
+    }
+
+    deleteStatus(weight: number): void {
+        this.createProjectPresenter.deleteStatus(weight);
+    }
+
+    deletePriority(weight: number): void {
+        this.createProjectPresenter.deletePriority(weight);
     }
 }

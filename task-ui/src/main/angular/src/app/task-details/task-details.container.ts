@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TasksService, Task, User, ProjectsService, ApplicationConfiguration, PaginatedComments } from '../api';
+import { TasksService, Task, User, ProjectsService, ProjectConfiguration, PaginatedComments } from '../api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Subject, switchMap, take, takeUntil, zip } from 'rxjs';
 import { ErrorService } from '../error.service';
@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class TaskDetailsContainerComponent implements OnInit {
 
     private destroy: Subject<void> = new Subject();
-    applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
+    configurations: ProjectConfiguration[] | undefined = undefined;
     userProfile: User | null = null;
     task: Task | null = null;
     comments: PaginatedComments | null = null;
@@ -66,7 +66,7 @@ export class TaskDetailsContainerComponent implements OnInit {
             })
         ).subscribe(([project, comments]) => {
             this.shellService.setLoadingSpinner(false);
-            this.applicationConfigurations = project.configurations;
+            this.configurations = project.configurations;
             this.comments = comments;
         });
 

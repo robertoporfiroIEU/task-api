@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CreateTaskPresenter } from './create-task.presenter';
 import { FormGroup } from '@angular/forms';
-import { DropDown, Type, UserPrincipal } from '../shared/ModelsForUI';
+import { Type, UserPrincipal } from '../shared/ModelsForUI';
 import { Utils } from '../shared/Utils';
-import { User, Task, ApplicationConfiguration } from '../api';
+import { Task, ProjectConfiguration } from '../api';
 import { Subject, takeUntil } from 'rxjs';
 import { Message } from 'primeng/api';
 
@@ -19,7 +19,7 @@ export class CreateTaskComponent implements OnInit {
     @Input() userPrincipal: UserPrincipal | null = null
     @Input() autoCompleteUsersData: string[] = [];
     @Input() autoCompleteGroupsData: string[] = [];
-    @Input() configurations: ApplicationConfiguration[] | undefined = undefined;
+    @Input() configurations: ProjectConfiguration[] | undefined = undefined;
     @Output() onAutocompleteUsersAssign = new EventEmitter<string>();
     @Output() onAutocompleteGroupsAssign = new EventEmitter<string>();
     @Output() onCreateTask = new EventEmitter<Task>();

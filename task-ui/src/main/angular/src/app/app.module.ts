@@ -25,9 +25,8 @@ import { TaskDetailsContainerComponent } from './task-details/task-details.conta
 import { UnauthorisedComponent } from './unauthorised/unauthorised.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { UserSettingsContainerComponent } from './user-settings/user-settings.container';
-import { ApiModule, Configuration, ConfigurationParameters } from './api';
+import { ApiModule, ConfigurationParameters, Configuration } from './api';
 import { CsrfInterceptorInterceptor } from './csrf-interceptor.interceptor';
-import { UserProfileService } from './user-profile.service';
 
 
 // configuring providers

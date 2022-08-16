@@ -38,6 +38,8 @@ import { StringToColorPipe } from './pipes/string-to-color.pipe';
 import { PaginatorModule } from 'primeng/paginator';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { OrderListModule } from 'primeng/orderlist';
+import { ColorPickerModule } from 'primeng/colorpicker';
 
 @NgModule({
     declarations: [
@@ -82,7 +84,9 @@ import { MessageModule } from 'primeng/message';
         ConfirmDialogModule,
         PaginatorModule,
         MessagesModule,
-        MessageModule
+        MessageModule,
+        OrderListModule,
+        ColorPickerModule
     ],
     exports: [
         BrowserModule,
@@ -118,7 +122,9 @@ import { MessageModule } from 'primeng/message';
         ShortTextPipe,
         StringToColorPipe,
         MessagesModule,
-        MessageModule
+        MessageModule,
+        OrderListModule,
+        ColorPickerModule
     ]
 })
 export class SharedModule {

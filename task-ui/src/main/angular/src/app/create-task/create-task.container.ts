@@ -4,8 +4,8 @@ import {
     TasksService,
     UsersService,
     Task,
-    ApplicationConfiguration,
-    ProjectsService, ApplicationConfigurationsService
+    ProjectConfiguration,
+    ProjectsService
 } from '../api';
 import { catchError, Subject, switchMap, takeUntil } from 'rxjs';
 import { UserProfileService } from '../user-profile.service';
@@ -29,12 +29,11 @@ export class CreateTaskContainerComponent implements OnInit, OnDestroy {
     userPrincipal: UserPrincipal | null = null
     autoCompleteUsersData: string[] = [];
     autoCompleteGroupsData: string[] = [];
-    configurations: ApplicationConfiguration[] | undefined = undefined;
+    configurations: ProjectConfiguration[] | undefined = undefined;
 
     constructor(
         private tasksService: TasksService,
         private projectsService: ProjectsService,
-        private applicationConfigurationsService: ApplicationConfigurationsService,
         private usersService: UsersService,
         private groupsService: GroupsService,
         private userProfileService: UserProfileService,

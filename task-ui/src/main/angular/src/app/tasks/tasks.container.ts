@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-    ApplicationConfiguration, ApplicationConfigurationsService,
+    ProjectConfiguration,
     PaginatedTasks,
     ProjectsService,
     TasksService
 } from '../api';
 import { ShellService } from '../shell/shell.service';
-import { catchError, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { ErrorService } from '../error.service';
 import { ActivatedRoute,  Router } from '@angular/router';
@@ -22,7 +22,7 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
 
     projectIdentifier: string | null = null;
 
-    configurations$: Observable<ApplicationConfiguration[] | undefined> = this.activatedRoute.queryParams.pipe(
+    configurations$: Observable<ProjectConfiguration[] | undefined> = this.activatedRoute.queryParams.pipe(
         takeUntil(this.destroy),
         switchMap( params => {
             if (params['projectIdentifier']) {
@@ -31,7 +31,7 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
                     map( p => p.configurations)
                 );
             }
-            return this.applicationConfigurationsService.getApplicationConfigurations();
+            return of(undefined);
         }),
     );
 
@@ -62,7 +62,6 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
 
     constructor(
         private tasksService: TasksService,
-        private applicationConfigurationsService: ApplicationConfigurationsService,
         private projectsService: ProjectsService,
         private router: Router,
         private activatedRoute: ActivatedRoute,

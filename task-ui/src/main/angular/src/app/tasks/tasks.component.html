@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-12 col-lg-4 mt-4">
                                 <app-task-status-dropdown *ngIf="configurations"
-                                    [applicationConfigurations]="configurations"
+                                                          [configurations]="configurations"
                                     [onlyPlaceHolder]="true"
                                     [editable]="false"
                                     [readOnly]="false"
@@ -286,7 +286,7 @@
                     <div *ngIf="task.dueDate">{{task.dueDate | date: datePipeDateFormat}}</div>
                     <div *ngIf="!task.dueDate">{{'taskUI.n_a' | translate}}</div>
                     <app-task-status-dropdown *ngIf="configurations"
-                          [applicationConfigurations]="configurations"
+                                              [configurations]="configurations"
                           [readOnly]="true"
                           [editable]="false"
                           [taskStatusValue]="task?.status">

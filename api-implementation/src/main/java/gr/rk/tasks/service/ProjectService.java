@@ -4,7 +4,6 @@ import gr.rk.tasks.dto.ProjectCriteriaDTO;
 import gr.rk.tasks.entity.Project;
 import gr.rk.tasks.exception.ApplicationException;
 import gr.rk.tasks.exception.i18n.I18nErrorMessage;
-import gr.rk.tasks.repository.ApplicationConfigurationRepository;
 import gr.rk.tasks.repository.ProjectRepository;
 import gr.rk.tasks.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +15,12 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-
-    private final ApplicationConfigurationRepository applicationConfigurationRepository;
-
-    private final UserService userService;
 
     private final UserPrincipal userPrincipal;
 
@@ -36,13 +30,10 @@ public class ProjectService {
     @Autowired
     public ProjectService(
             ProjectRepository projectRepository,
-            ApplicationConfigurationRepository applicationConfigurationRepository,
             UserService userService,
             UserPrincipal userPrincipal
     ) {
         this.projectRepository = projectRepository;
-        this.applicationConfigurationRepository = applicationConfigurationRepository;
-        this.userService = userService;
         this.userPrincipal = userPrincipal;
     }
 
@@ -50,8 +41,7 @@ public class ProjectService {
     public Project createProject(Project project) throws org.springframework.dao.DataIntegrityViolationException {
         try {
             project.setCreatedBy(userPrincipal.getPropagatedUser());
-            project = projectRepository.saveProject(project);
-            return project;
+            return projectRepository.saveProject(project);
         }
         catch(org.springframework.dao.DataIntegrityViolationException e) {
             throw new ConstraintViolationException("This project already exists.", null);
@@ -92,6 +82,7 @@ public class ProjectService {
         project.setDeleted(true);
     }
 
+    @Transactional
     public Project updateProject(Project projectWithUpdatedValues) {
         Optional<Project> oProject = projectRepository.
                 findProjectByIdentifierAndApplicationUserAndDeleted(projectWithUpdatedValues.getIdentifier(), userPrincipal.getClientName(), false);

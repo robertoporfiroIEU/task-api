@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, of, Subject, takeUntil } from 'rxjs';
-import { ApplicationConfiguration, PaginatedTasks } from '../api';
+import { ProjectConfiguration, PaginatedTasks } from '../api';
 import { TasksParams } from './TasksParams';
 import { TasksPresenter } from './tasks.presenter';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
@@ -23,10 +23,10 @@ export class TasksComponent implements OnInit {
 
     @Input() paginatedTasks: PaginatedTasks = {};
     @Input() projectIdentifier: string | null = null;
-    @Input() configurations$: Observable<ApplicationConfiguration[] | undefined> = of(undefined);
+    @Input() configurations$: Observable<ProjectConfiguration[] | undefined> = of(undefined);
     @Output() lazyLoadPaginatedTasks: EventEmitter<TasksParams> = new EventEmitter<TasksParams>();
 
-    configurations: ApplicationConfiguration[] | undefined = undefined;
+    configurations: ProjectConfiguration[] | undefined = undefined;
     datePipeDateFormat = Utils.datePipeDateFormat;
     pCalendarDateFormat = Utils.pCalendarDateFormat;
     createTaskUrl: string = '';
