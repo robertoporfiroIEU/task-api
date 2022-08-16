@@ -25,7 +25,7 @@ spring:
             scope: openid
             authorization-grant-type: authorization_code
             redirect-uri: "http://rktasks/login/oauth2/code/keycloak"
-    csrf: disabled
+    csrf: enabled
 management:
   endpoints:
     web:

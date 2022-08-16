@@ -56,18 +56,18 @@
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <ng-container *ngFor="let col of columns">
-                        <th *ngIf="col.field !== 'action'; else action " [pSortableColumn]=col.field>
+                        <th scope="col" *ngIf="col.field !== 'action'; else action " [pSortableColumn]=col.field>
                             {{col.header | translate}}
                             <p-sortIcon field="col.field"></p-sortIcon>
                         </th>
                         <ng-template #action>
-                            <th>{{'taskUI.projects-header-action' | translate}}</th>
+                            <th scope="col">{{'taskUI.projects-header-action' | translate}}</th>
                         </ng-template>
                     </ng-container>
                 </tr>
                 <tr>
                     <ng-container *ngFor="let col of columns">
-                        <th *ngIf="col.field !== 'createdAt' && col.field !== 'action'; else createdAt">
+                        <th scope="col" *ngIf="col.field !== 'createdAt' && col.field !== 'action'; else createdAt">
                             <input pInputText
                                    [formControlName]="col.field"
                                    type="text"
@@ -76,7 +76,7 @@
                                    class="p-column-filter">
                         </th>
                         <ng-template #createdAt>
-                            <th *ngIf="col.field !== 'action'">
+                            <th scope="col" *ngIf="col.field !== 'action'">
                                 <p-calendar
                                     formControlName="creationDateFromTo"
                                     [dateFormat]=pCalendarDateFormat
@@ -93,7 +93,7 @@
                         </ng-template>
                     </ng-container>
 
-                    <th><i class="fas fa-times ms-1 hover" (click)="resetFilters()"></i></th>
+                    <th scope="col"><i class="fas fa-times ms-1 hover" (click)="resetFilters()"></i></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-project let-columns="columns">

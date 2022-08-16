@@ -66,11 +66,11 @@ export class CommentsComponent implements OnInit, OnDestroy {
     }
 
     copyCommentURLToClipboard(identifier: string): void {
-        this.commentPresenter.copyCommentURLToClipboard(identifier)
+        this.commentPresenter.copyCommentURLToClipboard(identifier);
     }
 
     deleteClick(comment: Comment): void {
-        this.commentPresenter.deleteClick(comment!.identifier!)
+        this.commentPresenter.deleteClick(comment.identifier!);
     }
 
     updateComment(editorModel: EditorModel, comment: Comment): void {

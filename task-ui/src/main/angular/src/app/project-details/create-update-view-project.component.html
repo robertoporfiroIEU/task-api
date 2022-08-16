@@ -88,13 +88,13 @@
 
         <div class="row">
             <!--statuses-->
-            <div class="col-6">
-                <p-orderList [value]="statusesFormArray.controls" [dragdrop]="true">
+            <div class="col-12 col-sm-6">
+                <p-orderList [value]="statusesFormArray.controls" [dragdrop]="action !== actions.VIEW">
                     <ng-template pTemplate="header">
                         <div class="clearfix">
                             <h5 class="float-start">{{'taskUI.create-project-statuses-name-title' | translate}}</h5>
                             <div class="float-end">
-                                <button
+                                <button *ngIf="action !== actions.VIEW"
                                     (click)="addStatus()"
                                     type="button"
                                     class="btn">
@@ -119,10 +119,10 @@
                             </div>
                             <div class="float-start mt-4">
                                 <span class="ms-2 me-2">{{'taskUI.create-project-status-color-label' | translate}}</span>
-                                <p-colorPicker  formControlName="color" appendTo="body"></p-colorPicker>
+                                <p-colorPicker [disabled]="action === actions.VIEW"  formControlName="color" appendTo="body"></p-colorPicker>
                             </div>
                             <div class="float-end">
-                                <button
+                                <button *ngIf="action !== actions.VIEW"
                                     type="button"
                                     (click)="deleteStatus(configuration.value.weight)"
                                     class="btn">
@@ -135,13 +135,13 @@
             </div>
 
             <!--priorities-->
-            <div class="col-6">
-                <p-orderList [value]="prioritiesFormArray.controls" [dragdrop]="true">
+            <div class="col-12 col-sm-6 mb-3 mb-sm-0">
+                <p-orderList [value]="prioritiesFormArray.controls" [dragdrop]="action !== actions.VIEW">
                     <ng-template pTemplate="header">
                         <div class="clearfix">
                             <h5 class="float-start">{{'taskUI.create-project-priorities-name-title' | translate}}</h5>
                             <div class="float-end">
-                                <button
+                                <button *ngIf="action !== actions.VIEW"
                                     (click)="addPriority()"
                                     type="button"
                                     class="btn">
@@ -166,10 +166,10 @@
                             </div>
                             <div class="float-start mt-4">
                                 <span class="ms-2 me-2">{{'taskUI.create-project-priority-color-label' | translate}}</span>
-                                <p-colorPicker  formControlName="color" appendTo="body"></p-colorPicker>
+                                <p-colorPicker [disabled]="action === actions.VIEW" formControlName="color" appendTo="body"></p-colorPicker>
                             </div>
                             <div class="float-end">
-                                <button
+                                <button *ngIf="action !== actions.VIEW"
                                     type="button"
                                     (click)="deleteStatus(configuration.value.weight)"
                                     class="btn">

@@ -1,22 +1,22 @@
 <header *ngIf="!fullScreenMode" class="shadowBottom">
     <div class="row m-0">
-        <div class="col-4">
+        <div class="col-12 col-sm-4">
             <div routerLink="{{homeUrl}}">
-                <img src="{{logoImage}}" class="logo">
+                <img src="{{logoImage}}" alt="" class="logo">
                 <span class="corinthiaFont">{{applicationTitle}}</span>
             </div>
         </div>
-        <div class="col-8 clearfix">
+        <div class="col-12 col-sm-8 clearfix mb-2 mb-sm-0">
             <div class="float-end mt-3">
                 <button class="btn" type="button" (click)="logout()">
                     <i pTooltip="{{'taskUI.logout' | translate}}"
                        tooltipPosition="left"
-                       class="pi pi-sign-out fs-5 mt-2 me-5"
+                       class="pi pi-sign-out fs-5 mt-2 me-0 me-sm-5"
                     ></i>
                 </button>
             </div>
-            <div class="float-end mt-3 me-4">
-                <div class="text-center">
+            <div class="float-start float-sm-end mt-3 me-1 me-sm-4">
+                <div class="text-sm-center">
                     <p-avatar label="{{userName | shortText:1 | uppercase }}" size="large"></p-avatar>
                     <span class="ms-1">{{userName}}</span>
                 </div>

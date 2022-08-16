@@ -11,10 +11,9 @@ import {
 import { FormGroup } from '@angular/forms';
 import { EditorPresenter } from './editor.presenter';
 import { Editor } from 'primeng/editor';
-import { EditorModel, FileEvent } from '../ModelsForUI';
+import { EditorModel, FileEvent, AttachmentsMimeType } from '../ModelsForUI';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Attachment, User } from '../../api';
-import { AttachmentsMimeType } from '../ModelsForUI'
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 

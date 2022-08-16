@@ -83,12 +83,11 @@ export class TaskDetailsContainerComponent implements OnInit {
 
     updateTask(task: Task) {
         this.shellService.setLoadingSpinner(true);
-        let identifier: string = task.identifier!;
         this.tasksService.updateTask(task)
             .pipe(catchError(error => {
                 this.errorService.showErrorMessage(error);
                 return [];
-            })).subscribe(task => {
+            })).subscribe(t => {
                 this.shellService.setLoadingSpinner(false);
                 this.messageService.add(
                     {
@@ -97,7 +96,7 @@ export class TaskDetailsContainerComponent implements OnInit {
                         detail: this.translateService.instant('taskUI.task-details-task-updated')
                     }
                 );
-                this.task = task;
+                this.task = t;
         });
     }
 }

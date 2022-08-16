@@ -13,7 +13,9 @@ export class DockContainerComponent implements OnInit {
 
     constructor(private shellService: ShellService) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // ngOnInit
+    }
 
     setDockItemsState(dockItemsState: ApplicationMenuItem[]): void {
         this.shellService.setDockItemsState(dockItemsState);
