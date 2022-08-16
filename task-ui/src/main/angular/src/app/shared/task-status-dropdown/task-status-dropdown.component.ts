@@ -2,7 +2,7 @@ import { Component, EventEmitter, forwardRef, Input, OnInit, Optional, Output } 
 import { DropDown } from '../ModelsForUI';
 import { TranslateService } from '@ngx-translate/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ApplicationConfiguration } from '../../api';
+import { ProjectConfiguration } from '../../api';
 
 @Component({
     selector: 'app-task-status-dropdown',
@@ -23,7 +23,7 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     @Input() readOnly: boolean = false;
     @Input() editable: boolean = false
     @Input() taskStatusValue: string | null = null;
-    @Input() applicationConfigurations: ApplicationConfiguration[] = [];
+    @Input() configurations: ProjectConfiguration[] = [];
     @Output() onStatusChanged = new EventEmitter<string>();
     @Output() onEditClick = new EventEmitter<void>();
 
@@ -31,18 +31,18 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
 
     control: AbstractControl | null = null;
 
-    constructor(@Optional() private controlContainer: ControlContainer, private translateService: TranslateService) {}
+    constructor(@Optional() private controlContainer: ControlContainer) {}
 
     ngOnChanges() {}
 
     ngOnInit(): void {
-        let statusesFromConfigurations: ApplicationConfiguration[] = this.applicationConfigurations?.filter(
+        let statusesFromConfigurations: ProjectConfiguration[] = this.configurations?.filter(
             c => c.configurationName === 'status'
         );
 
         statusesFromConfigurations?.forEach(a => this.statuses.push(
             {
-                label: this.translateService.instant(a.configurationLabel!),
+                label: a.configurationValue,
                 value: a.configurationValue
             }
         ));
@@ -72,7 +72,7 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     }
 
     getStatusColor(taskStatusValue: string): string {
-        return this.applicationConfigurations.find(
+        return this.configurations.find(
             c => c.configurationValue === taskStatusValue && c.configurationName === 'status'
         )?.color!;
     }

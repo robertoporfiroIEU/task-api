@@ -15,7 +15,6 @@ tags:
   - name: Tasks
   - name: Groups
   - name: Users
-  - name: ApplicationConfigurations
   - name: Files
 
 paths:
@@ -685,26 +684,6 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
-
-  /applicationConfigurations:
-    get:
-      description: Returns the application configurations that are not for a specific Project.
-      tags:
-        - ApplicationConfigurations
-      operationId: getApplicationConfigurations
-      responses:
-        "200":
-          description: Application Configurations
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/ApplicationConfiguration'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-
-
-
   /file:
     post:
       description: Uploads the content of the file in the servers file system
@@ -858,9 +837,9 @@ components:
        configurations:
          description: These are the configurations of the project
          items:
-           $ref: '#/components/schemas/ApplicationConfiguration'
+           $ref: '#/components/schemas/ProjectConfiguration'
 
-    ApplicationConfiguration:
+    ProjectConfiguration:
         type: object
         required:
           - configurationName

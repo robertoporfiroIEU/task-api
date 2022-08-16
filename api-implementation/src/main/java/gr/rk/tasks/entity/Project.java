@@ -36,14 +36,14 @@ public class Project implements GenerateCreationAt, GenerateUpdateAt {
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private Set<Task> tasks;
 
-    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
-    private Set<Configuration> configurations;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Configuration> configurations;
 
     private boolean deleted;
 
     public Project() {
         tasks = new HashSet<>();
-        configurations = new HashSet<>();
+        configurations = new ArrayList<>();
     }
 
     public Long getId() {
@@ -119,19 +119,17 @@ public class Project implements GenerateCreationAt, GenerateUpdateAt {
         this.deleted = deleted;
     }
 
-    public void setConfigurations(Set<Configuration> configurations) {
+    public void setConfigurations(List<Configuration> configurations) {
         if (Objects.isNull(configurations) || configurations.isEmpty()) {
-            this.configurations.forEach(configuration -> configuration.getProjects().remove(this));
             this.configurations.clear();
-
         } else {
             this.configurations.clear();
-            configurations.forEach(c -> c.getProjects().add(this));
+            configurations.forEach(c -> c.setProject(this));
             this.configurations.addAll(configurations);
         }
     }
 
-    public Set<Configuration> getConfigurations() {
+    public List<Configuration> getConfigurations() {
         return configurations;
     }
 

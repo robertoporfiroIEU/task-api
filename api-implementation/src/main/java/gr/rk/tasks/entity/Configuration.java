@@ -3,9 +3,7 @@ package gr.rk.tasks.entity;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "configurations")
@@ -32,20 +30,15 @@ public class Configuration implements GenerateCreationAt, GenerateUpdateAt {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToMany
-    @JoinTable(
-            name = "projects_configurations",
-            joinColumns = @JoinColumn(name = "configurations_id"),
-            inverseJoinColumns = @JoinColumn(name = "projects_id"))
-    private Set<Project> projects;
+    @ManyToOne()
+    @JoinColumn(name = "projects_id")
+    private Project project;
 
     private String applicationUser;
 
     private int weight;
 
-    public Configuration() {
-        projects = new HashSet<>();
-    }
+    public Configuration() {}
 
     public Long getId() {
         return id;
@@ -95,12 +88,12 @@ public class Configuration implements GenerateCreationAt, GenerateUpdateAt {
         this.updatedAt = updatedAt;
     }
 
-    public Set<Project> getProjects() {
-        return projects;
+    public Project getProject() {
+        return project;
     }
 
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public String getApplicationUser() {

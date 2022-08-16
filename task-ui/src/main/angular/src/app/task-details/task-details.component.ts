@@ -7,7 +7,7 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { ApplicationConfiguration, PaginatedComments, Task, User } from '../api';
+import { ProjectConfiguration, PaginatedComments, Task, User } from '../api';
 import { TaskDetailsPresenter } from './task-details.presenter';
 import { Utils } from '../shared/Utils';
 import { FormGroup } from '@angular/forms';
@@ -27,9 +27,9 @@ export class TaskDetailsComponent implements OnInit {
     @Input() task: Task | null = null;
     @Input() comments: PaginatedComments | null = null;
     @Input() userProfile: User | null = null
-    @Input() applicationConfigurations: ApplicationConfiguration[] | undefined = undefined;
+    @Input() configurations: ProjectConfiguration[] | undefined = undefined;
     @Output() onUpdateTask = new EventEmitter<Task>();
-    @ViewChild('nameInput', {static: false}) nameInput: ElementRef<any> | null = null;
+    @ViewChild('nameInput', {static: false}) nameInput: ElementRef | null = null;
 
     viewProjectURL: string = '/projects/view-project/';
     datePipeDateFormat = Utils.datePipeDateFormat;
