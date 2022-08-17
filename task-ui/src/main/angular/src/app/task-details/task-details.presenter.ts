@@ -61,7 +61,7 @@ export class TaskDetailsPresenter {
 
         let dueDate: Date | null = null;
         if (task?.dueDate) {
-            dueDate = new Date(task.dueDate!);
+            dueDate = new Date(task.dueDate);
         }
 
         this.taskForm = new FormGroup({

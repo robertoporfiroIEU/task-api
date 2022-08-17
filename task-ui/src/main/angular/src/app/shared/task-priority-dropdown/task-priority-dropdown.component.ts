@@ -34,8 +34,6 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
 
     constructor(@Optional() private controlContainer: ControlContainer, private translateService: TranslateService) {}
 
-    ngOnChanges() {}
-
     ngOnInit(): void {
         let statusesFromConfigurations: ProjectConfiguration[] = this.configurations?.filter(
             c => c.configurationName === 'priority'
@@ -62,15 +60,17 @@ export class TaskPriorityDropdownComponent implements OnInit, ControlValueAccess
     }
 
     writeValue(obj: any): void {
-
+        // writeValue
     }
 
     registerOnChange(fn: any): void {
-
+        // registerOnChange
     }
 
     registerOnTouched(fn: any): void {
+        // registerOnTouched
     }
+
 
     getPriorityColor(priorityValue: string): string {
         return this.configurations.find(

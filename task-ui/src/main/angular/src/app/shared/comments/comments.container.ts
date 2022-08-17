@@ -104,19 +104,19 @@ export class CommentsContainerComponent implements OnInit, OnDestroy {
             catchError(error => {
                 this.errorService.showErrorMessage(error);
                 return [];
-            })).subscribe((comment) => {
-            this.shellService.setLoadingSpinner(false);
-            this.messageService.add(
-                {
-                    severity: 'success',
-                    summary: this.translateService.instant('taskUI.success'),
-                    detail: this.translateService.instant('taskUI.comment-update-success-message')
-                }
-            );
+            })).subscribe((commentResponse) => {
+                this.shellService.setLoadingSpinner(false);
+                this.messageService.add(
+                    {
+                        severity: 'success',
+                        summary: this.translateService.instant('taskUI.success'),
+                        detail: this.translateService.instant('taskUI.comment-update-success-message')
+                    }
+                );
 
-            // update the model
-            let indexOfComment: number = this.comments!.content!.findIndex(c => c.identifier === comment.identifier);
-            this.comments!.content![indexOfComment] = comment!;
+                // update the model
+                let indexOfComment: number = this.comments!.content!.findIndex(c => c.identifier === commentResponse.identifier);
+                this.comments!.content![indexOfComment] = commentResponse!;
         })
     }
 

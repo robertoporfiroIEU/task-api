@@ -8,9 +8,8 @@ import {
 } from '@angular/core';
 import { EditorModel, FileEvent } from '../ModelsForUI';
 import { catchError, Observable, Subject, takeUntil } from 'rxjs';
-import { Attachment, User } from '../../api';
+import { Attachment, User, FilesService } from '../../api';
 import { ShellService } from '../../shell/shell.service';
-import { FilesService } from '../../api';
 import { ErrorService } from '../../error.service';
 
 @Component({
@@ -45,7 +44,9 @@ export class EditorContainerComponent implements OnInit, OnDestroy {
         private errorService: ErrorService
     ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // ngOnInit
+    }
 
     saveClick(editorModel: EditorModel): void {
         this.onSaveClick.emit(editorModel);

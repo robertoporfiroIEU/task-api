@@ -15,8 +15,6 @@ export class ShellService {
     onFullScreenMode$ = this.fullScreenModeSubject.asObservable();
     onLoadingSpinner$ = this.loadingSpinnerSubject.asObservable();
 
-    constructor() {}
-
     setDockItemsState(dockItemsState: ApplicationMenuItem[]) {
         this.dockItemsStateSubject.next(dockItemsState);
     }

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Project, ProjectsService, User } from '../api';
+import { Project, ProjectsService } from '../api';
 import { ShellService } from '../shell/shell.service';
 import { UserProfileService } from '../user-profile.service';
-import { catchError, Observable, Subject } from 'rxjs';
+import { catchError, Subject } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';

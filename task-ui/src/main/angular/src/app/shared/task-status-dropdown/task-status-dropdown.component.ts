@@ -1,6 +1,5 @@
 import { Component, EventEmitter, forwardRef, Input, OnInit, Optional, Output } from '@angular/core';
 import { DropDown } from '../ModelsForUI';
-import { TranslateService } from '@ngx-translate/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ProjectConfiguration } from '../../api';
 
@@ -33,8 +32,6 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
 
     constructor(@Optional() private controlContainer: ControlContainer) {}
 
-    ngOnChanges() {}
-
     ngOnInit(): void {
         let statusesFromConfigurations: ProjectConfiguration[] = this.configurations?.filter(
             c => c.configurationName === 'status'
@@ -61,14 +58,15 @@ export class TaskStatusDropdownComponent implements OnInit, ControlValueAccessor
     }
 
     writeValue(obj: any): void {
-
+        // writeValue
     }
 
     registerOnChange(fn: any): void {
-
+        // registerOnChange
     }
 
     registerOnTouched(fn: any): void {
+        // registerOnTouched
     }
 
     getStatusColor(taskStatusValue: string): string {

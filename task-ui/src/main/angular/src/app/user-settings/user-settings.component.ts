@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DropDown, UserPrincipal } from '../shared/ModelsForUI';
+import { UserPrincipal } from '../shared/ModelsForUI';
 import { UserSettingsPresenter } from './user-settings.presenter';
 import { FormGroup } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
