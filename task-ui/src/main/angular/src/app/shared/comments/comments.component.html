@@ -22,7 +22,9 @@
                     label="{{comment.createdBy.toUpperCase() | shortText:1}}"
                     [style]="{'background-color':comment.createdBy.toUpperCase() | stringToColor, 'color': '#ffffff'}"
                     size="large"></p-avatar>
-                <span class="ms-2 fw-bold">{{comment?.createdBy}}</span>
+                <div>
+                    <small class="ms-0 fw-bold text-break">{{comment?.createdBy}}</small>
+                </div>
             </div>
         </div>
         <div class="col-sm-11">

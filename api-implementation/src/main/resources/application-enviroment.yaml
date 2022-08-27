@@ -16,7 +16,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://rktasks:9090/realms/tasks-api/protocol/openid-connect/certs
+          jwk-set-uri: http://rktasks:8080/realms/tasks-api/protocol/openid-connect/certs
 
 logging:
   level:
@@ -29,7 +29,7 @@ logging:
 
 applicationConfigurations:
   keycloak:
-    authServerUrl: http://rktasks:9090
+    authServerUrl: http://rktasks:8080
     realm: tasks-api
     clientId: rest-client-tasks-api
     clientSecret: kxYukJZHZyrzfyJkEwrVuGWpRNSKSRWs

@@ -1,4 +1,6 @@
 spring:
+  webflux:
+    base-path: /rktasks/
   main:
     allow-bean-definition-overriding: true
     web-application-type: reactive
@@ -6,9 +8,9 @@ spring:
     gateway:
       routes:
         - id: tasks-api
-          uri: http://rktasks:8080
+          uri: http://rktasks:9090/rktasks/
           predicates:
-            - Path=/tasks-api/**
+            - Path=/rktasks/tasks-api/**
       default-filters:
         - TokenRelay
   security:
@@ -16,7 +18,7 @@ spring:
       client:
         provider:
           my-keycloak-provider:
-            issuer-uri: http://rktasks:9090/realms/tasks-api
+            issuer-uri: http://rktasks:8080/realms/tasks-api
         registration:
           keycloak-spring-gateway-client:
             provider: my-keycloak-provider
@@ -24,7 +26,7 @@ spring:
             client-secret: jJDqDEwqKdHDGiDNvPc8UkXqRSsLP2II
             scope: openid
             authorization-grant-type: authorization_code
-            redirect-uri: "http://rktasks/login/oauth2/code/keycloak"
+            redirect-uri: "http://rktasks/rktasks/login/oauth2/code/keycloak"
     csrf: enabled
 management:
   endpoints:

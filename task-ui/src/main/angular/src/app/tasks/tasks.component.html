@@ -285,14 +285,14 @@
                     <div class="mt-4"><strong>{{'taskUI.tasks-header-due-date' | translate}} </strong></div>
                     <div *ngIf="task.dueDate">{{task.dueDate | date: datePipeDateFormat}}</div>
                     <div *ngIf="!task.dueDate">{{'taskUI.n_a' | translate}}</div>
-                    <app-task-status-dropdown *ngIf="configurations"
-                                              [configurations]="configurations"
+                    <app-task-status-dropdown
+                          [configurations]="configurations"
                           [readOnly]="true"
                           [editable]="false"
                           [taskStatusValue]="task?.status">
                     </app-task-status-dropdown>
                     <app-task-priority-dropdown
-                        [applicationConfigurations]="configurations"
+                        [configurations]="configurations"
                         [readOnly]="true"
                         [editable]="false"
                         [priorityValue]="task?.priority">

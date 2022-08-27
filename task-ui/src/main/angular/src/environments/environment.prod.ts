@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
     api: {
-        logout: '/auth/logout',
-        userDetails: '/auth/userDetails',
-        csrf: '/login'
+        logout: '/rktasks/auth/logout',
+        userDetails: '/rktasks/auth/userDetails',
+        csrf: '/rktasks/login'
     }
 };

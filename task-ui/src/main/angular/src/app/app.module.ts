@@ -32,7 +32,7 @@ import { CsrfInterceptorInterceptor } from './csrf-interceptor.interceptor';
 // configuring providers
 export function apiConfigFactory (): Configuration {
     const params: ConfigurationParameters = {
-        basePath: window.location.origin + '/tasks-api'
+        basePath: window.location.origin + window.location.pathname + 'tasks-api'
     }
     return new Configuration(params);
 }
@@ -90,7 +90,7 @@ export class AppModule {
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-    return new TranslateHttpLoader(http);
+    return new TranslateHttpLoader(http, './assets/i18n/');
 }
 
 export function appInitializerFactory(translate: TranslateService) {
