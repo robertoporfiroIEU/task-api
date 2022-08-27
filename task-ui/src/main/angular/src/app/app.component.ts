@@ -94,6 +94,6 @@ export class AppComponent {
     }
 
     logout(): void {
-        location.href = environment.api.logout + '?post_logout_redirect_uri=' + window.location.origin;
+        location.href = environment.api.logout + '?post_logout_redirect_uri=' + window.location.origin + window.location.pathname;
     }
 }

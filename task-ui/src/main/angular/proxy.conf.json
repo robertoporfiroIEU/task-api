@@ -1,16 +1,17 @@
 {
-    "/tasks-api": {
+    "/rktasks/tasks-api": {
         "target": "http://rktasks",
-        "secure": false
+        "secure": false,
+        "logLevel": "debug"
     },
 
     "/auth": {
-        "target": "http://rktasks",
+        "target": "http://rktasks/rktasks",
         "secure": false
     },
 
     "/login": {
-        "target": "http://rktasks",
+        "target": "http://rktasks/rktasks",
         "secure": false
     }
 }
