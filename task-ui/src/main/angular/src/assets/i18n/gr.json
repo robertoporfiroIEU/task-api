@@ -41,6 +41,8 @@
     "taskUI.create-project-project-name": "Όνομα Έργου",
     "taskUI.create-project-project-prefix": "Πρόθεμα αύξοντος αριθμού Εργασίας",
     "taskUI.create-project-created-by": "Δημιουργία από χρήστη",
+    "taskUI.create-project-tasks-options": "Επιτρεπόμενες τιμές Εργασιών",
+    "taskUI.create-project-tasks-help": "Παρακάτω καθορίζονται οι επιτρεπόμενες τιμές που μπορεί να επιλέξει ο χρήστης όταν φτίαχνει μια νέα εργασία",
     "taskUI.create-project-status-name-place-holder": "Όνομα κατάστασης",
     "taskUI.create-project-priority-name-place-holder": "Όνομα Προτεραιότητας",
     "taskUI.create-project-statuses-name-title": "Καταστάσεις Εργασιών",

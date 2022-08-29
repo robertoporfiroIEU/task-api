@@ -10,7 +10,7 @@
     </parent>
     <groupId>gr.rk</groupId>
     <artifactId>task-ui</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>task-ui</name>
     <description>task-ui</description>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>gr.rk</groupId>
             <artifactId>api-definition</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -80,6 +80,24 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>artifacts</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <csvSummary>true</csvSummary>
+                    <csvSummaryFile>artifacts-checksums.csv</csvSummaryFile>
+                    <xmlSummary>true</xmlSummary>
+                    <xmlSummaryFile>artifacts-checksums.xml</xmlSummaryFile>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>

@@ -6,7 +6,7 @@
 
     <groupId>gr.rk</groupId>
     <artifactId>tasks</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>tasks application</name>
     <description>This project is using the &quot;contract-first&quot; methodology for the construction</description>
 

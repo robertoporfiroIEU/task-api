@@ -86,6 +86,17 @@
             </span>
         </div>
 
+        <button *ngIf="action === actions.VIEW || action === actions.UPDATE"
+            tooltipPosition="left"
+            type="button"
+            routerLink="/tasks"  [queryParams]="{projectIdentifier: project?.identifier}"
+            class="btn btn-primary mb-2">
+            {{'taskUI.projects-header-task-action' | translate}}
+        </button>
+
+        <h3>{{'taskUI.create-project-tasks-options' | translate}}</h3>
+        <small>{{'taskUI.create-project-tasks-help'| translate}}</small>
+        <hr>
         <div class="row">
             <!--statuses-->
             <div class="col-12 col-sm-6">

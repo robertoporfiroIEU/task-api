@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED, imports = { Util.class }, uses = { AssignMapper.class, SpectatorMapper.class })
+@Mapper(componentModel = "spring",
+        collectionMappingStrategy = CollectionMappingStrategy.SETTER_PREFERRED,
+        imports = { Util.class }, uses = { AssignMapper.class, SpectatorMapper.class, ConfigurationMapper.class })
 public abstract class TaskMapper {
 
     @Autowired
@@ -43,6 +45,7 @@ public abstract class TaskMapper {
     @Mapping(target = "dueDate", expression = "java(Util.toDateISO8601WithTimeZone(task.getDueDate()))")
     @Mapping(target = "applicationUser", expression = "java(task.getApplicationUser())")
     @Mapping(target = "projectIdentifier", expression = "java(task.getProject().getIdentifier())")
+    @Mapping(target = "projectConfigurations", source = "task.project.configurations")
     @Mapping(target = "commentsUrl", expression = "java(Util.getEndPointRelationURL(task.getIdentifier() + \"/comments\"))")
     @Mapping(target = "createdBy", source = "createdBy")
     public abstract TaskDTO toTaskDTO(Task task);

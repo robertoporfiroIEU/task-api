@@ -98,14 +98,9 @@ export function appInitializerFactory(translate: TranslateService) {
         let language: string | null = localStorage.getItem('language');
 
         if (!language) {
-            let browserLanguage = translate.getBrowserLang();
-
-            if (browserLanguage) {
-                language = browserLanguage;
-            } else {
-                language = 'en';
-            }
+            language = 'en';
         }
+
         translate.setDefaultLang(language);
         return translate.use(language);
     };
