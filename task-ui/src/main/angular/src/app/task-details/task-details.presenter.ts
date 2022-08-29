@@ -126,6 +126,7 @@ export class TaskDetailsPresenter {
         task.status = this.taskForm.value.status;
         task.priority = this.taskForm.value.priority;
         task.dueDate = this.taskForm.value.dueDate;
+        task.projectConfigurations = [];
 
         this.updateTaskSubject.next(task);
     }

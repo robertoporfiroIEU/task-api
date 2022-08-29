@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-    ProjectConfiguration,
     PaginatedTasks,
     ProjectsService,
     TasksService
 } from '../api';
 import { ShellService } from '../shell/shell.service';
-import { catchError, map, Observable, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TasksParams } from './TasksParams';
 import { ErrorService } from '../error.service';
 import { ActivatedRoute,  Router } from '@angular/router';
@@ -21,19 +20,6 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
     private destroy: Subject<void> = new Subject();
 
     projectIdentifier: string | null = null;
-
-    configurations$: Observable<ProjectConfiguration[] | undefined> = this.activatedRoute.queryParams.pipe(
-        takeUntil(this.destroy),
-        switchMap( params => {
-            if (params['projectIdentifier']) {
-                this.projectIdentifier = params['projectIdentifier'];
-                return this.projectsService.getProject(this.projectIdentifier!).pipe(
-                    map( p => p.configurations)
-                );
-            }
-            return of(undefined);
-        }),
-    );
 
     paginatedTasks$: Observable<PaginatedTasks> = this.onLazyLoadPaginatedTasksSubject.pipe(
         switchMap(tasksParams => this.tasksService.getTasks(
@@ -70,6 +56,11 @@ export class TasksContainerComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+        this.activatedRoute.queryParams.pipe(takeUntil(this.destroy)).subscribe(params => {
+            if (params['projectIdentifier']) {
+                this.projectIdentifier = params['projectIdentifier'];
+            }
+        });
         this.shellService.setFullScreenMode(false);
         this.shellService.setLoadingSpinner(true);
     }

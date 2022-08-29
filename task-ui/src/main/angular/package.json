@@ -6,7 +6,7 @@
         "start": "ng serve --host rktasks --proxy-config proxy.conf.json",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
-        "build-prod": "npm run generate:schema && ng build --prod",
+        "build-prod": "npm run generate:schema && ng build --prod  --base-href /rktasks/",
         "test": "ng test",
         "generate:schema": "openapi-generator-cli generate -i ../../../../api-definition/src/main/resources/static/V1/openapi.yaml -g typescript-angular -o src/app/api --additional-properties=prependFormOrBodyParameters=false"
     },

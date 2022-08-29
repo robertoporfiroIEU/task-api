@@ -87,7 +87,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
 
         if (Objects.nonNull(taskCriteriaDTO.getSpectator())) {
             joinPart = " join " + entityVariableWithDot + "spectators s ";
-            filters.add("s.user.username like :spectator OR s.group like :spectator");
+            filters.add("s.user like :spectator OR s.group like :spectator");
             tasksTypedQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator","%" + taskCriteriaDTO.getSpectator() + "%")));
             totalResultsQueryParamBinders.add((taskTypedQuery -> taskTypedQuery.setParameter("spectator", "%" + taskCriteriaDTO.getSpectator() + "%")));
         }

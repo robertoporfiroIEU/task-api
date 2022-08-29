@@ -1,6 +1,6 @@
 {
-    "/rktasks/tasks-api": {
-        "target": "http://rktasks",
+    "/tasks-api": {
+        "target": "http://rktasks/rktasks",
         "secure": false,
         "logLevel": "debug"
     },

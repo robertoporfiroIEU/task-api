@@ -912,6 +912,10 @@ components:
           type: string
         projectIdentifier:
           type: string
+        projectConfigurations:
+          description: These are the configurations of the project
+          items:
+              $ref: '#/components/schemas/ProjectConfiguration'
         applicationUser:
           type: string
           description: This field is the applicationUser from the IDP

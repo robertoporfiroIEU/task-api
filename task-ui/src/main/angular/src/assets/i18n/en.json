@@ -40,6 +40,8 @@
     "taskUI.view-project-title": "Project Details",
     "taskUI.create-project-project-name": "Project Name",
     "taskUI.create-project-project-prefix": "Prefix Identifier",
+    "taskUI.create-project-tasks-options": "Tasks options",
+    "taskUI.create-project-tasks-help": "Below the user can define the available values that can be used when creating a new task",
     "taskUI.create-project-status-name-place-holder": "Status Name",
     "taskUI.create-project-priority-name-place-holder": "Priority Name",
     "taskUI.create-project-statuses-name-title": "Task Statuses",
@@ -124,7 +126,7 @@
     "taskUI.user-settings-role-name": "Role Name",
     "taskUI.user-settings-group-name": "Group Name",
     "taskUI.user-settings-language-greek": "Greek",
-    "taskUI.user-settings-language-english": "english",
+    "taskUI.user-settings-language-english": "English",
     "taskUI.user-settings-language-placeholder": "select language",
     "taskUI.user-settings-language-title": "Language",
 
